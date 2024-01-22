@@ -170,106 +170,15 @@ public final class Constants {
 
 
     public static final class IntakeConstants {
-        public static final PneumaticsModuleType PNEUMATICS_MODULE_TYPE = PneumaticsModuleType.REVPH;
-        public static final int FORWARD_CHANNEL = 0; //TODO: Config
-        public static final int REVERSE_CHANNEL = 1;// TODO: Config
-
-        public static final int UPPER_MOTOR_ID = 0;// TODO: Config
-        public static final int LOWER_MOTOR_ID = 1;// TODO: Config
-
-        // different rpms for cubes & cones
-        // because we might want to throw the cubes a little bit
-        public static final double INTAKE_FLOOR_RPM = 0;
-        public static final double OUTTAKE_RPM = 0;
-        public static final double OUTTAKE_CONE_RPM = 0;
-        public static final double OUTTAKE_CUBE_HIGH_RPM = 0;
-        public static final double OUTTAKE_CUBE_MID_RPM = 0;
-        public static final double OUTTAKE_LOW = 0;
-        public static final double INTAKE_SINGLE_SUBSTATION_CUBE = 0;
-        public static final double INTAKE_SINGLE_SUBSTATION_CONE = 0;
     }
 
-    public static final class WristConstants {
-        public static final int MOTOR_ID = 0; // TODO: Config
-        public static final boolean IS_MOTOR_INVERTED = false;
-
-        // PID values
-        public static final double WRIST_CONTROLLER_KP = 0.0;
-        public static final double WRIST_CONTROLLER_KI = 0.0;
-        public static final double WRIST_CONTROLLER_KD = 0.0;
-        public static final double WRIST_CONTROLLER_KF = 0;
-
-
-        public static final double WRIST_PEAK_OUTPUT_FORWARD = 0;
-        public static final double WRIST_PEAK_OUTPUT_REVERSE = 0;
-        public static final double WRIST_NOMINAL_VOLTAGE = 0;
-        public static final double WRIST_CURRENT_LIMIT = 0;
-        public static final double WRIST_MOTION_VEL = 0;
-        public static final double WRIST_MOTION_ACCEL = 0;
-
-        public static final double SOFT_LIMIT_FORWARD = 0;
-        public static final double SOFT_LIMIT_REVERSE = 0;
-
-        public static final double WRIST_TRIGGER_THRESHOLD_CURRENT = 0;
-        public static final double WRIST_GEAR_RATIO = 68.38/1;
-
-        // setpoints
-        public static final Rotation2d WRIST_LOW = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_CONE_MID = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_CUBE_MID = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_CONE_HIGH = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_CUBE_HIGH = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_FLOOR = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_ZERO = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_CUBE_SINGLESTATION = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_CONE_SINGLESTATION = Rotation2d.fromDegrees(0);
-        public static final Rotation2d WRIST_SECURE_PIECE = Rotation2d.fromDegrees(0);
-
-        public static final double WRIST_TOLERANCE = 1.5;
-        
+    public static final class ArmConstants {  
     }
 
-    public static final class ElevatorConstants {
-        public static final int MASTER_MOTOR_ID = 21;
-        public static final int SLAVE_MOTOR_ID = 22;
-        public static final NeutralMode MASTER_NEUTRAL_MODE = NeutralMode.Brake;
-        public static final NeutralMode SLAVE_NEUTRAL_MODE = NeutralMode.Brake;
-        public static final boolean IS_MOTOR_INVERTED = false;
-        public static final double ELEVATOR_GEAR_RATIO = 16 / 1;
+    public static final class ShooterConstants {
+    }
 
-        // TODO: Config All
-        public static final double ELEVATOR_PEAK_OUTPUT_FORWARD = 0;
-        public static final double ELEVATOR_PEAK_OUTPUT_REVERSE = 0;
-        public static final double ELEVATOR_CURRENT_LIMIT = 0;
-        public static final double ELEVATOR_TRIGGER_THRESHOLD_CURRENT = 0;
-        public static final double ELEVATOR_NOMINAL_VOLTAGE = 0;
-
-        // PID
-        public static final double ELEVATOR_CONTROLLER_KP = 0;
-        public static final double ELEVATOR_CONTROLLER_KI = 0;
-        public static final double ELEVATOR_CONTROLLER_KD = 0;
-        public static final double ELEVATOR_CONTROLLER_KF = 0;
-
-        // Motion magic
-        public static final double ELEVATOR_MOTION_VEL = 0;
-        public static final double SOFT_LIMIT_FORWARD = 0;
-        public static final double SOFT_LIMIT_REVERSE = 0;
-        public static final double ELEVATOR_MOTION_ACCEL = 1;
-        public static final double DISTANCE_PER_UNIT_DEGREE = 1.79*25.4;
-
-        public static final int ELEVATOR_TOLERANCE = 0;
-
-        // setpoints
-        public static final double ELEVATOR_LOW = 0;
-        public static final double ELEVATOR_CONE_MID = 0;
-        public static final double ELEVATOR_CUBE_MID = 0;
-        public static final double ELEVATOR_CONE_HIGH = 0;
-        public static final double ELEVATOR_CUBE_HIGH = 0;
-        public static final double ELEVATOR_FLOOR = 0;
-        public static final double ELEVATOR_ZERO = 0;
-        public static final double ELEVATOR_CUBE_SINGLESTATION = 0;
-        public static final double ELEVATOR_CONE_SINGLESTATION = 0;
-        public static final double ELEVATOR_SECURE_PIECE = 0;
+    public static final class TelescopicConstants {
     }
 
     public static final class LEDConstants {
@@ -293,8 +202,6 @@ public final class Constants {
 
             public static final Color CONE = Color.kOrange; // cone mode
             public static final Color CUBE = Color.kPurple; // cube mode
-
-
 
         }
     }
