@@ -18,7 +18,7 @@ public class Party extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    CANdleLed.getInstance().changeAnimation(AnimationTypes.Fire);
+    CANdleLed.getInstance().changeAnimation(AnimationTypes.Rainbow);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
