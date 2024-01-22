@@ -22,7 +22,6 @@ import frc.robot.commands.leds.Party;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.subsystems.DriveSubsystem;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -35,10 +34,10 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        //private final ElevatorSubsystem mElevator = ElevatorSubsystem.getInstance();
+        // private final ElevatorSubsystem mElevator = ElevatorSubsystem.getInstance();
         // private final SuperstructureSubsystem mSuperStructure =
         // SuperstructureSubsystem.getInstance();
-        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -46,7 +45,7 @@ public class RobotContainer {
 
         // auto
         private final ARCTrajectory trajectories = new ARCTrajectory();
-        private SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser(); 
+        private SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
 
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
                         () -> mDriver.getLeftX() * -1,
@@ -54,7 +53,8 @@ public class RobotContainer {
                         () -> mDriver.R2().getAsBoolean(),
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
-        //private final ElevatorDeneme elevator = new ElevatorDeneme(() -> mOperator.getLeftY() * -1);
+        // private final ElevatorDeneme elevator = new ElevatorDeneme(() ->
+        // mOperator.getLeftY() * -1);
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -67,7 +67,7 @@ public class RobotContainer {
                 LiveWindow.setEnabled(false);
                 // Configure the button bindings
                 configureButtonBindings();
-                SmartDashboard.putData("Auto", autoChooser);
+                SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
 
         }
@@ -81,7 +81,7 @@ public class RobotContainer {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
-                mDriver.circle().onTrue(new AllignWithLL(1)); //ID should change 
+                mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 mOperator.x().onTrue(new Party());
