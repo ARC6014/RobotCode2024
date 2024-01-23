@@ -55,7 +55,7 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, mOperator.getLeftY());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
