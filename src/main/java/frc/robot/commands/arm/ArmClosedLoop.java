@@ -35,7 +35,7 @@ public class ArmClosedLoop extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mArm.setArmAngleMotionMagic(setpoint, cruiseVel, acceleration);
+    mArm.setArmPosition(setpoint);
   }
 
   // Called once the command ends or is interrupted.
