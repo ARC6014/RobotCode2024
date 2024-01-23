@@ -4,17 +4,24 @@
 
 package frc.robot.commands.arm;
 
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 public class ArmOpenLoop extends Command {
   /** Creates a new ArmOpenLoop. */
   private ArmSubsystem mArm;
-  private double voltage;
+  private final DoubleSupplier joystick;
+  private final BooleanSupplier setpointButton;
+  private final double targetAngle = ArmConstants.INTAKE; // TODO: CONFIG
 
-  public ArmOpenLoop(ArmSubsystem arm, double voltage) {
+  public ArmOpenLoop(ArmSubsystem arm, DoubleSupplier output, BooleanSupplier button ) {
     mArm = arm;
-    this.voltage = voltage;
+    joystick = output;
+    setpointButton = button;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }
@@ -26,7 +33,16 @@ public class ArmOpenLoop extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    mArm.setArmVoltage(voltage);
+    if(joystick.getAsDouble() >= 0.04 || joystick.getAsDouble() <= -0.04){
+      mArm.setArmPercentOutput(joystick.getAsDouble());
+    }
+    else if(setpointButton.getAsBoolean()) {
+      mArm.setArmPosition(targetAngle);
+    }
+    else {
+      mArm.holdPosition();
+    }
+    
   }
 
   // Called once the command ends or is interrupted.
