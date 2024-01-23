@@ -32,7 +32,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double setpoint = 0; // angle to go by arm
   private final DutyCycleOut m_percentOut = new DutyCycleOut(0, true, false, false, false); // stores output in (next line)
   private double targetOutput = 0; //  output to set in open loop
-  private ArmControlState armControlState;
+  private ArmControlState armControlState = ArmControlState.MOTION_MAGIC;
 
   private double lastDemandedRotation; // last angle of arm
 
