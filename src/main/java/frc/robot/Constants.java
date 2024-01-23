@@ -185,8 +185,8 @@ public final class Constants {
         public static final double bottomSoftLimit = -25; // TODO: Config
         public static final double topSoftLimit = 232; // TODO: Config
 
-        public static final double armCruiseVelocity = 5000; // Mind units!
-        public static final double armAcceleration = 10000; // Mind units!
+        public static final double armCruiseVelocity = 1000; // Mind units!
+        public static final double armAcceleration = 2000; // Mind units!
 
         public static final double rampRate = 0.09;
         public static final double kP = 0.085; // TODO: Config
@@ -196,7 +196,7 @@ public final class Constants {
 
 
         public static final double resetAngle = 0; // TODO: Config
-        public static final double angleTolerance = 0;
+        public static final double angleTolerance = 1.5;
 
         /* Arm angles for setpoints */
         public static final double ZERO = 90;
