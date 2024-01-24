@@ -179,18 +179,19 @@ public final class Constants {
     }
 
     public static final class TelescopicConstants {
-        public static final int MASTER_MOTOR_ID = 0;
-        public static final int SLAVE_MOTOR_ID = 0;
-        public static final int TELESCOPIC_GEAR_RATIO = 0;
+        public static final int MASTER_MOTOR_ID = 0; // TODO: Config
+        public static final int SLAVE_MOTOR_ID = 0; // TODO: Config
+
+        public static final int TELESCOPIC_GEAR_RATIO = 144 / 11 / 1;
+
         public static final double TELESCOPIC_CONTROLLER_KD = 0;
         public static final double TELESCOPIC_CONTROLLER_KI = 0;
         public static final double TELESCOPIC_CONTROLLER_KP = 0;
-        public static final double TELESCOPIC_MOTION_ACCEL = 0;
-        public static final double TELESCOPIC_MOTION_VEL = 0;
+        public static final double TELESCOPIC_MOTION_ACCEL = 200;
+        public static final double TELESCOPIC_MOTION_VEL = 500;
         public static final double TELESCOPIC_MOTION_TIMEOUT = 0;
         public static final double TELESCOPIC_RESET = 0;
-        public static final double DISTANCE_PER_UNIT_DEGREE = 0;
-        public static final double TELESCOPIC_TOLERANCE = 0;
+        public static final double TELESCOPIC_TOLERANCE = 1;
 
 
     }
