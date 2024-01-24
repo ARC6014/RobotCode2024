@@ -71,6 +71,8 @@ public class TelescopicSubsystem extends SubsystemBase {
     // TODO: Configure whether inverted!
     m_slave.setControl(new Follower(m_master.getDeviceID(), false));
 
+    zeroEncoder();
+
     
   }
 
@@ -104,6 +106,11 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   public void zeroTelescopicArm() {
     setpoint = 0;
+  }
+
+  public void zeroEncoder() {
+    m_master.setPosition(0);
+    m_slave.setPosition(0);
   }
 
   public boolean isAtSetpoint() {
