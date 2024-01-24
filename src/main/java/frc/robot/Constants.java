@@ -193,6 +193,8 @@ public final class Constants {
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
 		public static final IdleMode MASTER_MODE = IdleMode.kBrake;
 		public static final int BEAM_BREAK_ID = 0;
+        public static final double AMP_SHOOT_RPM = 0;
+        public static final double SPEAKER_SHOOT_RPM = 0;
     }
 
     public static final class TelescopicConstants {
