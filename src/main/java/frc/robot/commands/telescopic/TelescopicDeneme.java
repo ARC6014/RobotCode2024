@@ -6,21 +6,21 @@ package frc.robot.commands.telescopic;
 
 import java.util.function.DoubleSupplier;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.telescopic.TelescopicSubsystem;
+import frc.robot.subsystems.telescopic.TelescopicSubsystem.TelescopicState;
 
 public class TelescopicDeneme extends Command {
 
 
-  private final TelescopicSubsystem m_arm = TelescopicSubsystem.getInstance();
+  private final TelescopicSubsystem telescopic = TelescopicSubsystem.getInstance();
   private final DoubleSupplier joystick;
 
   /** Creates a new TelescopicDeneme. */
   public TelescopicDeneme(DoubleSupplier output) {
     joystick = output;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_arm);
+    addRequirements(telescopic);
   }
 
   // Called when the command is initially scheduled.
@@ -31,14 +31,12 @@ public class TelescopicDeneme extends Command {
   @Override
   public void execute() {
     if(joystick.getAsDouble() >= 0.04 || joystick.getAsDouble() <= -0.04){
-      m_arm.openLoop((joystick.getAsDouble())/5);
+      telescopic.openLoop((joystick.getAsDouble())/5);
     }
     else {
-      m_arm.setBreakMode();
+      telescopic.setTelescopicState(TelescopicState.ZERO);
     }
 
-    SmartDashboard.putNumber("Arm Height", m_arm.getHeight());
-    SmartDashboard.putBoolean("Is at zero?", m_arm.isAtZero());
   }
 
   // Called once the command ends or is interrupted.
