@@ -32,6 +32,7 @@ import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
  */
 public final class Constants {
     public static final String CANIVORE_CANBUS = "CANivore"; 
+    public static final String RIO_CANBUS = "rio";
     public static final int Pigeon2CanID = 50; 
     public static final boolean tuningMode = false;
 
@@ -170,6 +171,23 @@ public final class Constants {
 
 
     public static final class IntakeConstants {
+        // TODO: determine actual ids
+        public static final int runningMotorId = 0;
+        public static final int angleMotorId = 0;
+
+        public static final int boreEncoderDioId = 0;
+        public static final int beamBreakSensorDioId = 0;
+
+        public static final double positionOffset = 0;
+
+        public static final double openPosition = 0;
+        public static final double closedPosition = 0;
+
+        public static final double forwardVelocity = 0;
+        public static final double reverseVelocity = 0;
+
+        public static final double positionEqualityInterval = 0;
+        public static final double velocityEqualityInterval = 0;
     }
 
     public static final class ArmConstants {  
