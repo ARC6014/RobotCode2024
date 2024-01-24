@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -25,9 +26,13 @@ public class IntakeSubsystem extends SubsystemBase {
     public Position mPosition;
     public double mPositionSetpoint;
     public PositionVoltage mPositionControl;
+    public double mAngleOpenLoopOutput;
+    public DutyCycleOut mAngleOpenLoopControl;
 
     public Running mRunning;
     public double mRunningVelocitySetpoint;
+    public double mRunningOpenLoopOutput;
+    public DutyCycleOut mRunningOpenLoopControl;
     public VelocityVoltage mRunningVelocityControl;
 
     public IntakeSubsystem() {
@@ -87,6 +92,7 @@ public class IntakeSubsystem extends SubsystemBase {
         OPEN,
         CLOSED,
         OVERRIDE,
+        OPENLOOP,
     }
 
     public enum Running {
@@ -94,21 +100,51 @@ public class IntakeSubsystem extends SubsystemBase {
         REVERSE,
         NEUTRAL,
         OVERRIDE,
+        OPENLOOP,
     }
 
     @Override
     public void periodic() {
         // TODO: Control requests are automatically transmitted at a fixed update frequency.
         // does this mean that we do not have to setControl every periodic run?
-        // https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/control-requests.html#changing-update-frequency 
+        // https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/control-requests.html#changing-update-frequency
+        // nevertheless I added them here just to be sure
+
+        switch (mPosition) {
+            case OPENLOOP:
+                mAngleMotor.setControl(mAngleOpenLoopControl);
+                break;
+        
+            default:
+                mAngleMotor.setControl(mPositionControl);
+                break;
+        }
+
+        switch (mRunning) {
+            case OPENLOOP:
+                mRunningMotor.setControl(mRunningOpenLoopControl);
+                break;
+        
+            default:
+                mRunningMotor.setControl(mRunningVelocityControl);
+                break;
+        }
+        
+        // VOLTAGE CHECK TO STOP MOTOR IF WE RAM THE INTAKE INTO THE CHASSIS
+        // TODO: this is just a fix to stop the motor, does not readjust encoders etc.
+        // we'll have to implement more code to make it usable after stopping
+        if (mAngleMotor.getMotorVoltage().getValueAsDouble() > IntakeConstants.maxVoltageCutoff) {
+            setAngleOpenLoop(0);
+            mAngleMotor.stopMotor();
+        }
     }
 
     public boolean isAtPositionSetpoint() {
-        return Math.abs(mAngleMotor.getPosition().getValueAsDouble() - mPositionSetpoint) < IntakeConstants.positionEqualityInterval;
+        return Math.abs(mAngleMotor.getPosition().getValueAsDouble() - mPositionSetpoint) < IntakeConstants.positionEqualityTolerance;
     }
 
     public boolean isAtVelocitySetpoint() {
-        return Math.abs(mRunningMotor.getPosition().getValueAsDouble() - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityInterval;
+        return Math.abs(mRunningMotor.getPosition().getValueAsDouble() - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityTolerance;
     }
 
     public void setStates(Position pos, Running run) {
@@ -134,6 +170,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
             case OVERRIDE:
                 break;
+
+            case OPENLOOP:
+                break;
         }
 
         mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
@@ -145,6 +184,13 @@ public class IntakeSubsystem extends SubsystemBase {
         mRunningVelocitySetpoint = velocity;
         mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
         mRunningMotor.setControl(mRunningVelocityControl);
+    }
+
+    public void setRunningOpenLoop(double output) {
+        mRunning = Running.OPENLOOP;
+        mRunningOpenLoopOutput = output;
+        mRunningOpenLoopControl.Output = mRunningOpenLoopOutput;
+        mRunningMotor.setControl(mRunningOpenLoopControl);
     }
 
     public void setPositionState(Position pos) {
@@ -161,6 +207,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
             case OVERRIDE:
                 break;
+            
+            case OPENLOOP:
+                break;
         }
 
         mPositionControl.Position = mPositionSetpoint;
@@ -172,5 +221,12 @@ public class IntakeSubsystem extends SubsystemBase {
         mPositionSetpoint = position;
         mPositionControl.Position = mPositionSetpoint;
         mAngleMotor.setControl(mPositionControl);
+    }
+
+    public void setAngleOpenLoop(double output) {
+        mPosition = Position.OPENLOOP;
+        mAngleOpenLoopOutput = output;
+        mAngleOpenLoopControl.Output = mAngleOpenLoopOutput;
+        mAngleMotor.setControl(mAngleOpenLoopControl);
     }
 }

@@ -186,8 +186,12 @@ public final class Constants {
         public static final double forwardVelocity = 0;
         public static final double reverseVelocity = 0;
 
-        public static final double positionEqualityInterval = 0;
-        public static final double velocityEqualityInterval = 0;
+        // TODO: equality tolerances
+        public static final double positionEqualityTolerance = 0;
+        public static final double velocityEqualityTolerance = 0;
+
+        // TODO: voltage cutoff
+        public static final double maxVoltageCutoff = 0;
     }
 
     public static final class ArmConstants {  
