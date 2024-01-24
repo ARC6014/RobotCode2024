@@ -87,6 +87,7 @@ public class TelescopicSubsystem extends SubsystemBase {
         break;
       case OPEN_LOOP:
         setMotorOutput();
+        break;
       default:
         stop();
         break;
