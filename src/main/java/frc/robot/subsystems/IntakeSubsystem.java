@@ -140,7 +140,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /* ENCODERS */
-    
+    // theoretically, Falcon position = Bore encoder position + offset at all times
+
     public double getFalconPosition() {
         return mAngleMotor.getPosition().getValueAsDouble();
     }
