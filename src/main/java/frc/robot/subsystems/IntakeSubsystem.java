@@ -63,7 +63,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // TODO: mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset() 
         // must output a position relative to the horizontal, which is 0
-        mAngleMotor.setPosition(mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset);
+        resetToAbsolute();
         mPositionSetpoint = mAngleMotor.getPosition().getValueAsDouble();
         mPositionControl = new PositionVoltage(mPositionSetpoint);
 
@@ -139,6 +139,22 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    /* ENCODERS */
+    
+    public double getFalconPosition() {
+        return mAngleMotor.getPosition().getValueAsDouble();
+    }
+
+    public double getBoreEncoderPosition() {
+        return mBoreEncoder.getAbsolutePosition();
+    }
+
+    public void resetToAbsolute() {
+        mAngleMotor.setPosition(mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset);
+    }
+
+    /* SETPOINT CHECKS */
+
     public boolean isAtPositionSetpoint() {
         return Math.abs(mAngleMotor.getPosition().getValueAsDouble() - mPositionSetpoint) < IntakeConstants.positionEqualityTolerance;
     }
@@ -146,6 +162,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public boolean isAtVelocitySetpoint() {
         return Math.abs(mRunningMotor.getPosition().getValueAsDouble() - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityTolerance;
     }
+
+
+    /* STATE SETTING */
 
     public void setStates(Position pos, Running run) {
         setRunningState(run);
