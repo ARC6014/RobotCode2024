@@ -20,7 +20,9 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.auto.ARCTrajectory;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.swerve.DriveByJoystick;
+import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.telescopic.TelescopicSubsystem;
 
 
 /**
@@ -35,10 +37,7 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        //private final ElevatorSubsystem mElevator = ElevatorSubsystem.getInstance();
-        // private final SuperstructureSubsystem mSuperStructure =
-        // SuperstructureSubsystem.getInstance();
-        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -54,14 +53,14 @@ public class RobotContainer {
                         () -> mDriver.R2().getAsBoolean(),
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
-        //private final ElevatorDeneme elevator = new ElevatorDeneme(() -> mOperator.getLeftY() * -1);
+        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getLeftY());
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
                 mDrive.setDefaultCommand(driveByJoystick);
-                // mElevator.setDefaultCommand(elevator);
+                mTelescopic.setDefaultCommand(telescopic);
                 DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
                 LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
                 LiveWindow.setEnabled(false);
@@ -85,6 +84,8 @@ public class RobotContainer {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 mOperator.x().onTrue(new Party());
+
+                
 
         }
 
