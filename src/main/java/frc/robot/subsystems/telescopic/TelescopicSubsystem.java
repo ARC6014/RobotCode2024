@@ -9,10 +9,13 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TelescopicConstants;
 
@@ -23,19 +26,75 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   private static TelescopicSubsystem m_instance;
 
+  private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
 
-  private MotorOutputConfigs motorConfig = new MotorOutputConfigs();
+  private final DutyCycleOut m_percentOut = new DutyCycleOut(0, true, false, false, false); // stores output in (next line)
+  private double targetOutput = 0; //  output to set in open loop
 
-  private double setpoint;
-  private double sensorUnitPerClimb = (TelescopicConstants.TELESCOPIC_GEAR_RATIO*2048) / (1.75*2.54*Math.PI);
+  private double setpoint = 0;
+  private final double sprocketCircumference = 0; // must be in cm!
 
-  public enum TelescopicArmState {
+  public enum TelescopicState {
     ZERO,
+    OPEN_LOOP,
     CLIMB,
   }
 
-  public void setSetpoint(double number) {
-    setpoint = number;
+  private TelescopicState telescopicState = TelescopicState.ZERO;
+
+  /** Creates a new TelescopicSubsystem. */
+  public TelescopicSubsystem() {
+    configureTelescopicMotors();
+  }
+
+  private void configureTelescopicMotors() {
+    m_master.getConfigurator().apply(new TalonFXConfiguration());
+    
+    var slot0Configs = new Slot0Configs();
+        slot0Configs.kP = TelescopicConstants.TELESCOPIC_CONTROLLER_KP;
+        slot0Configs.kI = TelescopicConstants.TELESCOPIC_CONTROLLER_KI;
+        slot0Configs.kD = TelescopicConstants.TELESCOPIC_CONTROLLER_KD;
+        m_master.getConfigurator().apply(slot0Configs);
+    
+    var motionMagicConfigs = new MotionMagicConfigs();
+    motionMagicConfigs.MotionMagicAcceleration = TelescopicConstants.TELESCOPIC_MOTION_ACCEL;
+    motionMagicConfigs.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
+    m_master.getConfigurator().apply(motionMagicConfigs);
+
+    var motorConfigs = new MotorOutputConfigs();
+    motorConfigs.NeutralMode = NeutralModeValue.Brake;
+    m_master.getConfigurator().apply(motorConfigs);
+    m_slave.getConfigurator().apply(motorConfigs);
+
+    m_master.getConfigurator().apply(slot0Configs, TelescopicConstants.TELESCOPIC_MOTION_TIMEOUT);
+
+    // TODO: Configure whether inverted!
+    m_slave.setControl(new Follower(m_master.getDeviceID(), false));
+
+    
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+
+    switch(telescopicState){
+      case ZERO:
+        stop();
+        break;
+      case CLIMB:
+        setHeight();
+        break;
+      case OPEN_LOOP:
+        setMotorOutput();
+      default:
+        stop();
+        break;
+    }
+
+    SmartDashboard.putNumber("Telescopic Height", getHeight());
+    SmartDashboard.putString("State", getTelescopicState().toString());
+    SmartDashboard.putBoolean("Is at zero?", isAtZero());
   }
 
   public double getSetpoint() {
@@ -54,65 +113,66 @@ public class TelescopicSubsystem extends SubsystemBase {
     return m_master.getRotorPosition().getValue() < TelescopicConstants.TELESCOPIC_TOLERANCE;
   }
 
-  public void openLoop(double output) {
-    final DutyCycleOut m_request = new DutyCycleOut(0);
-    m_master.setControl(m_request.withOutput(output));
-    m_slave.setControl(m_request.withOutput(output));
+  public void setMotorOutput(){
+    m_master.setControl(m_percentOut.withOutput(targetOutput));
+  }
 
-    //m_master.set(ControlMode.PercentOutput, output);
-    //m_slave.set(ControlMode.PercentOutput, output);
+  public void openLoop(double percent) {
+    if(telescopicState != TelescopicState.OPEN_LOOP){
+      telescopicState =  TelescopicState.OPEN_LOOP;
+    }
+    targetOutput = percent;
   }
 
   public double getHeight() {
-    double sensorUnit = m_master.getRotorPosition().getValue();
-    return sensorUnit / sensorUnitPerClimb;
+    var masterRot = m_master.getRotorPosition();
+    var slaveRot = m_slave.getRotorPosition();
+    masterRot.refresh(); 
+    slaveRot.refresh();
+    double sprocketRotation = (masterRot.getValue() + slaveRot.getValue()) / 2 / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
+    return sprocketRotation * sprocketCircumference;
   }
 
-  private void runMotor() {
-    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    m_master.setControl(m_request.withPosition(distanceToRotation(setpoint)));
-    //m_master.set(ControlMode.MotionMagic, Conversions.radiansToSteps(distanceToRotation(setpoint) / 180 * Math.PI, ElevatorConstants.ELEVATOR_GEAR_RATIO));
-
+  public void setTelescopicPosition(double target){
+    if(telescopicState != TelescopicState.CLIMB){
+      telescopicState =  TelescopicState.CLIMB;
+    }
+    setpoint = target;
   }
 
-  private double distanceToRotation(double distance) {
-    return distance / TelescopicConstants.DISTANCE_PER_UNIT_DEGREE;
+  public void setHeight() {
+    m_master.setControl(motionMagic.withPosition(setpoint/sprocketCircumference * TelescopicConstants.TELESCOPIC_GEAR_RATIO).withSlot(0));
   }
 
-  /** Creates a new TelescopicSubsystem. */
-  public TelescopicSubsystem() {
-    configureTelescopicMotors();
-    motorConfig.NeutralMode = NeutralModeValue.Brake;
+  public void setTelescopicState(TelescopicState state) {
+    telescopicState = state;
   }
 
+  public TelescopicState getTelescopicState() {
+    return telescopicState;
+  }
+
+  
   public void setBreakMode() {
-    //m_master.setNeutralMode(NeutralModeValue.Brake);
-    m_master.getConfigurator().apply(motorConfig);
-    //m_slave.setNeutralMode(NeutralModeValue.Brake);
-    m_slave.getConfigurator().apply(motorConfig);
+    m_master.setNeutralMode(NeutralModeValue.Brake);
+    //m_master.getConfigurator().apply(motorConfig);
+    m_slave.setNeutralMode(NeutralModeValue.Brake);
+    //m_slave.getConfigurator().apply(motorConfig);
   } 
 
-  private void configureTelescopicMotors() {
-    m_master.getConfigurator().apply(new TalonFXConfiguration());
-    
-    TalonFXConfiguration config = new TalonFXConfiguration();
-    var slot0Configs = new Slot0Configs();
-        slot0Configs.kP = TelescopicConstants.TELESCOPIC_CONTROLLER_KP;
-        slot0Configs.kI = TelescopicConstants.TELESCOPIC_CONTROLLER_KI;
-        slot0Configs.kD = TelescopicConstants.TELESCOPIC_CONTROLLER_KD;
-        m_master.getConfigurator().apply(slot0Configs);
-    
-    var motionMagiConfigs = new MotionMagicConfigs();
-    motionMagiConfigs.MotionMagicAcceleration = TelescopicConstants.TELESCOPIC_MOTION_ACCEL;
-    motionMagiConfigs.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
-    m_master.getConfigurator().apply(motionMagiConfigs);
+  // basically taking them off break mode to trigger cfs 
+  // might actually not even use this tbh
+  public void ejectTelescopic() {
+    m_master.setNeutralMode(NeutralModeValue.Coast);
+    m_slave.setNeutralMode(NeutralModeValue.Coast);
+  }
 
-    var motorConfigs = new MotorOutputConfigs();
-    motorConfigs.NeutralMode = NeutralModeValue.Brake;
-    m_master.getConfigurator().apply(motorConfigs);
-    m_slave.getConfigurator().apply(motorConfigs);
-
-    m_master.getConfigurator().apply(slot0Configs, TelescopicConstants.TELESCOPIC_MOTION_TIMEOUT);
+  public void stop(){
+    if(telescopicState != TelescopicState.ZERO){
+      telescopicState =  TelescopicState.ZERO;
+    }
+    m_master.stopMotor();
+    m_slave.stopMotor();
   }
 
   public void resetEncoder() {
@@ -120,22 +180,13 @@ public class TelescopicSubsystem extends SubsystemBase {
     m_slave.setPosition(TelescopicConstants.TELESCOPIC_RESET);
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    //runMotor();
-  }
+  
 
   public static TelescopicSubsystem getInstance() {
     if (m_instance == null) {
       m_instance = new TelescopicSubsystem();
     }
     return m_instance;
-  }
-
-  public void TelescopicStateSet(TelescopicArmState level) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'TelescopicStateSet'");
   }
 
 }
