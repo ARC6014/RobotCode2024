@@ -23,17 +23,17 @@ public class IntakeSubsystem extends SubsystemBase {
     public DutyCycleEncoder mBoreEncoder;
     public DigitalInput mBeamBreakSensor;
 
-    public Position mPosition;
-    public double mPositionSetpoint;
-    public PositionVoltage mPositionControl;
-    public double mAngleOpenLoopOutput;
-    public DutyCycleOut mAngleOpenLoopControl;
+    private Position mPosition;
+    private double mPositionSetpoint;
+    private PositionVoltage mPositionControl;
+    private double mAngleOpenLoopOutput;
+    private DutyCycleOut mAngleOpenLoopControl;
 
-    public Running mRunning;
-    public double mRunningVelocitySetpoint;
-    public double mRunningOpenLoopOutput;
-    public DutyCycleOut mRunningOpenLoopControl;
-    public VelocityVoltage mRunningVelocityControl;
+    private Running mRunning;
+    private double mRunningVelocitySetpoint;
+    private double mRunningOpenLoopOutput;
+    private DutyCycleOut mRunningOpenLoopControl;
+    private VelocityVoltage mRunningVelocityControl;
 
     public IntakeSubsystem() {
         mRunningMotor = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
@@ -157,13 +157,28 @@ public class IntakeSubsystem extends SubsystemBase {
     /* SETPOINT CHECKS */
 
     public boolean isAtPositionSetpoint() {
+        if (mPosition == Position.OPENLOOP) {
+            return false;
+        }
         return Math.abs(mAngleMotor.getPosition().getValueAsDouble() - mPositionSetpoint) < IntakeConstants.positionEqualityTolerance;
     }
 
     public boolean isAtVelocitySetpoint() {
+        if (mRunning == Running.OPENLOOP) {
+            return false;
+        }
         return Math.abs(mRunningMotor.getPosition().getValueAsDouble() - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityTolerance;
     }
 
+    /* STATE ACCESSORS */
+
+    public Position getIntakePosition() {
+        return mPosition;
+    }
+    
+    public Running getIntakeRunning() {
+        return mRunning;
+    }
 
     /* STATE SETTING */
 
@@ -192,7 +207,8 @@ public class IntakeSubsystem extends SubsystemBase {
                 break;
 
             case OPENLOOP:
-                break;
+                // don't set control if it's open loop, just return
+                return;
         }
 
         mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
