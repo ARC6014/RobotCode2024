@@ -60,13 +60,6 @@ public class IntakeSubsystem extends SubsystemBase {
         angleMotorConfigs.kI = 0; // no output for integrated error
         angleMotorConfigs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
-        /** 
-         * REMOVED GRAVITY-FF as Falcon's encoder is not directly connected
-         * to the output shaft (TalonFX cannot calculate FF via kG * cos(Falcon encoder angle)).
-         * If we want to add GRAVITY-FF, we'll have
-         * to move the PID loop out of the Falcon and use a PIDController.
-         */
-
         mAngleMotor.getConfigurator().apply(angleMotorConfigs);
         mAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -132,6 +125,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 break;
         
             default:
+                /* GRAVITY FF */
                 mAngleMotor.setControl(mPositionControl.withFeedForward(IntakeConstants.kG * Math.cos(Conversions.revolutionsToRadians(getBoreEncoderPosition()))));
                 break;
         }
