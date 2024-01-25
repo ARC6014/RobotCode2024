@@ -56,7 +56,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         /** 
          * REMOVED GRAVITY-FF as Falcon's encoder is not directly connected
-         * to the output shaft. If we want to add GRAVITY-FF, we'll have
+         * to the output shaft (TalonFX cannot calculate FF via kG * cos(Falcon encoder angle)).
+         * If we want to add GRAVITY-FF, we'll have
          * to move the PID loop out of the Falcon and use a PIDController.
          */
 
@@ -246,11 +247,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
         switch (mPosition) {
             case OPEN:
-                mPositionSetpoint = IntakeConstants.openPosition;
+                mPositionSetpoint = drivenToDriver(IntakeConstants.openPosition);
                 break;
         
             case CLOSED:
-                mPositionSetpoint = IntakeConstants.closedPosition;
+                mPositionSetpoint = drivenToDriver(IntakeConstants.openPosition);
                 break;
 
             case OVERRIDE:

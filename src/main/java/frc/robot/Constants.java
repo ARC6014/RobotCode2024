@@ -181,7 +181,9 @@ public final class Constants {
 
         public static final double positionOffset = 0;
 
+        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
         public static final double openPosition = 0;
+        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
         public static final double closedPosition = 0;
 
         public static final double forwardVelocity = 0;
