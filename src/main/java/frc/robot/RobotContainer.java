@@ -23,8 +23,10 @@ import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.auto.ARCTrajectory;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.swerve.DriveByJoystick;
+import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.telescopic.TelescopicSubsystem;
 
 
 /**
@@ -39,6 +41,7 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
+        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -55,12 +58,16 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
+        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getLeftY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
                 mDrive.setDefaultCommand(driveByJoystick);
+                mTelescopic.setDefaultCommand(telescopic);
+                DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
+                LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
                 
                 // Arm open loop
                 mArm.setDefaultCommand(armOpenLoop);
