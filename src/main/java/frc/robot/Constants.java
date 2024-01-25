@@ -174,10 +174,8 @@ public final class Constants {
 
         public static final int motorID = 0; // TODO: Config
         public static final int boreChannel = 0; // TODO: Config
-        public static final double gearRatio = 119.5 / 1; // TODO: Config
+        public static final Gearbox gearRatio = new Gearbox(119.5 / 1); // TODO: Config
         public static final boolean motorInverted = false; // TODO: Config
-        public static final NeutralMode neutralMode = NeutralMode.Brake;
-
 
         public static final double bottomSoftLimit = -25; // TODO: Config
         public static final double topSoftLimit = 232; // TODO: Config
@@ -193,6 +191,7 @@ public final class Constants {
 
 
         public static final double resetAngle = 0; // TODO: Config
+        public static final double positionOffset = 0; // TODO: Config starting position offset of bore
         public static final double angleTolerance = 1.5;
 
         /* Arm angles for setpoints */
