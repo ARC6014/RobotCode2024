@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 
 /**
@@ -31,6 +32,7 @@ import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
  */
 public final class Constants {
     public static final String CANIVORE_CANBUS = "CANivore"; 
+    public static final String RIO_CANBUS = "rio";
     public static final int Pigeon2CanID = 50; 
     public static final boolean tuningMode = false;
 
@@ -166,11 +168,7 @@ public final class Constants {
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
-
-
-    public static final class IntakeConstants {
-    }
-
+  
     public static final class ArmConstants {
 
         public static final int motorID = 0; // TODO: Config
@@ -203,6 +201,34 @@ public final class Constants {
         public static final double AMP = -45; // Double check negative
         public static final double distancePerRotation = 0;
   
+    }
+
+    public static final class IntakeConstants {
+        // TODO: determine actual ids
+        public static final int runningMotorId = 0;
+        public static final int angleMotorId = 0;
+
+        public static final int boreEncoderDioId = 0;
+        public static final int beamBreakSensorDioId = 0;
+
+        public static final double positionOffset = 0;
+
+        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
+        public static final double openPosition = 0;
+        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
+        public static final double closedPosition = 0;
+
+        public static final double forwardVelocity = 0;
+        public static final double reverseVelocity = 0;
+
+        // TODO: equality tolerances
+        public static final double positionEqualityTolerance = 0;
+        public static final double velocityEqualityTolerance = 0;
+
+        // TODO: voltage cutoff
+        public static final double maxVoltageCutoff = 0;
+
+        public static final Gearbox gearbox = new Gearbox(72, 1);
     }
 
     public static final class ShooterConstants {
