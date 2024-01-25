@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -232,6 +233,24 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
+
+		public static final int MASTER_MOTOR_ID = 0;
+        public static final int SLAVE_MOTOR_ID = 0;
+        public static final int FEEDER_MOTOR_ID = 0;
+		public static final double kP = 0;
+        public static final double maxRPM = 0;
+        public static final double kMinOutput = 0;
+        public static final double kMaxOutput = 0;
+        public static final double kFF = 0;
+        public static final double kIz = 0;
+        public static final double kD = 0;
+        public static final double kI = 0;
+        
+        public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
+		public static final IdleMode MASTER_MODE = IdleMode.kBrake;
+		public static final int BEAM_BREAK_ID = 0;
+        public static final double AMP_SHOOT_RPM = 0;
+        public static final double SPEAKER_SHOOT_RPM = 0;
     }
 
     public static final class TelescopicConstants {
