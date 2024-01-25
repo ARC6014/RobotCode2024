@@ -16,12 +16,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.arm.ArmClosedLoop;
+import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.auto.ARCTrajectory;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.swerve.DriveByJoystick;
+import frc.robot.commands.telescopic.TelescopicDeneme;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.TelescopicSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,10 +41,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        // private final ElevatorSubsystem mElevator = ElevatorSubsystem.getInstance();
-        // private final SuperstructureSubsystem mSuperStructure =
-        // SuperstructureSubsystem.getInstance();
-        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+
+        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -48,25 +53,30 @@ public class RobotContainer {
         private final ARCTrajectory trajectories = new ARCTrajectory();
         private SendableChooser<Command> autoChooser;
 
+        // commands
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
                         () -> mDriver.getLeftX() * -1,
                         () -> mDriver.getRawAxis(2),
                         () -> mDriver.R2().getAsBoolean(),
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
-        // private final ElevatorDeneme elevator = new ElevatorDeneme(() ->
-        // mOperator.getLeftY() * -1);
 
+        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
+       
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
-                // mElevator.setDefaultCommand(elevator);
-                DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
-                LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
-                LiveWindow.setEnabled(false);
+                mTelescopic.setDefaultCommand(telescopic);
+                mArm.setDefaultCommand(armOpenLoop);
 
+                DriverStation.silenceJoystickConnectionWarning(true); 
+                LiveWindow.disableAllTelemetry(); 
+                LiveWindow.setEnabled(false);
+          
                 configureNamedCommands();
 
                 // Configure the button bindings
@@ -97,6 +107,9 @@ public class RobotContainer {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 mOperator.x().onTrue(new Party());
+
+                // Arm Closed Loop
+                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false, ArmConstants.armCruiseVelocity, ArmConstants.armAcceleration));
 
         }
 
