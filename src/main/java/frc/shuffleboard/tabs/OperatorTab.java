@@ -4,6 +4,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.CANdleLed;
 import frc.shuffleboard.ShuffleboardTabBase;
 
 public class OperatorTab extends ShuffleboardTabBase{
@@ -11,6 +12,10 @@ public class OperatorTab extends ShuffleboardTabBase{
     /* ARM SUBSYSTEM */
     private ArmSubsystem mArm = ArmSubsystem.getInstance();
     private GenericEntry boreAngle, falconAngle, armState, atSetpoint, atZero;
+
+    /* LEDS */
+    private CANdleLed mLed = CANdleLed.getInstance();
+    private GenericEntry currentAnimation;
     
 
 
@@ -54,18 +59,24 @@ public class OperatorTab extends ShuffleboardTabBase{
         .withWidget(BuiltInWidgets.kBooleanBox)
         .getEntry();
 
+        currentAnimation = mTab
+        .add("Current Anim", "NONE")
+        .withPosition(2, 0)
+        .withSize(1, 1)
+        .getEntry();
     }
 
     @Override
     public void update() {
+        /* ARM */
         boreAngle.setDouble(truncate(mArm.getArmAngleBore()));
         falconAngle.setDouble(truncate(mArm.getArmAngleFalcon()));
         armState.setString(mArm.getArmControlState().toString());
         atSetpoint.setBoolean(mArm.isAtSetpointFalcon());
         atZero.setBoolean(mArm.isAtZeroFalcon());
 
-
-
+        /* LEDS */
+        currentAnimation.setString(mLed.getCurrentAnimation().toString());
     }
 
 

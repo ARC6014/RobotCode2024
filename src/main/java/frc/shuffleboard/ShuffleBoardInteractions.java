@@ -2,6 +2,7 @@ package frc.shuffleboard;
 
 import java.util.ArrayList;
 
+import frc.shuffleboard.tabs.OperatorTab;
 import frc.shuffleboard.tabs.SwerveTab;
 
 public class ShuffleBoardInteractions {
@@ -23,10 +24,12 @@ public class ShuffleBoardInteractions {
 
     public FieldView mFieldView = new FieldView();
     private SwerveTab mSwerveTab = new SwerveTab();
+    private OperatorTab mOperatorTab = new OperatorTab();
 
     // instantiate subsystems, tabs, and widgets
     public ShuffleBoardInteractions() {
         mTabs.add(mSwerveTab);
+        mTabs.add(mOperatorTab);
         for (ShuffleboardTabBase tab : mTabs) {
             tab.createEntries();
         }
