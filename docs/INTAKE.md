@@ -76,4 +76,5 @@ public class IntakeSetState extends Command {
 - [ ] PID constants (both angle & velocity)
 - [ ] Bore encoder position offset
 - [ ] \(Optional) Intake position reset if we ram it into the drivebase
+- [ ] Using the beam break sensor
 
