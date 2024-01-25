@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -28,7 +29,6 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 
-
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -41,6 +41,7 @@ import frc.robot.subsystems.TelescopicSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
+
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
 
@@ -50,7 +51,7 @@ public class RobotContainer {
 
         // auto
         private final ARCTrajectory trajectories = new ARCTrajectory();
-        private SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser(); 
+        private SendableChooser<Command> autoChooser;
 
         // commands
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
@@ -75,13 +76,22 @@ public class RobotContainer {
                 DriverStation.silenceJoystickConnectionWarning(true); 
                 LiveWindow.disableAllTelemetry(); 
                 LiveWindow.setEnabled(false);
-                
-                
+          
+                configureNamedCommands();
+
                 // Configure the button bindings
                 configureButtonBindings();
-                SmartDashboard.putData("Auto", autoChooser);
-                SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
 
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto ", autoChooser);
+                SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
+        }
+
+        /*
+         * Named commands
+         */
+        private void configureNamedCommands() {
+                // NamedCommands.registerCommand(null, driveByJoystick);
         }
 
         /**
@@ -93,7 +103,7 @@ public class RobotContainer {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
-                mDriver.circle().onTrue(new AllignWithLL(1)); //ID should change 
+                mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 mOperator.x().onTrue(new Party());
