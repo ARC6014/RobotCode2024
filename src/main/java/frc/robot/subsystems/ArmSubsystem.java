@@ -121,8 +121,11 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Bore Angle", getArmAngleBore()); // will be configured for Bore
-    SmartDashboard.putNumber("Arm Falcon Angle", getArmAngleFalcon());
+    //SmartDashboard.putNumber("Arm Bore Angle", getArmAngleBore()); // will be configured for Bore
+    //SmartDashboard.putNumber("Arm Falcon Angle", getArmAngleFalcon());
+    //SmartDashboard.putString("Arm State: ", armControlState.toString());
+    //SmartDashboard.putNumber("Last Demanded Angle", lastDemandedRotation);
+
 
     switch(armControlState){
       case OPEN_LOOP:
@@ -143,7 +146,6 @@ public class ArmSubsystem extends SubsystemBase {
       lastDemandedRotation = getArmAngleFalcon();
     }
     
-    SmartDashboard.putString("Carriage State: ", armControlState.toString());
   }
 
   // resets falcon encoder to some pre-set zero position
@@ -221,6 +223,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setArmControlState(ArmControlState state){
     armControlState = state;
+  }
+
+  public ArmControlState getArmControlState() {
+    return armControlState;
   }
 
   public void setMotorOutput(){
