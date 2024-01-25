@@ -53,6 +53,25 @@ public enum Running {
 
 ## Command
 
+```java
+//  Intake control command (open loop for angle only).
+public class IntakeSetState extends Command {
+    
+    // ...instance variables omitted..
+
+    public IntakeSetState(
+        IntakeSubsystem intakeSubsystem, 
+        DoubleSupplier openLoopOutput, 
+        IntakeSubsystem.Position position, 
+        IntakeSubsystem.Running running
+    );
+}
+```
+
+- Set both states with a single command.
+- Closed-loop or intake angle open-loop operation.
+- Command ends when subsystem arrives at setpoint (never for open-loop).
+
 ## TODO:
 - [ ] PID constants (both angle & velocity)
 - [ ] Bore encoder position offset
