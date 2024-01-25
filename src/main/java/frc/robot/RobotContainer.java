@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -45,7 +46,7 @@ public class RobotContainer {
 
         // auto
         private final ARCTrajectory trajectories = new ARCTrajectory();
-        private SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser();
+        private SendableChooser<Command> autoChooser;
 
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
                         () -> mDriver.getLeftX() * -1,
@@ -65,11 +66,22 @@ public class RobotContainer {
                 DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
                 LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
                 LiveWindow.setEnabled(false);
+
+                configureNamedCommands();
+
                 // Configure the button bindings
                 configureButtonBindings();
+
+                autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
+        }
 
+        /*
+         * Named commands
+         */
+        private void configureNamedCommands() {
+                // NamedCommands.registerCommand(null, driveByJoystick);
         }
 
         /**
