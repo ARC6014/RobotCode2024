@@ -18,25 +18,30 @@ import frc.team6014.lib.math.Gearbox;
 public class IntakeSubsystem extends SubsystemBase {
     private static IntakeSubsystem mInstance;
 
+    /* MOTORS */
     public TalonFX mRunningMotor;
     public TalonFX mAngleMotor;
+
     public Gearbox mGearbox = IntakeConstants.gearbox;
 
+    /* SENSORS */
     public DutyCycleEncoder mBoreEncoder;
     public DigitalInput mBeamBreakSensor;
 
+    /* ANGLE MOTOR CONTROL */
     private Position mPosition;
     private double mPositionSetpoint;
     private PositionVoltage mPositionControl;
     private double mAngleOpenLoopOutput;
     private DutyCycleOut mAngleOpenLoopControl;
 
+    /* RUNNING/INTAKING MOTOR CONTROL */
     private Running mRunning;
     private double mRunningVelocitySetpoint;
+    private VelocityVoltage mRunningVelocityControl;
     private double mRunningOpenLoopOutput;
     private DutyCycleOut mRunningOpenLoopControl;
-    private VelocityVoltage mRunningVelocityControl;
-
+    
     public IntakeSubsystem() {
         mRunningMotor = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
         mAngleMotor = new TalonFX(IntakeConstants.angleMotorId, Constants.RIO_CANBUS);
@@ -94,15 +99,22 @@ public class IntakeSubsystem extends SubsystemBase {
     public enum Position {
         OPEN,
         CLOSED,
-        OVERRIDE,
+        /** custom setpoint/position */
+        OVERRIDE, 
+        /** openloop control */
         OPENLOOP,
     }
 
     public enum Running {
-        FORWARD,
+        /** intake */
+        FORWARD, 
+        /** outtake */
         REVERSE,
+        /** neutral/idle (coast) */
         NEUTRAL,
+        /** custom setpoint/position */
         OVERRIDE,
+        /** openloop control */
         OPENLOOP,
     }
 
