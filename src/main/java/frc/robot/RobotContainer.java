@@ -43,6 +43,7 @@ public class RobotContainer {
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
@@ -51,6 +52,7 @@ public class RobotContainer {
         private final ARCTrajectory trajectories = new ARCTrajectory();
         private SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser(); 
 
+        // commands
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
                         () -> mDriver.getLeftX() * -1,
                         () -> mDriver.getRawAxis(2),
@@ -60,20 +62,17 @@ public class RobotContainer {
 
         private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
+       
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 mTelescopic.setDefaultCommand(telescopic);
-                DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
-                LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
-                
-                // Arm open loop
                 mArm.setDefaultCommand(armOpenLoop);
-                
-                
-                DriverStation.silenceJoystickConnectionWarning(true);
+
+                DriverStation.silenceJoystickConnectionWarning(true); 
                 LiveWindow.disableAllTelemetry(); 
                 LiveWindow.setEnabled(false);
                 
