@@ -129,6 +129,10 @@ public class CANdleLed extends SubsystemBase {
         }
     }
 
+    public AnimationTypes getCurrentAnimation() {
+        return m_currentAnimation;
+    }
+
     public static CANdleLed getInstance() {
         return m_instance;
     }
