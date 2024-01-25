@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IntakeConstants;
+import frc.team6014.lib.math.Gearbox;
 
 public class ArmSubsystem extends SubsystemBase {
   /** Creates a new ArmSubsystem. */
@@ -24,6 +26,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final DutyCycleEncoder boreEncoder = new DutyCycleEncoder(ArmConstants.boreChannel);
 
   private static ArmSubsystem mInstance;
+  public Gearbox armGearbox = ArmConstants.gearRatio;
 
   private double setpoint = 0; // angle to go by arm
   private final DutyCycleOut m_percentOut = new DutyCycleOut(0, true, false, false, false); // stores output in (next line)
@@ -113,7 +116,8 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.getConfigurator().apply(configs);
 
     resetFalconEncoder();
-    // TODO: CONFIGURE THIS!
+    resetToAbsolute();
+    // TODO: CONFIGURE THIS?
     boreEncoder.setDistancePerRotation(ArmConstants.distancePerRotation);
 
   }
@@ -150,8 +154,25 @@ public class ArmSubsystem extends SubsystemBase {
 
   // resets falcon encoder to some pre-set zero position
   public void resetFalconEncoder() {
-    armMotor.setPosition(ArmConstants.resetAngle * ArmConstants.gearRatio);
+    armMotor.setPosition(ArmConstants.resetAngle * armGearbox.getRatio());
   }
+
+  /* Conversions */
+  public double drivenToDriver(double revolutions) {
+    return revolutions * (1.0 / armGearbox.getRatio());
+}
+
+public double driverToDriven(double revolutions) {
+    return armGearbox.calculate(revolutions);
+}
+
+  // resets falcon encoder so that bore and falcon have the same initial reading
+  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
+
+  public void resetToAbsolute() {
+        double position = drivenToDriver(getArmAngleBore() + ArmConstants.positionOffset);
+        armMotor.setPosition(position);
+    }
 
   // TODO: Double-check this method
   public boolean isAtSetpointFalcon() {
@@ -160,7 +181,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   // TODO: Check difference between rotorPosition and position
   public boolean isAtZeroFalcon() {
-    return armMotor.getRotorPosition().getValue() / ArmConstants.gearRatio == ArmConstants.resetAngle;
+    return armMotor.getRotorPosition().getValue() / armGearbox.getRatio() == ArmConstants.resetAngle;
   }
 
   public double getSetpoint() {
@@ -168,7 +189,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getArmAngleFalcon() {
-    return armMotor.getRotorPosition().getValue() *360 / ArmConstants.gearRatio;
+    return armMotor.getRotorPosition().getValue() / armGearbox.getRatio();
   }
 
   // TODO: Check if we need to multiply by anything here
@@ -179,15 +200,11 @@ public class ArmSubsystem extends SubsystemBase {
   // TODO: decide whether to use getAngle from Falcon or Bore
   public void setArmAngleMotionMagic() {
     // TODO: add max/min angles here!
-    //armMotor.configMotionCruiseVelocity(cruiseVel);
-    //armMotor.configMotionAcceleration(acc);
-    //armMotor.set(ControlMode.MotionMagic, targetAngle * ArmConstants.gearRatio, DemandType.ArbitraryFeedForward,
-        //ArmConstants.kF * java.lang.Math.cos(java.lang.Math.toRadians(getArmAngleFalcon())));
-    armMotor.setControl(motionMagic.withPosition(setpoint / 360 * ArmConstants.gearRatio));
+    armMotor.setControl(motionMagic.withPosition(setpoint * armGearbox.getRatio()));
   }
 
   public void holdPosition(){
-    armMotor.setControl(torqueControl.withPosition(lastDemandedRotation/360 * ArmConstants.gearRatio));
+    armMotor.setControl(torqueControl.withPosition(lastDemandedRotation * armGearbox.getRatio()));
   }
 
   public void setArmVoltage(double voltage) {
