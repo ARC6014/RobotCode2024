@@ -229,6 +229,11 @@ public final class Constants {
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
 
+        public static final double kG = 0;
+
+        /** unit: revolutions */
+        public static final double stopPosition = 0;
+
         public static final Gearbox gearbox = new Gearbox(72, 1);
     }
 

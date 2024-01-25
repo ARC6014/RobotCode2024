@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -131,7 +132,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 break;
         
             default:
-                mAngleMotor.setControl(mPositionControl);
+                mAngleMotor.setControl(mPositionControl.withFeedForward(IntakeConstants.kG * Math.cos(Conversions.revolutionsToRadians(getBoreEncoderPosition()))));
                 break;
         }
 
@@ -144,14 +145,14 @@ public class IntakeSubsystem extends SubsystemBase {
                 mRunningMotor.setControl(mRunningVelocityControl);
                 break;
         }
-        
-        // VOLTAGE CHECK TO STOP MOTOR IF WE RAM THE INTAKE INTO THE CHASSIS
-        // TODO: this is just a fix to stop the motor, does not readjust encoders etc.
-        // we'll have to implement more code to make it usable after stopping
-        if (mAngleMotor.getMotorVoltage().getValueAsDouble() > IntakeConstants.maxVoltageCutoff) {
+
+        // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
+        if (getBoreEncoderPosition() < IntakeConstants.stopPosition) {
             setAngleOpenLoop(0);
             mAngleMotor.stopMotor();
+            resetToAbsolute();
         }
+        
     }
 
     /* CALCULATIONS */
@@ -170,8 +171,9 @@ public class IntakeSubsystem extends SubsystemBase {
         return mAngleMotor.getPosition().getValueAsDouble();
     }
 
+    /** Bore encoder reading (with position offset) */
     public double getBoreEncoderPosition() {
-        return mBoreEncoder.getAbsolutePosition();
+        return mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset;
     }
 
     public void resetToAbsolute() {

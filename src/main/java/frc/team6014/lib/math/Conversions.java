@@ -102,4 +102,12 @@ public class Conversions {
         double radPerStep = (((2*Math.PI)/gearing)) / 2048;
         return rad/radPerStep;
     }
+
+    public static double revolutionsToRadians(double revolutions) {
+        return revolutions * 2 * Math.PI;
+    }
+
+    public static double radiansToRevolutions(double radians) {
+        return radians / (2 * Math.PI);
+    }
 }
