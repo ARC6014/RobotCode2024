@@ -18,12 +18,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
 
 public class TelescopicSubsystem extends SubsystemBase {
 
-  private TalonFX m_master = new TalonFX(TelescopicConstants.MASTER_MOTOR_ID, "rio");
-  private TalonFX m_slave = new TalonFX(TelescopicConstants.SLAVE_MOTOR_ID, "rio");
+  private TalonFX m_master = new TalonFX(TelescopicConstants.MASTER_MOTOR_ID, Constants.RIO_CANBUS);
+  private TalonFX m_slave = new TalonFX(TelescopicConstants.SLAVE_MOTOR_ID, Constants.RIO_CANBUS);
 
   private static TelescopicSubsystem m_instance;
 
