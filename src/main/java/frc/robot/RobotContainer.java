@@ -15,12 +15,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.arm.ArmClosedLoop;
+import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.auto.ARCTrajectory;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicDeneme;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.telescopic.TelescopicSubsystem;
 
@@ -38,7 +42,7 @@ public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
-
+        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
@@ -53,8 +57,9 @@ public class RobotContainer {
                         () -> mDriver.R2().getAsBoolean(),
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
-        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getLeftY());
 
+        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getLeftY());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -63,7 +68,16 @@ public class RobotContainer {
                 mTelescopic.setDefaultCommand(telescopic);
                 DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
                 LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
+                
+                // Arm open loop
+                mArm.setDefaultCommand(armOpenLoop);
+                
+                
+                DriverStation.silenceJoystickConnectionWarning(true);
+                LiveWindow.disableAllTelemetry(); 
                 LiveWindow.setEnabled(false);
+                
+                
                 // Configure the button bindings
                 configureButtonBindings();
                 SmartDashboard.putData("Auto", autoChooser);
@@ -85,7 +99,8 @@ public class RobotContainer {
 
                 mOperator.x().onTrue(new Party());
 
-                
+                // Arm Closed Loop
+                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false, ArmConstants.armCruiseVelocity, ArmConstants.armAcceleration));
 
         }
 

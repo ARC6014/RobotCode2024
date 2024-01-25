@@ -8,7 +8,10 @@
   },
   "NetworkTables": {
     "transitory": {
-      "SmartDashboard": {
+      "Shuffleboard": {
+        "Operator": {
+          "open": true
+        },
         "open": true
       }
     }
