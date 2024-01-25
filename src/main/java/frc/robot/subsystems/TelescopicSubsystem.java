@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.telescopic;
+package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
@@ -15,9 +15,14 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.TelescopicConstants;
+import frc.team6014.lib.drivers.SwerveModuleBase;
 
 public class TelescopicSubsystem extends SubsystemBase {
 
@@ -34,6 +39,9 @@ public class TelescopicSubsystem extends SubsystemBase {
   private double setpoint = 0;
   private final double sprocketCircumference = 0; // must be in cm!
 
+  private final Trigger brakeModeTrigger;
+  private final StartEndCommand brakeModeCommand;
+
   public enum TelescopicState {
     ZERO,
     OPEN_LOOP,
@@ -45,6 +53,11 @@ public class TelescopicSubsystem extends SubsystemBase {
   /** Creates a new TelescopicSubsystem. */
   public TelescopicSubsystem() {
     configureTelescopicMotors();
+
+    brakeModeTrigger = new Trigger(RobotState::isDisabled);
+    brakeModeCommand = new StartEndCommand(()->setCoast(), ()->setBreakMode(), this);
+    
+
   }
 
   private void configureTelescopicMotors() {
@@ -74,6 +87,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     zeroEncoder();
 
     
+    
   }
 
   @Override
@@ -98,6 +112,9 @@ public class TelescopicSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Telescopic Height", getHeight());
     SmartDashboard.putString("State", getTelescopicState().toString());
     SmartDashboard.putBoolean("Is at zero?", isAtZero());
+
+    brakeModeTrigger.whileTrue(brakeModeCommand);
+    
   }
 
   public double getSetpoint() {
@@ -170,7 +187,7 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   // basically taking them off break mode to trigger cfs 
   // might actually not even use this tbh
-  public void ejectTelescopic() {
+  public void setCoast() {
     m_master.setNeutralMode(NeutralModeValue.Coast);
     m_slave.setNeutralMode(NeutralModeValue.Coast);
   }
