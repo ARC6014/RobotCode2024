@@ -1,65 +1,13 @@
-# Official 2024 Robot Code for Crescendo
+## Official 2024 Robot Code for Crescendo
+### Editing Guidelines:
+- Every subsystem should have Open & Closed Loop commands. Open Loop should be bound to necessary Operator/Driver joysticks.
+- The Open Loop commands will be created under the Deneme commands section with respective titles.
+- Subsystem-specific constants should be capsulated in respective subsystem constant classes.
+- Every member of a subsystem should have their name in the convention `mName`. A DriveSubsystem instance would be `mDrive`, respectively. 
+- Every subsystem should have a `getInstance()` method which would be called to get an instance of the subsystem. Subsystems shouldn’t be instantiated in `RobotContainer.java` as `Subsystem sub = new Subsystem()`!
+- Every subsystem should include necessary debugging printed to SmartDashboard/Shuffleboard, such as encoder readings, zeroing booleans, etc.
+- `Robot.java` should be avoided most of the time unless writing in `autoInit()` `teleopInit()` etc, `RobotContainer.java` suffices.
 
-## ARM-RELATED CODE
-
-### `ArmSubsystem.java`
-- `boreEncoder` as external encoder
-- `MotionMagicTorqueCurrentFOC` for FOC and Motion Magic
-- `PositionTorqueCurrentFOC` for keeping arm in position after reached setpoint
-
-<br>
-
-`ArmControlState`:
-default state: `OPEN_LOOP`
-- `OPEN_LOOP` for joystick-fed value
-    - `setMotorOutput()` sets motor percent output
-
-- `TORQUE_CONTROL` for holding position
-    - `holdPosition()` holds the current mechanism angle
-
-- `MOTION_MAGIC` for reaching setpoint using MM
-    - `setArmAngleMotionMagic()` sets arm angle with MM
-    - Note that MM uses Falcon internal encoder for now!
-
-- default: stops (percent output=0)
-
-<br>
-
-- `isAtSetpointFalcon` and `isAtZeroFalcon` are currently using only Falcon encoders, implementation with Bore is yet to come.
-
-**State Setters:**
-- `setArmPosition()`
-    - sets current state to `MOTION_MAGIC` 
-    - sets the `setpoint` to given value
-- `holdArmPosition()`
-    - sets current state to `TORQUE_CONTROL`
-- `setArmPercentOutput()`
-    - sets current state to `OPEN_LOOP`
-    - sets `targetOutput` to given percent output
-
-<br>
-
-**TODOS:**
-- [ ] Configure `kP`, `kI`, `kD` for slots 0&1
-- [ ] Configure necessary limits
-- [ ] Check motor inverts
-- [ ] Configure motor IDs & Bore port
-- [ ] Configure angle tolerance&reset angle
-- [ ] Configure arm setpoint angles
-- [ ] Set Bore's `distancePerRotation`
-- [ ] Check encoder tick to rotation conversions in all methods!
-
-<br>
-
-## `ArmOpenLoop.java`
-- takes in joystick & one button
-- joystick to move arm up&down, button to test one given setpoint
-
-**TODOS:**
-- [ ] Configure `targetAngle` for the button
-
-<br>
-
-## `ArmClosedLoop.java`
-- closed loop command for arm which takes in a `setpoint` and `finishPoint`.
-- will finish command when current angle is within a tolerance of the `finishPoint`
+Formatting code:
+- Explanatory comments labeled `FIX!` and `TODO:` are a must.
+- Every commit should include necessary changes done.
