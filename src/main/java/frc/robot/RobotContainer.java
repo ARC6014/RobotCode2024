@@ -26,7 +26,7 @@ import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.telescopic.TelescopicSubsystem;
+import frc.robot.subsystems.TelescopicSubsystem;
 
 
 /**
@@ -58,7 +58,7 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getLeftY());
+        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
