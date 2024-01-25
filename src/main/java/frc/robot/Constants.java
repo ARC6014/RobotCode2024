@@ -16,6 +16,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 
 /**
@@ -192,6 +193,8 @@ public final class Constants {
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
+
+        public static final Gearbox gearbox = new Gearbox(72, 1);
     }
 
     public static final class ArmConstants {  

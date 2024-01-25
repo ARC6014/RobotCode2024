@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
+import frc.team6014.lib.math.Gearbox;
 
 public class IntakeSubsystem extends SubsystemBase {
     private static IntakeSubsystem mInstance;
 
     public TalonFX mRunningMotor;
     public TalonFX mAngleMotor;
+    public Gearbox mGearbox = IntakeConstants.gearbox;
 
     public DutyCycleEncoder mBoreEncoder;
     public DigitalInput mBeamBreakSensor;
@@ -139,8 +141,17 @@ public class IntakeSubsystem extends SubsystemBase {
         }
     }
 
+    /* CALCULATIONS */
+    public double drivenToDriver(double revolutions) {
+        return revolutions * (1.0 / mGearbox.getRatio());
+    }
+
+    public double driverToDriven(double revolutions) {
+        return mGearbox.calculate(revolutions);
+    }
+
     /* ENCODERS */
-    // theoretically, Falcon position = Bore encoder position + offset at all times
+    // theoretically, Falcon position / 72 = Bore encoder position + offset at all times
 
     public double getFalconPosition() {
         return mAngleMotor.getPosition().getValueAsDouble();
@@ -151,7 +162,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void resetToAbsolute() {
-        mAngleMotor.setPosition(mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset);
+        double position = drivenToDriver(mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset);
+        mAngleMotor.setPosition(position);
     }
 
     /* SETPOINT CHECKS */
