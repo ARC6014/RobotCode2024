@@ -54,11 +54,11 @@ public class IntakeSubsystem extends SubsystemBase {
         angleMotorConfigs.kI = 0; // no output for integrated error
         angleMotorConfigs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
-        // Gravity FF:
-        // the sensor offset must be configured such that a position of 0 represents the arm being held horizontally forward.
-        angleMotorConfigs.kG = 0; // TODO: measure voltage to hold intake horizontal
-        angleMotorConfigs.GravityType = GravityTypeValue.Arm_Cosine;
-        // https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/device-specific/talonfx/closed-loop-requests.html#gravity-feedforward
+        /** 
+         * REMOVED GRAVITY-FF as Falcon's encoder is not directly connected
+         * to the output shaft. If we want to add GRAVITY-FF, we'll have
+         * to move the PID loop out of the Falcon and use a PIDController.
+         */
 
         mAngleMotor.getConfigurator().apply(angleMotorConfigs);
         mAngleMotor.setNeutralMode(NeutralModeValue.Brake);
