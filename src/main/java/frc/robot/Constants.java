@@ -172,7 +172,7 @@ public final class Constants {
   
     public static final class ArmConstants {
 
-        public static final int motorID = 0; // TODO: Config
+        public static final int motorID = 30; // TODO: Config
         public static final int boreChannel = 0; // TODO: Config
         public static final Gearbox gearRatio = new Gearbox(119.5 / 1); // TODO: Config
         public static final boolean motorInverted = false; // TODO: Config
@@ -187,7 +187,7 @@ public final class Constants {
         public static final double kP = 0.085; // TODO: Config
         public static final double kD = 4.5; // TODO: Config
         public static final double kI = 0; // TODO: Config
-        public static final double kF = 0.04; // TODO: Config
+        public static final double kG = 0;
 
 
         public static final double resetAngle = 0; // TODO: Config
@@ -205,8 +205,8 @@ public final class Constants {
 
     public static final class IntakeConstants {
         // TODO: determine actual ids
-        public static final int runningMotorId = 0;
-        public static final int angleMotorId = 0;
+        public static final int runningMotorId = 20;
+        public static final int angleMotorId = 21;
 
         public static final int boreEncoderDioId = 0;
         public static final int beamBreakSensorDioId = 0;
@@ -238,9 +238,9 @@ public final class Constants {
 
     public static final class ShooterConstants {
 
-		public static final int MASTER_MOTOR_ID = 0;
-        public static final int SLAVE_MOTOR_ID = 0;
-        public static final int FEEDER_MOTOR_ID = 0;
+		public static final int MASTER_MOTOR_ID = 40;
+        public static final int SLAVE_MOTOR_ID = 41;
+        public static final int FEEDER_MOTOR_ID = 42;
 		public static final double kP = 0;
         public static final double maxRPM = 0;
         public static final double kMinOutput = 0;
@@ -258,8 +258,8 @@ public final class Constants {
     }
 
     public static final class TelescopicConstants {
-        public static final int MASTER_MOTOR_ID = 0; // TODO: Config
-        public static final int SLAVE_MOTOR_ID = 0; // TODO: Config
+        public static final int MASTER_MOTOR_ID = 51; // TODO: Config
+        public static final int SLAVE_MOTOR_ID = 52; // TODO: Config
 
         public static final int TELESCOPIC_GEAR_RATIO = 144 / 11 / 1;
 
@@ -283,7 +283,7 @@ public final class Constants {
         public static final double STROBE_FAST = 0.1;
         public static final double STROBE_SLOW = 0.2;
         /* For CANdle */
-        public static final int CANdleID = 41; // TODO: config
+        public static final int CANdleID = 53; // TODO: config
 
         public static final class Colors {
             /* Colors go:
