@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.IntakeConstants;
+import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -193,14 +195,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   }
 
+  // TODO: Configure bore position offset
   public double getArmAngleBore() {
-    return boreEncoder.getAbsolutePosition();
+    return boreEncoder.getAbsolutePosition() + ArmConstants.positionOffset;
   }
-
+    
+  // TODO: add max/min angles here!
   public void setArmAngleMotionMagic() {
-    // TODO: add max/min angles here!
-    // TODO: add FF
-    armMotor.setControl(motionMagic.withPosition(setpoint * armGearbox.getRatio()));
+    armMotor.setControl(motionMagic.withPosition(setpoint * armGearbox.getRatio()).withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
   }
 
   public void holdPosition() {
