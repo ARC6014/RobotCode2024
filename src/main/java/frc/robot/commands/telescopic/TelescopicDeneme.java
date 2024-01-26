@@ -7,8 +7,8 @@ package frc.robot.commands.telescopic;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.telescopic.TelescopicSubsystem;
-import frc.robot.subsystems.telescopic.TelescopicSubsystem.TelescopicState;
+import frc.robot.subsystems.TelescopicSubsystem;
+import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 
 public class TelescopicDeneme extends Command {
 
@@ -41,7 +41,9 @@ public class TelescopicDeneme extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    telescopic.setBreakMode();
+  }
 
   // Returns true when the command should end.
   @Override

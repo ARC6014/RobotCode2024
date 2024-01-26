@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -93,13 +95,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     zeroHeading();
 
-    mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions()); //! Change to getRotation2d() if wrong
+    mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions()); // ! Change to
+                                                                                                      // getRotation2d()
+                                                                                                      // if wrong
     poseEstimator = new SwerveDrivePoseEstimator(
-      Constants.kinematics,
-      getRotation2d(),
-      getModulePositions(),
-      new Pose2d());
-    
+        Constants.kinematics,
+        getRotation2d(),
+        getModulePositions(),
+        new Pose2d());
 
     brakeModeTrigger = new Trigger(RobotState::isEnabled);
     brakeModeCommand = new StartEndCommand(() -> {
@@ -126,12 +129,9 @@ public class DriveSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     updateOdometry();
     poseEstimator.update(
-      getRotation2d(),
-      getModulePositions()
-      );
+        getRotation2d(),
+        getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
-
-
 
   }
 
@@ -193,6 +193,15 @@ public class DriveSubsystem extends SubsystemBase {
 
   }
 
+  /*
+   * @param speeds The desired ChassisSpeeds
+   * 
+   * Outputs commands to the robot's drive motors given robot-relative
+   * ChassisSpeeds
+   * 
+   * Namely, driveRobotRelative or drive
+   * 
+   */
   public void setClosedLoopStates(ChassisSpeeds speeds) {
     SwerveModuleState[] desiredStates = Constants.kinematics.toSwerveModuleStates(speeds);
     setClosedLoopStates(desiredStates);
@@ -209,9 +218,11 @@ public class DriveSubsystem extends SubsystemBase {
    * Setters
    */
   public void resetOdometry(Pose2d pose) {
-    // original code: swervePoseEstimator.resetPosition(getYaw(), getPositions(), pose);
+    // original code: swervePoseEstimator.resetPosition(getYaw(), getPositions(),
+    // pose);
     // TODO: may also use the code below
-    // swervePoseEstimator.resetPosition(getRotation2d(), getModulePositions(), pose);
+    // swervePoseEstimator.resetPosition(getRotation2d(), getModulePositions(),
+    // pose);
     mGyro.reset();
     mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
     mOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose);
@@ -226,11 +237,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void resetPoseEstimator(Pose2d pose) {
     poseEstimator.resetPosition(
-      getRotation2d(),
-      getModulePositions(),
-      pose
-    );
-    
+        getRotation2d(),
+        getModulePositions(),
+        pose);
+
   }
 
   public void resetSnapPID() {
@@ -239,7 +249,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void zeroHeading() {
     mGyro.reset();
-    //mGyro.setYaw(0);
+    // mGyro.setYaw(0);
   }
 
   public void stop() {
@@ -261,7 +271,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public void updateOdometry() {
     mOdometry.update(
-        getRotation2d(), 
+        getRotation2d(),
         getModulePositions());
   }
 
@@ -291,7 +301,7 @@ public class DriveSubsystem extends SubsystemBase {
     return mOdometry.getPoseMeters();
   }
 
-  public Pose2d getPose(){
+  public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
 
@@ -312,19 +322,35 @@ public class DriveSubsystem extends SubsystemBase {
     return states;
   }
 
+  /*
+   * @return the desired wheel speeds in meters per second.
+   *
+   * Namely, getRobotRelativeSpeeds or getCurrentSpeeds
+   */
   public ChassisSpeeds getChassisSpeed() {
     return Constants.kinematics.toChassisSpeeds(mSwerveModules[0].getState(), mSwerveModules[1].getState(),
         mSwerveModules[2].getState(), mSwerveModules[3].getState());
   }
 
-/*
-  public double getPitch() {
-    return mGyro.getPitch().getValue();
-  } 
   /*
-  public double getYaw() {
-    return mGyro.getYaw().getValue();
+   * return true when a path should be flipped to the red side of the field
+   */
+  public boolean shouldAlianceFlippedToRed() {
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+    if (alliance.isEmpty()) {
+      return false;
+    }
+    return alliance.get() == Alliance.Red;
   }
-  */
+
+  /*
+   * public double getPitch() {
+   * return mGyro.getPitch().getValue();
+   * }
+   * /*
+   * public double getYaw() {
+   * return mGyro.getYaw().getValue();
+   * }
+   */
 
 }

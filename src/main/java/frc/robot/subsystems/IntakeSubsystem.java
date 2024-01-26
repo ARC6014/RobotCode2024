@@ -5,7 +5,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -42,7 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private VelocityVoltage mRunningVelocityControl;
     private double mRunningOpenLoopOutput;
     private DutyCycleOut mRunningOpenLoopControl;
-    
+
     public IntakeSubsystem() {
         mRunningMotor = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
         mAngleMotor = new TalonFX(IntakeConstants.angleMotorId, Constants.RIO_CANBUS);
@@ -63,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
         mAngleMotor.getConfigurator().apply(angleMotorConfigs);
         mAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
-        // TODO: mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset() 
+        // TODO: mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset()
         // must output a position relative to the horizontal, which is 0
         resetToAbsolute();
         mPositionSetpoint = mAngleMotor.getPosition().getValueAsDouble();
@@ -86,22 +85,22 @@ public class IntakeSubsystem extends SubsystemBase {
     public static IntakeSubsystem getInstance() {
         if (mInstance == null) {
             mInstance = new IntakeSubsystem();
-          }
-          return mInstance;
+        }
+        return mInstance;
     }
 
     public enum Position {
         OPEN,
         CLOSED,
         /** custom setpoint/position */
-        OVERRIDE, 
+        OVERRIDE,
         /** openloop control */
         OPENLOOP,
     }
 
     public enum Running {
         /** intake */
-        FORWARD, 
+        FORWARD,
         /** outtake */
         REVERSE,
         /** neutral/idle (brake) */
@@ -126,7 +125,7 @@ public class IntakeSubsystem extends SubsystemBase {
             case OPENLOOP:
                 mAngleMotor.setControl(mAngleOpenLoopControl);
                 break;
-        
+
             default:
                 /* GRAVITY FF */
                 mAngleMotor.setControl(mPositionControl.withFeedForward(IntakeConstants.kG * Math.cos(Conversions.revolutionsToRadians(getBoreEncoderPosition()))));
@@ -165,7 +164,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /* ENCODERS */
-    // theoretically, Falcon position / 72 = Bore encoder position + offset at all times
+    // theoretically, Falcon position / 72 = Bore encoder position + offset at all
+    // times
 
     public double getFalconPosition() {
         return mAngleMotor.getPosition().getValueAsDouble();
@@ -187,14 +187,16 @@ public class IntakeSubsystem extends SubsystemBase {
         if (mPosition == Position.OPENLOOP) {
             return false;
         }
-        return Math.abs(mAngleMotor.getPosition().getValueAsDouble() - mPositionSetpoint) < IntakeConstants.positionEqualityTolerance;
+        return Math.abs(mAngleMotor.getPosition().getValueAsDouble()
+                - mPositionSetpoint) < IntakeConstants.positionEqualityTolerance;
     }
 
     public boolean isAtVelocitySetpoint() {
         if (mRunning == Running.OPENLOOP) {
             return false;
         }
-        return Math.abs(mRunningMotor.getPosition().getValueAsDouble() - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityTolerance;
+        return Math.abs(mRunningMotor.getPosition().getValueAsDouble()
+                - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityTolerance;
     }
 
     /* STATE ACCESSORS */
@@ -202,7 +204,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public Position getIntakePosition() {
         return mPosition;
     }
-    
+
     public Running getIntakeRunning() {
         return mRunning;
     }
@@ -221,7 +223,7 @@ public class IntakeSubsystem extends SubsystemBase {
             case FORWARD:
                 mRunningVelocitySetpoint = IntakeConstants.forwardVelocity;
                 break;
-        
+
             case REVERSE:
                 mRunningVelocitySetpoint = IntakeConstants.reverseVelocity;
                 break;
@@ -264,14 +266,14 @@ public class IntakeSubsystem extends SubsystemBase {
             case OPEN:
                 mPositionSetpoint = drivenToDriver(IntakeConstants.openPosition);
                 break;
-        
+
             case CLOSED:
                 mPositionSetpoint = drivenToDriver(IntakeConstants.openPosition);
                 break;
 
             case OVERRIDE:
                 break;
-            
+
             case OPENLOOP:
                 break;
         }

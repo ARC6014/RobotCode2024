@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -26,8 +27,7 @@ import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.telescopic.TelescopicSubsystem;
-
+import frc.robot.subsystems.TelescopicSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -41,16 +41,19 @@ import frc.robot.subsystems.telescopic.TelescopicSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
+
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
 
         // auto
         private final ARCTrajectory trajectories = new ARCTrajectory();
-        private SendableChooser<Command> autoChooser = AutoBuilder.buildAutoChooser(); 
+        private SendableChooser<Command> autoChooser;
 
+        // commands
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
                         () -> mDriver.getLeftX() * -1,
                         () -> mDriver.getRawAxis(2),
@@ -58,31 +61,37 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getLeftY());
+        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
+       
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
+                /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 mTelescopic.setDefaultCommand(telescopic);
-                DriverStation.silenceJoystickConnectionWarning(true); // otherwise it is annoying
-                LiveWindow.disableAllTelemetry(); // LiveWindow is causing periodic loop overruns
-                
-                // Arm open loop
                 mArm.setDefaultCommand(armOpenLoop);
-                
-                
-                DriverStation.silenceJoystickConnectionWarning(true);
+
+                DriverStation.silenceJoystickConnectionWarning(true); 
                 LiveWindow.disableAllTelemetry(); 
                 LiveWindow.setEnabled(false);
-                
-                
+          
+                configureNamedCommands();
+
                 // Configure the button bindings
                 configureButtonBindings();
-                SmartDashboard.putData("Auto", autoChooser);
-                SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
 
+                autoChooser = AutoBuilder.buildAutoChooser();
+                SmartDashboard.putData("Auto ", autoChooser);
+                SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
+        }
+
+        /*
+         * Named commands
+         */
+        private void configureNamedCommands() {
+                // NamedCommands.registerCommand(null, driveByJoystick);
         }
 
         /**
@@ -94,7 +103,7 @@ public class RobotContainer {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
-                mDriver.circle().onTrue(new AllignWithLL(1)); //ID should change 
+                mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 mOperator.x().onTrue(new Party());

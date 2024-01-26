@@ -42,7 +42,7 @@ default state: `OPEN_LOOP`
 - [ ] Configure motor IDs & Bore port
 - [ ] Configure angle tolerance&reset angle
 - [ ] Configure arm setpoint angles
-- [ ] Set Bore's `distancePerRotation`
+- [ ] Set Bore's `distancePerRotation` and `positionOffset`
 - [ ] Check encoder tick to rotation conversions in all methods!
 
 <br>
