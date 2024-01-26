@@ -91,13 +91,12 @@ public class DriveSubsystem extends SubsystemBase {
     snapTimer.start();
 
     snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that the PID controller knows -180 and 180 are
-                                                                // connected
+                                                                
 
     zeroHeading();
 
-    mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions()); // ! Change to
-                                                                                                      // getRotation2d()
-                                                                                                      // if wrong
+    mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions()); 
+    
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
         getRotation2d(),
@@ -333,9 +332,9 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   /*
-   * return true when a path should be flipped to the red side of the field
+   * @return true when a path should be flipped to the red side of the field
    */
-  public boolean shouldAlianceFlippedToRed() {
+  public boolean shouldAllianceFlipToRed() {
     Optional<Alliance> alliance = DriverStation.getAlliance();
     if (alliance.isEmpty()) {
       return false;
