@@ -225,6 +225,20 @@ public final class Constants {
         public static final double positionEqualityTolerance = 0;
         public static final double velocityEqualityTolerance = 0;
 
+        /** unit: V/rev */
+        public static final double ANGLE_kP = 0;
+        /** unit: V/(rev * s) */
+        public static final double ANGLE_kI = 0;
+        /** unit: Vs/rev */
+        public static final double ANGLE_kD = 0;
+
+        /** unit: V/(rev/s) */
+        public static final double RUN_kP = 0;
+        /** unit: V/((rev/s) * s) */
+        public static final double RUN_kI = 0;
+        /** unit: Vs/(rev/s) */
+        public static final double RUN_kD = 0;
+
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
 

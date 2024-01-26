@@ -55,9 +55,9 @@ public class IntakeSubsystem extends SubsystemBase {
         /* mAngleMotor + PositionControl setup */
         // TODO: fix PID constants
         var angleMotorConfigs = new Slot0Configs();
-        angleMotorConfigs.kP = 24; // An error of 0.5 rotations results in 12 V output
-        angleMotorConfigs.kI = 0; // no output for integrated error
-        angleMotorConfigs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+        angleMotorConfigs.kP = IntakeConstants.ANGLE_kP;
+        angleMotorConfigs.kI = IntakeConstants.ANGLE_kI;
+        angleMotorConfigs.kD = IntakeConstants.ANGLE_kD;
 
         mAngleMotor.getConfigurator().apply(angleMotorConfigs);
         mAngleMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -71,9 +71,9 @@ public class IntakeSubsystem extends SubsystemBase {
         /* mRunningMotor + VelocityControl setup */
         // TODO: fix PID constants
         var runningMotorConfigs = new Slot0Configs();
-        runningMotorConfigs.kP = 24; // An error of 0.5 rotations results in 12 V output
-        runningMotorConfigs.kI = 0; // no output for integrated error
-        runningMotorConfigs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
+        runningMotorConfigs.kP = IntakeConstants.RUN_kP;
+        runningMotorConfigs.kI = IntakeConstants.RUN_kI;
+        runningMotorConfigs.kD = IntakeConstants.RUN_kD;
 
         mRunningMotor.getConfigurator().apply(runningMotorConfigs);
         mAngleMotor.setNeutralMode(NeutralModeValue.Brake);
