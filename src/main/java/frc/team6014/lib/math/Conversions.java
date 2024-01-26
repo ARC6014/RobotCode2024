@@ -82,7 +82,7 @@ public class Conversions {
      * @param gearRatio Gear Ratio between Falcon and Mechanism (set to 1 for Falcon RPM)
      * @return Rotation of the Mechanism
      */
-    public static double FalconToRotation(double counts, double gearRatio){
+    public static double falconToRotation(double counts, double gearRatio){
         double rotation = counts / 2048.0;
         return rotation / gearRatio;
     }
@@ -93,10 +93,16 @@ public class Conversions {
      * @return Sensor Counts of Falcon
      */
 
-    public static double RotationToFalcon(double rotation, double gearRatio){
+    public static double rotationToFalcon(double rotation, double gearRatio){
         double counts = rotation * 2048.0;
         return counts * gearRatio;
     }
+
+    /**
+     * @param rad Rotation of the Mechanism in radians
+     * @param gearing Gear Ratio between Falcon and Mechanism (set to 1 for Falcon RPM)
+     * @return Sensor Counts of Falcon
+     */
 
     public static double radiansToSteps(double rad,double gearing){
         double radPerStep = (((2*Math.PI)/gearing)) / 2048;
