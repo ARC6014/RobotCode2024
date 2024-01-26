@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.subsystems.IntakeSubsystem.Running;
 
 public class ShooterSubsystem extends SubsystemBase {
-  
+
   private CANSparkMax m_master = new CANSparkMax(ShooterConstants.MASTER_MOTOR_ID, MotorType.kBrushless);
   private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
   private SparkPIDController m_masterPIDController;
@@ -25,7 +26,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
   private static ShooterSubsystem m_instance;
-  private ShooterState m_shootstate;
+  private ShooterState m_shootState;
+  private FeederState m_feederState;
 
   public enum ShooterState {
     CLOSED,
@@ -33,9 +35,15 @@ public class ShooterSubsystem extends SubsystemBase {
     SPEAKER,
   }
 
+  public enum FeederState {
+    LET_HIM_COOK,
+    STOP_WAIT_A_SEC,
+  }
+
   public ShooterSubsystem() {
 
-    m_shootstate = ShooterState.CLOSED;
+    m_shootState = ShooterState.CLOSED;
+    m_feederState = FeederState.LET_HIM_COOK;
 
     m_master.restoreFactoryDefaults();
     m_slave.restoreFactoryDefaults();
@@ -49,15 +57,14 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
 
     // PID coefficients
-    kP = ShooterConstants.kP; 
+    kP = ShooterConstants.kP;
     kI = ShooterConstants.kI;
-    kD = ShooterConstants.kD; 
-    kIz = ShooterConstants.kIz; 
-    kFF = ShooterConstants.kFF; 
-    kMaxOutput = ShooterConstants.kMaxOutput; 
+    kD = ShooterConstants.kD;
+    kIz = ShooterConstants.kIz;
+    kFF = ShooterConstants.kFF;
+    kMaxOutput = ShooterConstants.kMaxOutput;
     kMinOutput = ShooterConstants.kMinOutput;
     maxRPM = ShooterConstants.maxRPM;
-
 
     // set PID coefficients
     m_masterPIDController.setP(kP);
@@ -67,34 +74,40 @@ public class ShooterSubsystem extends SubsystemBase {
     m_masterPIDController.setFF(kFF);
     m_masterPIDController.setOutputRange(kMinOutput, kMaxOutput);
 
-
     m_slavePIDController.setP(kP);
     m_slavePIDController.setI(kI);
     m_slavePIDController.setD(kD);
     m_slavePIDController.setIZone(kIz);
     m_slavePIDController.setFF(kFF);
-    m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);    
+    m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);
     // save settings to flash
     m_master.burnFlash();
     m_slave.burnFlash();
   }
-  
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (getSensorState()) {
+      m_feederState = FeederState.STOP_WAIT_A_SEC;
+    } else {
+      m_feederState = FeederState.LET_HIM_COOK;
+    }
   }
 
-  
   // Setters
 
   public void setShooterState(ShooterState newState) {
-    m_shootstate = newState;
+    m_shootState = newState;
+  }
+
+  public void setFeederState(FeederState newState) {
+    m_feederState = newState;
   }
 
   public void setFeederMotorSpeed(double percentOutput) {
     m_feeder.set(percentOutput);
   }
-  
+
   public void setShooterMotorSpeed(double percentOutput) {
     m_master.set(percentOutput);
     m_slave.set(percentOutput);
@@ -128,9 +141,14 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_beamBreaker.get();
   }
 
-  public ShooterState getShooterState() {
-    return m_shootstate;
+  public FeederState getFeederState() {
+    return m_feederState;
   }
+
+  public ShooterState getShooterState() {
+    return m_shootState;
+  }
+
   public static ShooterSubsystem getInstance() {
     if (m_instance == null) {
       m_instance = new ShooterSubsystem();

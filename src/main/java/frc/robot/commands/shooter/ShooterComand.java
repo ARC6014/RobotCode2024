@@ -13,7 +13,7 @@ public class ShooterComand extends Command {
 
   public ShooterState level;
   private ShooterSubsystem mShooterSubsystem;
-  
+
   /** Creates a new ShooterComand. */
   public ShooterComand(ShooterState level) {
     this.level = level;
@@ -29,25 +29,27 @@ public class ShooterComand extends Command {
 
     mShooterSubsystem.setShooterMotorSpeed(openLoopOut);
   }
-  
 
   @Override
   public void initialize() {
-    
+
   }
 
   @Override
   public void execute() {
+    if (mShooterSubsystem.getFeederState() == ShooterSubsystem.FeederState.LET_HIM_COOK) {
+      mShooterSubsystem.setFeederMotorSpeed(0);
+      return;
+    }
+
     if (mShooterSubsystem.getShooterState() == ShooterState.AMP) {
       mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.AMP_SHOOT_RPM);
-    } 
-    else if (mShooterSubsystem.getShooterState() == ShooterState.SPEAKER){
+    } else if (mShooterSubsystem.getShooterState() == ShooterState.SPEAKER) {
       mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.SPEAKER_SHOOT_RPM);
-    }
-    else { //hareket etmesin pls
+    } else { // hareket etmesin pls
       mShooterSubsystem.setShooterMotorsRPM(0);
     }
-    
+
   }
 
   @Override
