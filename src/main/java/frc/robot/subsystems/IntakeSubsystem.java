@@ -77,7 +77,7 @@ public class IntakeSubsystem extends SubsystemBase {
         runningMotorConfigs.kD = 0.1; // A velocity of 1 rps results in 0.1 V output
 
         mRunningMotor.getConfigurator().apply(runningMotorConfigs);
-        mAngleMotor.setNeutralMode(NeutralModeValue.Coast);
+        mAngleMotor.setNeutralMode(NeutralModeValue.Brake);
 
         mRunningVelocitySetpoint = 0;
         mRunningVelocityControl = new VelocityVoltage(mRunningVelocitySetpoint);
@@ -104,7 +104,7 @@ public class IntakeSubsystem extends SubsystemBase {
         FORWARD, 
         /** outtake */
         REVERSE,
-        /** neutral/idle (coast) */
+        /** neutral/idle (brake) */
         NEUTRAL,
         /** custom setpoint/position */
         OVERRIDE,
@@ -114,11 +114,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (mBeamBreakSensor.get()) {
+            setRunningState(Running.NEUTRAL);
+        }
+
         // TODO: Control requests are automatically transmitted at a fixed update frequency.
         // does this mean that we do not have to setControl every periodic run?
         // https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/control-requests.html#changing-update-frequency
         // nevertheless I added them here just to be sure
-
         switch (mPosition) {
             case OPENLOOP:
                 mAngleMotor.setControl(mAngleOpenLoopControl);
@@ -134,6 +137,9 @@ public class IntakeSubsystem extends SubsystemBase {
             case OPENLOOP:
                 mRunningMotor.setControl(mRunningOpenLoopControl);
                 break;
+
+            case NEUTRAL:
+                mRunningMotor.stopMotor();
         
             default:
                 mRunningMotor.setControl(mRunningVelocityControl);
@@ -222,7 +228,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
             case NEUTRAL:
                 mRunningVelocitySetpoint = 0;
-                break;
+                mRunningMotor.stopMotor();
+                return;
 
             case OVERRIDE:
                 break;
