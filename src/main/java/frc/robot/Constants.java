@@ -41,9 +41,10 @@ public final class Constants {
     private static final double wheelBaseWidth = 0.690; // TODO: Config
     
     public static final double drivebaseRadius = Math.hypot(wheelBaseWidth / 2.0, wheelBaseLength / 2.0);
+    public static final double maxModuleSpeed = 3.0;
 
-    // TODO: Learn what replanningConfig is
-    public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(new PIDConstants(0, 0, 0), new PIDConstants(0, 0, 0), DriveConstants.maxSpeed, drivebaseRadius, new ReplanningConfig());
+    // TODO: Tune PID
+    public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(new PIDConstants(0, 0, 0), new PIDConstants(0, 0, 0), maxModuleSpeed, drivebaseRadius, new ReplanningConfig());
 
     // Module coordinates according to the chassis
     public static final Translation2d swerveModuleLocations[] = {
@@ -70,7 +71,7 @@ public final class Constants {
     public static final class DriveConstants {
         public static final boolean isFieldOriented = true;
         // TODO: Config gyro
-        public static final boolean invertGyro = false; // * CCW+
+        public static final boolean invertGyro = false; // !! CCW+
 
         public static final int angleContinuousCurrentLimit = 20;
         public static final int anglePeakCurrentLimit = 35;
@@ -98,7 +99,6 @@ public final class Constants {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        // TODO: Each module can have slightly different individual PID values
         public static final double drivekP = 0.05;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
