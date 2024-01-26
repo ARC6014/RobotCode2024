@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -27,6 +28,7 @@ import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 
 /**
@@ -41,9 +43,9 @@ import frc.robot.subsystems.TelescopicSubsystem;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -62,8 +64,11 @@ public class RobotContainer {
                         () -> mDriver.R1().getAsBoolean());
 
         private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
-        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> mOperator.getLeftY(), () -> mOperator.b().getAsBoolean());
-       
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
+                        () -> mOperator.b().getAsBoolean());
+
+        Orchestra m_orchestra = new Orchestra();
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -73,10 +78,10 @@ public class RobotContainer {
                 mTelescopic.setDefaultCommand(telescopic);
                 mArm.setDefaultCommand(armOpenLoop);
 
-                DriverStation.silenceJoystickConnectionWarning(true); 
-                LiveWindow.disableAllTelemetry(); 
+                DriverStation.silenceJoystickConnectionWarning(true);
+                LiveWindow.disableAllTelemetry();
                 LiveWindow.setEnabled(false);
-          
+
                 configureNamedCommands();
 
                 // Configure the button bindings
@@ -85,6 +90,8 @@ public class RobotContainer {
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
+
+                carpeDiem();
         }
 
         /*
@@ -109,8 +116,36 @@ public class RobotContainer {
                 mOperator.x().onTrue(new Party());
 
                 // Arm Closed Loop
-                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false, ArmConstants.armCruiseVelocity, ArmConstants.armAcceleration));
+                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false, ArmConstants.armCruiseVelocity,
+                                ArmConstants.armAcceleration));
 
+                // Orchestra open/pause/stop
+
+                mDriver.options().onTrue(new Command() {
+                        @Override
+                        public void initialize() {
+                                m_orchestra.play();
+                        }
+                });
+
+                mDriver.share().onTrue(new Command() {
+                        @Override
+                        public void initialize() {
+                                m_orchestra.pause();
+                        }
+                });
+
+        }
+
+        /*
+         * Talon FX Music
+         * Let's Have some fun
+         */
+        private void carpeDiem() {
+                m_orchestra.addInstrument(mIntake.getMotors().get(0));
+                m_orchestra.addInstrument(mIntake.getMotors().get(1));
+                m_orchestra.loadMusic("Never-Gonna-Give-You-Up-3.chrp");
+                m_orchestra.play();
         }
 
         /**

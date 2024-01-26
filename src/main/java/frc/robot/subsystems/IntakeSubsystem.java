@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -117,7 +119,8 @@ public class IntakeSubsystem extends SubsystemBase {
             setRunningState(Running.NEUTRAL);
         }
 
-        // TODO: Control requests are automatically transmitted at a fixed update frequency.
+        // TODO: Control requests are automatically transmitted at a fixed update
+        // frequency.
         // does this mean that we do not have to setControl every periodic run?
         // https://pro.docs.ctr-electronics.com/en/latest/docs/api-reference/api-usage/control-requests.html#changing-update-frequency
         // nevertheless I added them here just to be sure
@@ -128,7 +131,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
             default:
                 /* GRAVITY FF */
-                mAngleMotor.setControl(mPositionControl.withFeedForward(IntakeConstants.kG * Math.cos(Conversions.revolutionsToRadians(getBoreEncoderPosition()))));
+                mAngleMotor.setControl(mPositionControl.withFeedForward(
+                        IntakeConstants.kG * Math.cos(Conversions.revolutionsToRadians(getBoreEncoderPosition()))));
                 break;
         }
 
@@ -139,7 +143,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
             case NEUTRAL:
                 mRunningMotor.stopMotor();
-        
+
             default:
                 mRunningMotor.setControl(mRunningVelocityControl);
                 break;
@@ -151,7 +155,7 @@ public class IntakeSubsystem extends SubsystemBase {
             mAngleMotor.stopMotor();
             resetToAbsolute();
         }
-        
+
     }
 
     /* CALCULATIONS */
@@ -294,5 +298,12 @@ public class IntakeSubsystem extends SubsystemBase {
         mAngleOpenLoopOutput = output;
         mAngleOpenLoopControl.Output = mAngleOpenLoopOutput;
         mAngleMotor.setControl(mAngleOpenLoopControl);
+    }
+
+    public ArrayList<TalonFX> getMotors() {
+        var motors = new ArrayList<TalonFX>();
+        motors.add(mRunningMotor);
+        motors.add(mAngleMotor);
+        return motors;
     }
 }
