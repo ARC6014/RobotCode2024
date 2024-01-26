@@ -4,8 +4,10 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -91,12 +93,11 @@ public class DriveSubsystem extends SubsystemBase {
     snapTimer.start();
 
     snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that the PID controller knows -180 and 180 are
-                                                                
 
     zeroHeading();
 
-    mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions()); 
-    
+    mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
+
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
         getRotation2d(),
@@ -317,6 +318,7 @@ public class DriveSubsystem extends SubsystemBase {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (SwerveModuleBase mod : mSwerveModules) {
       states[mod.getModuleNumber()] = mod.getState();
+      mod.getDriveMotor();
     }
     return states;
   }
@@ -340,6 +342,14 @@ public class DriveSubsystem extends SubsystemBase {
       return false;
     }
     return alliance.get() == Alliance.Red;
+  }
+
+  public ArrayList<WPI_TalonFX> getDriveMotors() {
+    ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
+    for (SwerveModuleBase module : mSwerveModules) {
+      motors.add(module.getDriveMotor());
+    }
+    return motors;
   }
 
   /*

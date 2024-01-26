@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.Orchestra;
+import com.ctre.phoenix.music.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -67,7 +67,8 @@ public class RobotContainer {
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
                         () -> mOperator.b().getAsBoolean());
 
-        Orchestra m_orchestra = new Orchestra();
+        com.ctre.phoenix6.Orchestra mOrchestraV6 = new com.ctre.phoenix6.Orchestra();
+        Orchestra mOrchestra = new Orchestra();
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -91,7 +92,8 @@ public class RobotContainer {
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
 
-                carpeDiem();
+                carpeDiemV5();
+                // carpeDiem();
         }
 
         /*
@@ -124,16 +126,30 @@ public class RobotContainer {
                 mDriver.options().onTrue(new Command() {
                         @Override
                         public void initialize() {
-                                m_orchestra.play();
+                                mOrchestra.play();
                         }
                 });
 
                 mDriver.share().onTrue(new Command() {
                         @Override
                         public void initialize() {
-                                m_orchestra.pause();
+                                mOrchestra.pause();
                         }
                 });
+
+                // mDriver.options().onTrue(new Command() {
+                // @Override
+                // public void initialize() {
+                // mOrchestraV6.play();
+                // }
+                // });
+
+                // mDriver.share().onTrue(new Command() {
+                // @Override
+                // public void initialize() {
+                // mOrchestraV6.pause();
+                // }
+                // });
 
         }
 
@@ -142,10 +158,21 @@ public class RobotContainer {
          * Let's Have some fun
          */
         private void carpeDiem() {
-                m_orchestra.addInstrument(mIntake.getMotors().get(0));
-                m_orchestra.addInstrument(mIntake.getMotors().get(1));
-                m_orchestra.loadMusic("Never-Gonna-Give-You-Up-3.chrp");
-                m_orchestra.play();
+                mOrchestraV6.addInstrument(mIntake.getMotors().get(0));
+                mOrchestraV6.addInstrument(mIntake.getMotors().get(1));
+                mOrchestraV6.loadMusic("Never-Gonna-Give-You-Up-3.chrp");
+                mOrchestraV6.play();
+        }
+
+        /*
+         * Carpediem function WPI_TALON_FX For V5
+         */
+        private void carpeDiemV5() {
+                for (var motor : mDrive.getDriveMotors()) {
+                        mOrchestra.addInstrument(motor);
+                }
+                mOrchestra.loadMusic("Never-Gonna-Give-You-Up-3.chrp");
+                mOrchestra.play();
         }
 
         /**
