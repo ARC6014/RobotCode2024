@@ -27,8 +27,9 @@ public class ArmSubsystem extends SubsystemBase {
   public Gearbox armGearbox = ArmConstants.gearRatio;
 
   private double setpoint = 0; // angle to go by arm
-  private final DutyCycleOut m_percentOut = new DutyCycleOut(0, true, false, false, false); // stores output in (next line)
-  private double targetOutput = 0; //  output to set in open loop
+  private final DutyCycleOut m_percentOut = new DutyCycleOut(0, true, false, false, false); // stores output in (next
+                                                                                            // line)
+  private double targetOutput = 0; // output to set in open loop
   private ArmControlState armControlState = ArmControlState.OPEN_LOOP;
 
   private double lastDemandedRotation; // last angle of arm
@@ -56,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
-    //armMotor.configFactoryDefault();
+    // armMotor.configFactoryDefault();
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Slot0.kP = ArmConstants.kP;
     configs.Slot0.kI = ArmConstants.kI;
@@ -69,31 +70,32 @@ public class ArmSubsystem extends SubsystemBase {
     configs.Voltage.PeakForwardVoltage = 10;
     configs.Voltage.PeakReverseVoltage = -10;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
-    configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;;
+    configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
+    ;
     configs.MotionMagic.MotionMagicAcceleration = 400; // change
     configs.MotionMagic.MotionMagicCruiseVelocity = 120; // change
-    configs.MotionMagic.MotionMagicJerk = 800; //  change
-    
-    //armMotor.setInverted(ArmConstants.motorInverted);
+    configs.MotionMagic.MotionMagicJerk = 800; // change
+
+    // armMotor.setInverted(ArmConstants.motorInverted);
     configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO: CHANGE!
     configs.MotorOutput.NeutralMode = NeutralModeValue.Brake; // TODO: CHANGE!
-    //armMotor.setNeutralMode(ArmConstants.neutralMode);
+    // armMotor.setNeutralMode(ArmConstants.neutralMode);
 
     // armMotor.configReverseSoftLimitEnable(true);
     // armMotor.configReverseSoftLimitThreshold(
-    //     ArmConstants.gearRatio * ArmConstants.bottomSoftLimit);
+    // ArmConstants.gearRatio * ArmConstants.bottomSoftLimit);
     // armMotor.configForwardSoftLimitEnable(true);
     // armMotor.configForwardSoftLimitThreshold(
-    //     ArmConstants.gearRatio * ArmConstants.topSoftLimit);
+    // ArmConstants.gearRatio * ArmConstants.topSoftLimit);
 
-    //armMotor.configVoltageCompSaturation(12);
-    //armMotor.enableVoltageCompensation(true);
+    // armMotor.configVoltageCompSaturation(12);
+    // armMotor.enableVoltageCompensation(true);
 
+    // armMotor.configMotionCruiseVelocity(ArmConstants.armCruiseVelocity);
+    // armMotor.configMotionAcceleration(ArmConstants.armAcceleration);
 
-    //armMotor.configMotionCruiseVelocity(ArmConstants.armCruiseVelocity);
-    //armMotor.configMotionAcceleration(ArmConstants.armAcceleration);
-
-    // SupplyCurrentLimitConfiguration m_config = new SupplyCurrentLimitConfiguration();
+    // SupplyCurrentLimitConfiguration m_config = new
+    // SupplyCurrentLimitConfiguration();
     // m_config.currentLimit = 15.0; // TODO: Config
     // m_config.enable = true;
     // m_config.triggerThresholdCurrent = 5;
@@ -104,12 +106,11 @@ public class ArmSubsystem extends SubsystemBase {
     configs.CurrentLimits.SupplyCurrentLimit = 80;
     configs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-
-    //armMotor.configSupplyCurrentLimit(m_config);
-    //armMotor.configClosedloopRamp(ArmConstants.rampRate);
-    //armMotor.config_kP(0, ArmConstants.kP);
-    //armMotor.config_kI(0, ArmConstants.kI);
-    //armMotor.config_kD(0, ArmConstants.kD);
+    // armMotor.configSupplyCurrentLimit(m_config);
+    // armMotor.configClosedloopRamp(ArmConstants.rampRate);
+    // armMotor.config_kP(0, ArmConstants.kP);
+    // armMotor.config_kI(0, ArmConstants.kI);
+    // armMotor.config_kD(0, ArmConstants.kD);
 
     armMotor.getConfigurator().apply(configs);
 
@@ -123,13 +124,13 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    //SmartDashboard.putNumber("Arm Bore Angle", getArmAngleBore()); // will be configured for Bore
-    //SmartDashboard.putNumber("Arm Falcon Angle", getArmAngleFalcon());
-    //SmartDashboard.putString("Arm State: ", armControlState.toString());
-    //SmartDashboard.putNumber("Last Demanded Angle", lastDemandedRotation);
+    // SmartDashboard.putNumber("Arm Bore Angle", getArmAngleBore()); // will be
+    // configured for Bore
+    // SmartDashboard.putNumber("Arm Falcon Angle", getArmAngleFalcon());
+    // SmartDashboard.putString("Arm State: ", armControlState.toString());
+    // SmartDashboard.putNumber("Last Demanded Angle", lastDemandedRotation);
 
-
-    switch(armControlState){
+    switch (armControlState) {
       case OPEN_LOOP:
         setMotorOutput();
         break;
@@ -144,10 +145,10 @@ public class ArmSubsystem extends SubsystemBase {
         break;
     }
 
-    if(!(armControlState == ArmControlState.TORQUE_CONTROL)){
+    if (!(armControlState == ArmControlState.TORQUE_CONTROL)) {
       lastDemandedRotation = getArmAngleFalcon();
     }
-    
+
   }
 
   // resets falcon encoder to some pre-set zero position
@@ -158,19 +159,20 @@ public class ArmSubsystem extends SubsystemBase {
   /* Conversions */
   public double drivenToDriver(double revolutions) {
     return revolutions * (1.0 / armGearbox.getRatio());
-}
+  }
 
-public double driverToDriven(double revolutions) {
+  public double driverToDriven(double revolutions) {
     return armGearbox.calculate(revolutions);
-}
+  }
 
   // resets falcon encoder so that bore and falcon have the same initial reading
-  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
+  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at
+  // all times
 
   public void resetToAbsolute() {
-        double position = drivenToDriver(getArmAngleBore() + ArmConstants.positionOffset);
-        armMotor.setPosition(position);
-    }
+    double position = drivenToDriver(getArmAngleBore() + ArmConstants.positionOffset);
+    armMotor.setPosition(position);
+  }
 
   // TODO: Double-check this method
   public boolean isAtSetpointFalcon() {
@@ -188,20 +190,20 @@ public double driverToDriven(double revolutions) {
 
   public double getArmAngleFalcon() {
     return armMotor.getRotorPosition().getValue() / armGearbox.getRatio();
+
   }
 
-  // TODO: Check if we need to multiply by anything here
   public double getArmAngleBore() {
     return boreEncoder.getAbsolutePosition();
   }
 
-  // TODO: decide whether to use getAngle from Falcon or Bore
   public void setArmAngleMotionMagic() {
     // TODO: add max/min angles here!
+    // TODO: add FF
     armMotor.setControl(motionMagic.withPosition(setpoint * armGearbox.getRatio()));
   }
 
-  public void holdPosition(){
+  public void holdPosition() {
     armMotor.setControl(torqueControl.withPosition(lastDemandedRotation * armGearbox.getRatio()));
   }
 
@@ -210,33 +212,33 @@ public double driverToDriven(double revolutions) {
   }
 
   public void setArmPercentOutput(double percent) {
-    if(armControlState != ArmControlState.OPEN_LOOP){
-      armControlState =  ArmControlState.OPEN_LOOP;
+    if (armControlState != ArmControlState.OPEN_LOOP) {
+      armControlState = ArmControlState.OPEN_LOOP;
     }
     targetOutput = percent;
     lastDemandedRotation = getArmAngleFalcon();
   }
 
   // sets arm to the respective setpoint
-  public void setArmPosition(double target){
-    if(armControlState != ArmControlState.MOTION_MAGIC){
-      armControlState =  ArmControlState.MOTION_MAGIC;
+  public void setArmPosition(double target) {
+    if (armControlState != ArmControlState.MOTION_MAGIC) {
+      armControlState = ArmControlState.MOTION_MAGIC;
     }
     setpoint = target;
     lastDemandedRotation = getArmAngleFalcon();
   }
 
-  public void holdArmPosition(){
-    if(armControlState != ArmControlState.TORQUE_CONTROL){
-      armControlState =  ArmControlState.TORQUE_CONTROL;
+  public void holdArmPosition() {
+    if (armControlState != ArmControlState.TORQUE_CONTROL) {
+      armControlState = ArmControlState.TORQUE_CONTROL;
     }
   }
 
-  public void updateLastDemandedRotation(double rotation){
+  public void updateLastDemandedRotation(double rotation) {
     lastDemandedRotation = rotation;
   }
 
-  public void setArmControlState(ArmControlState state){
+  public void setArmControlState(ArmControlState state) {
     armControlState = state;
   }
 
@@ -244,7 +246,7 @@ public double driverToDriven(double revolutions) {
     return armControlState;
   }
 
-  public void setMotorOutput(){
+  public void setMotorOutput() {
     armMotor.setControl(m_percentOut.withOutput(targetOutput));
   }
 
