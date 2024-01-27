@@ -4,29 +4,19 @@
 
 package frc.robot.commands;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.robot.subsystems.LimeLight;
-import frc.robot.subsystems.LimelightHelpers;
-import frc.robot.subsystems.LimelightHelpers.LimelightTarget_Fiducial;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.LLConstants;;
 
 
 public class AllignWithLL extends Command {
   /** Creates a new AllignWithLL. */
   private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-  private final LimeLight mLL = LimeLight.getInstance();
+  private final LimelightSubsystem mLL = LimelightSubsystem.getInstance();
   
-  private double xDiff, yDiff, zDiff, tethaDiff, currID, xSpeed = 0, tethaSpeed = 0;
-
-
-  private Pose3d targetPose;
+  private double currID = 0, xSpeed = 0, tethaSpeed = 0;
 
   private double tagIDtoAllign;
 
@@ -47,8 +37,8 @@ public class AllignWithLL extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    x_pid.reset(mLL.getCamX());
-    m_thetaController.reset(mLL.getCamThetaRad());
+    x_pid.reset(mLL.getCamPose3d_target().getX());
+    m_thetaController.reset(mLL.getCamPose3d_target().getRotation().getZ());
     m_thetaController.enableContinuousInput(-Math.PI, Math.PI);
   }
 
@@ -56,18 +46,16 @@ public class AllignWithLL extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    xDiff = mLL.getCamX();
-    tethaDiff = mLL.getCamThetaRad();
-    currID = mLL.getTagID();
+    currID = mLL.getID();
 
     if (currID == tagIDtoAllign){
-      xSpeed = x_pid.calculate(xDiff, 0);
-      tethaSpeed = m_thetaController.calculate(tethaDiff, 0);
+      xSpeed = x_pid.calculate(mLL.getCamPose3d_target().getX(), 0);
+      tethaSpeed = m_thetaController.calculate(mLL.getCamPose3d_target().getRotation().getZ(), 0);
     } else {
       System.out.println("April tag is not the target");
     }
 
-    mDrive.swerveDrive(xSpeed, 0, tethaSpeed, true); //not sure if it should be fieldRelative or not
+    mDrive.swerveDrive(xSpeed, 0, tethaSpeed, false); //not sure if it should be fieldRelative or not
   }
 
   // Called once the command ends or is interrupted.
