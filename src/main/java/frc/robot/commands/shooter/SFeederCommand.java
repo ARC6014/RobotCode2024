@@ -37,11 +37,7 @@ public class SFeederCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooterSubsystem.getFeederState() == ShooterSubsystem.FeederState.STOP_WAIT_A_SEC) {
-      shooterSubsystem.setFeederMotorSpeed(0);
-    } else {
-      shooterSubsystem.setFeederMotorSpeed(percentOutput);
-    }
+    shooterSubsystem.setFeederMotorSpeed(percentOutput);
   }
 
   // Called once the command ends or is interrupted.
@@ -53,6 +49,6 @@ public class SFeederCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return shooterSubsystem.getFeederState() == ShooterSubsystem.FeederState.STOP_WAIT_A_SEC;
   }
 }

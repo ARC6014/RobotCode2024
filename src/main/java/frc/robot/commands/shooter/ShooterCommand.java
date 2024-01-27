@@ -11,23 +11,24 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
 public class ShooterCommand extends Command {
 
-  public ShooterState level;
   private ShooterSubsystem mShooterSubsystem;
+  private double percentOutput;
 
   /** Creates a new ShooterComand. */
-  public ShooterCommand(ShooterState level) {
-    this.level = level;
+  public ShooterCommand() {
+    percentOutput = 0;
     addRequirements(ShooterSubsystem.getInstance());
-    mShooterSubsystem.setShooterState(level);
-
   }
 
-  public ShooterCommand(ShooterState level, double openLoopOut) {
-    this.level = level;
-    addRequirements(ShooterSubsystem.getInstance());
-    mShooterSubsystem.setShooterState(level);
+  public ShooterCommand withOpenLoop(double percentOutput) {
+    mShooterSubsystem.setShooterState(ShooterState.OPEN_LOOP);
+    this.percentOutput = percentOutput;
+    return this;
+  }
 
-    mShooterSubsystem.setShooterMotorSpeed(openLoopOut);
+  public ShooterCommand withShooterState(ShooterState level) {
+    mShooterSubsystem.setShooterState(level);
+    return this;
   }
 
   @Override
@@ -37,25 +38,35 @@ public class ShooterCommand extends Command {
 
   @Override
   public void execute() {
-    if (mShooterSubsystem.getFeederState() == ShooterSubsystem.FeederState.LET_HIM_COOK) {
-      mShooterSubsystem.setFeederMotorSpeed(0);
-      return;
+
+    if (mShooterSubsystem.getShooterState() == ShooterState.OPEN_LOOP) {
+      mShooterSubsystem.setShooterMotorSpeed(percentOutput);
     }
 
-    if (mShooterSubsystem.getShooterState() == ShooterState.AMP) {
-      mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.AMP_SHOOT_RPM);
-    } else if (mShooterSubsystem.getShooterState() == ShooterState.SPEAKER) {
-      mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.SPEAKER_SHOOT_RPM);
-    } else { // hareket etmesin pls
-      mShooterSubsystem.setShooterMotorsRPM(0);
+    switch (mShooterSubsystem.getShooterState()) {
+
+      case OPEN_LOOP:
+        mShooterSubsystem.setShooterMotorSpeed(percentOutput);
+        break;
+
+      case AMP:
+        mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.AMP_SHOOT_RPM);
+        break;
+
+      case SPEAKER:
+        mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.SPEAKER_SHOOT_RPM);
+        break;
+
+      default:
+        mShooterSubsystem.setShooterMotorsRPM(0);
+        break;
     }
 
   }
 
   @Override
   public void end(boolean interrupted) {
-    level = ShooterState.CLOSED;
-    mShooterSubsystem.setShooterState(level);
+    mShooterSubsystem.setShooterState(ShooterState.CLOSED);
   }
 
   @Override

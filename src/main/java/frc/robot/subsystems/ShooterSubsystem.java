@@ -10,9 +10,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.subsystems.IntakeSubsystem.Running;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -30,6 +28,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private FeederState m_feederState;
 
   public enum ShooterState {
+    OPEN_LOOP,
     CLOSED,
     AMP,
     SPEAKER,

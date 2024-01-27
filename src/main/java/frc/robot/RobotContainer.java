@@ -23,12 +23,16 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.arm.ArmClosedLoop;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.leds.Party;
+import frc.robot.commands.shooter.SFeederCommand;
+import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.team6014.lib.auto.ARCTrajectory;
 
 /**
@@ -46,6 +50,7 @@ public class RobotContainer {
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -66,6 +71,7 @@ public class RobotContainer {
         private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
                         () -> mOperator.b().getAsBoolean());
+        private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
 
         com.ctre.phoenix6.Orchestra mOrchestraV6 = new com.ctre.phoenix6.Orchestra();
         Orchestra mOrchestra = new Orchestra();
@@ -78,6 +84,7 @@ public class RobotContainer {
                 mDrive.setDefaultCommand(driveByJoystick);
                 mTelescopic.setDefaultCommand(telescopic);
                 mArm.setDefaultCommand(armOpenLoop);
+                mShooter.setDefaultCommand(shooterIdle);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -85,7 +92,6 @@ public class RobotContainer {
 
                 configureNamedCommands();
 
-                // Configure the button bindings
                 configureButtonBindings();
 
                 autoChooser = AutoBuilder.buildAutoChooser();
@@ -100,7 +106,14 @@ public class RobotContainer {
          * Named commands
          */
         private void configureNamedCommands() {
-                // NamedCommands.registerCommand(null, driveByJoystick);
+
+                NamedCommands.registerCommand("prepare & shoot amp",
+                                new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.AMP)
+                                                .withTimeout(1.2)));
+
+                NamedCommands.registerCommand("prepare & shoot speaker",
+                                new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.SPEAKER)
+                                                .withTimeout(1.2)));
         }
 
         /**
@@ -112,16 +125,32 @@ public class RobotContainer {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
+
                 mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 mOperator.x().onTrue(new Party());
 
-                // Arm Closed Loop
+                // ---------------------------- Arm
+                // Closed Loop
                 mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false, ArmConstants.armCruiseVelocity,
                                 ArmConstants.armAcceleration));
 
-                // Orchestra open/pause/stop
+                // ---------------------------- Feeder
+                mOperator.y().onTrue(new SFeederCommand());
+                // Feeder arbitrary
+                // new SFeederCommand(mOperator.getLeftX());
+
+                // ---------------------------- Shooter
+                // Closed Loop
+                mOperator.leftBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
+                mOperator.rightBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
+                mOperator.leftTrigger().onTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                // shooter arbitrary
+                // new ShooterCommand().withOpenLoop(mOperator.getLeftX());
+
+                // ---------------------------- Orchestra
+                // open/pause/stop
 
                 mDriver.options().toggleOnTrue(new Command() {
                         @Override
