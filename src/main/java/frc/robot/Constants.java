@@ -5,7 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -15,7 +14,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.util.Color;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 
@@ -290,28 +288,8 @@ public final class Constants {
     }
 
     public static final class LEDConstants {
-        // The length of the buffer in pixels / pixel count of led
         public static final int BUFFER_LENGTH = 60; // TODO: set led length
-
-        public static final double BREATHE_DURATION = 1.0;
-        public static final double STROBE_FAST = 0.1;
-        public static final double STROBE_SLOW = 0.2;
-        /* For CANdle */
         public static final int CANdleID = 53; // TODO: config
-
-        public static final class Colors {
-            /* Colors go:
-             * Disabled: pink breathe
-             * Cone Mode: strobe orange
-             * Cube Mode: strobe purple
-             */
-            public static final Color DISABLED = Color.kPaleVioletRed; // run in disabled init
-            public static final Color NO_COLOR = Color.kBlack; // no color basically
-
-            public static final Color CONE = Color.kOrange; // cone mode
-            public static final Color CUBE = Color.kPurple; // cube mode
-
-        }
     }
 
     public class LLConstants{
