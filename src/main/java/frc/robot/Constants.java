@@ -180,8 +180,8 @@ public final class Constants {
         public static final double bottomSoftLimit = -25; // TODO: Config
         public static final double topSoftLimit = 232; // TODO: Config
 
-        public static final double armCruiseVelocity = 1000; // Mind units!
-        public static final double armAcceleration = 2000; // Mind units!
+        public static final double armCruiseVelocity = 50; // Mind units!
+        public static final double armAcceleration = 70; // Mind units!
 
         public static final double rampRate = 0.09;
         public static final double kP = 0.085; // TODO: Config
