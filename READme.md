@@ -1,4 +1,5 @@
 ## Official 2024 Robot Code for Crescendo
+[![CI](https://github.com/ARC6014/RobotCode2024/actions/workflows/main.yml/badge.svg)](https://github.com/ARC6014/RobotCode2024/actions/workflows/main.yml)
 ### Editing Guidelines:
 - Every subsystem should have Open & Closed Loop commands. Open Loop should be bound to necessary Operator/Driver joysticks.
 - The Open Loop commands will be created under the Deneme commands section with respective titles.
