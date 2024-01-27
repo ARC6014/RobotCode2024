@@ -1,4 +1,4 @@
-# [`Shooter & Feeder`](../subsystems/SH_FR.md)
+# [`Shooter & Feeder`](/src/main/java/frc/robot/subsystems/ShooterSubsystem.java)
 
 ## Class Members
 ```java
@@ -38,7 +38,7 @@ public enum FeederState {
 }
 ```
 
-## [Commands](../commands/SH_FR.md)
+## [Commands](/src/main/java/frc/robot/commands/shooter)
 
 ```java
 public class SFeederCommand extends Command {
