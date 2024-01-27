@@ -22,7 +22,6 @@ import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.arm.ArmClosedLoop;
 import frc.robot.commands.arm.ArmOpenLoop;
-import frc.robot.commands.auto.ARCTrajectory;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicDeneme;
@@ -30,6 +29,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
+import frc.team6014.lib.auto.ARCTrajectory;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
