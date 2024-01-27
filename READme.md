@@ -5,9 +5,9 @@
 Explanation of codes can be found under [docs](/docs):
 
 - [Arm Subsytem](/docs/ARM.md)
-  - Cr: Ouz
-- [Intake](/docs/INTAKE.md)
   - Cr: CAN
+- [Intake](/docs/INTAKE.md)
+  - Cr: Ouz
 - [Shooter & Feeder](/docs/SH_FR.md)
   - Cr: Alia % Cr
 
