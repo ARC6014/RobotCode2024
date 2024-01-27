@@ -123,14 +123,14 @@ public class RobotContainer {
 
                 // Orchestra open/pause/stop
 
-                mDriver.options().onTrue(new Command() {
+                mDriver.options().toggleOnTrue(new Command() {
                         @Override
                         public void initialize() {
                                 mOrchestra.play();
                         }
                 });
 
-                mDriver.share().onTrue(new Command() {
+                mDriver.share().toggleOnTrue(new Command() {
                         @Override
                         public void initialize() {
                                 mOrchestra.pause();

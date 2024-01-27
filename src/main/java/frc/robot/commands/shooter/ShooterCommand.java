@@ -9,20 +9,20 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
-public class ShooterComand extends Command {
+public class ShooterCommand extends Command {
 
   public ShooterState level;
   private ShooterSubsystem mShooterSubsystem;
 
   /** Creates a new ShooterComand. */
-  public ShooterComand(ShooterState level) {
+  public ShooterCommand(ShooterState level) {
     this.level = level;
     addRequirements(ShooterSubsystem.getInstance());
     mShooterSubsystem.setShooterState(level);
 
   }
 
-  public ShooterComand(ShooterState level, double openLoopOut) {
+  public ShooterCommand(ShooterState level, double openLoopOut) {
     this.level = level;
     addRequirements(ShooterSubsystem.getInstance());
     mShooterSubsystem.setShooterState(level);

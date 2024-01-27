@@ -255,20 +255,20 @@ public final class Constants {
 		public static final int MASTER_MOTOR_ID = 40;
         public static final int SLAVE_MOTOR_ID = 41;
         public static final int FEEDER_MOTOR_ID = 42;
-		public static final double kP = 0;
-        public static final double maxRPM = 0;
-        public static final double kMinOutput = 0;
-        public static final double kMaxOutput = 0;
-        public static final double kFF = 0;
-        public static final double kIz = 0;
-        public static final double kD = 0;
-        public static final double kI = 0;
+		public static final double kP = 0; // TODO: Config
+        public static final double maxRPM = 0; // TODO: Config
+        public static final double kMinOutput = 0; // TODO: Config
+        public static final double kMaxOutput = 0; // TODO: Config
+        public static final double kFF = 0; // TODO: Config
+        public static final double kIz = 0; // TODO: Config
+        public static final double kD = 0; // TODO: Config
+        public static final double kI = 0; // TODO: Config
         
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
 		public static final IdleMode MASTER_MODE = IdleMode.kBrake;
-		public static final int BEAM_BREAK_ID = 0;
-        public static final double AMP_SHOOT_RPM = 0;
-        public static final double SPEAKER_SHOOT_RPM = 0;
+		public static final int BEAM_BREAK_ID = 0; // TODO: Config
+        public static final double AMP_SHOOT_RPM = 0; // TODO: Config
+        public static final double SPEAKER_SHOOT_RPM = 0; // TODO: Config
     }
 
     public static final class TelescopicConstants {
