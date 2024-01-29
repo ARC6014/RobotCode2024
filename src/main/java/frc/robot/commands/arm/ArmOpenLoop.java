@@ -34,15 +34,11 @@ public class ArmOpenLoop extends Command {
   @Override
   public void execute() {
     if(joystick.getAsDouble() >= 0.04 || joystick.getAsDouble() <= -0.04){
-      mArm.setArmPercentOutput(joystick.getAsDouble());
+      mArm.setArmPercentOutput(joystick.getAsDouble() / 5);
     }
     else if(setpointButton.getAsBoolean()) {
       mArm.setArmPosition(targetAngle);
     }
-    else {
-      mArm.holdPosition();
-    }
-    
   }
 
   // Called once the command ends or is interrupted.

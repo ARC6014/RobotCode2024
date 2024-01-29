@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -29,7 +30,8 @@ public class ArmSubsystem extends SubsystemBase {
   public Gearbox armGearbox = ArmConstants.gearRatio;
 
   private double setpoint = 0; // angle to go by arm
-  private final DutyCycleOut m_percentOut = new DutyCycleOut(0, true, false, false, false); // stores output in (next
+  // TODO: FOC is false for now
+  private final DutyCycleOut m_percentOut = new DutyCycleOut(0, false, false, false, false); // stores output in (next
                                                                                             // line)
   private double targetOutput = 0; // output to set in open loop
   private ArmControlState armControlState = ArmControlState.OPEN_LOOP;
@@ -37,11 +39,9 @@ public class ArmSubsystem extends SubsystemBase {
   private double lastDemandedRotation; // last angle of arm
 
   private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
-  private final PositionTorqueCurrentFOC torqueControl = new PositionTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
-
+  private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
   public enum ArmControlState {
     OPEN_LOOP,
-    TORQUE_CONTROL,
     MOTION_MAGIC,
   }
 
@@ -59,60 +59,29 @@ public class ArmSubsystem extends SubsystemBase {
 
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
-    // armMotor.configFactoryDefault();
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Slot0.kP = ArmConstants.kP;
     configs.Slot0.kI = ArmConstants.kI;
     configs.Slot0.kD = ArmConstants.kD;
-
-    configs.Slot1.kI = 0;
-    configs.Slot1.kP = 0;
-    configs.Slot1.kD = 0;
+    configs.Slot0.kS = ArmConstants.kS;
+    configs.Slot0.kV = ArmConstants.kV;
 
     configs.Voltage.PeakForwardVoltage = 10;
     configs.Voltage.PeakReverseVoltage = -10;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
     ;
-    configs.MotionMagic.MotionMagicAcceleration = 400; // change
-    configs.MotionMagic.MotionMagicCruiseVelocity = 120; // change
-    configs.MotionMagic.MotionMagicJerk = 800; // change
+    configs.MotionMagic.MotionMagicAcceleration = 70; // change
+    configs.MotionMagic.MotionMagicCruiseVelocity = 50; // change
 
-    // armMotor.setInverted(ArmConstants.motorInverted);
-    configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // TODO: CHANGE!
-    configs.MotorOutput.NeutralMode = NeutralModeValue.Brake; // TODO: CHANGE!
-    // armMotor.setNeutralMode(ArmConstants.neutralMode);
-
-    // armMotor.configReverseSoftLimitEnable(true);
-    // armMotor.configReverseSoftLimitThreshold(
-    // ArmConstants.gearRatio * ArmConstants.bottomSoftLimit);
-    // armMotor.configForwardSoftLimitEnable(true);
-    // armMotor.configForwardSoftLimitThreshold(
-    // ArmConstants.gearRatio * ArmConstants.topSoftLimit);
-
-    // armMotor.configVoltageCompSaturation(12);
-    // armMotor.enableVoltageCompensation(true);
-
-    // armMotor.configMotionCruiseVelocity(ArmConstants.armCruiseVelocity);
-    // armMotor.configMotionAcceleration(ArmConstants.armAcceleration);
-
-    // SupplyCurrentLimitConfiguration m_config = new
-    // SupplyCurrentLimitConfiguration();
-    // m_config.currentLimit = 15.0; // TODO: Config
-    // m_config.enable = true;
-    // m_config.triggerThresholdCurrent = 5;
-    // m_config.triggerThresholdTime = 2;
+    armMotor.setInverted(ArmConstants.motorInverted);
+    armMotor.setNeutralMode(ArmConstants.neutralMode);
 
     configs.CurrentLimits.StatorCurrentLimit = 300;
     configs.CurrentLimits.StatorCurrentLimitEnable = true;
     configs.CurrentLimits.SupplyCurrentLimit = 80;
     configs.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    // armMotor.configSupplyCurrentLimit(m_config);
-    // armMotor.configClosedloopRamp(ArmConstants.rampRate);
-    // armMotor.config_kP(0, ArmConstants.kP);
-    // armMotor.config_kI(0, ArmConstants.kI);
-    // armMotor.config_kD(0, ArmConstants.kD);
 
     armMotor.getConfigurator().apply(configs);
 
@@ -139,17 +108,12 @@ public class ArmSubsystem extends SubsystemBase {
       case MOTION_MAGIC:
         setArmAngleMotionMagic();
         break;
-      case TORQUE_CONTROL:
-        holdPosition();
-        break;
       default:
         setArmPercentOutput(0.0);
         break;
     }
 
-    if (!(armControlState == ArmControlState.TORQUE_CONTROL)) {
-      lastDemandedRotation = getArmAngleFalcon();
-    }
+    lastDemandedRotation = getArmAngleFalcon();
 
   }
 
@@ -202,12 +166,9 @@ public class ArmSubsystem extends SubsystemBase {
     
   // TODO: add max/min angles here!
   public void setArmAngleMotionMagic() {
-    armMotor.setControl(motionMagic.withPosition(setpoint * armGearbox.getRatio()).withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
+    armMotor.setControl(motionMagicVoltage.withPosition(setpoint * armGearbox.getRatio()).withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
   }
 
-  public void holdPosition() {
-    armMotor.setControl(torqueControl.withPosition(lastDemandedRotation * armGearbox.getRatio()));
-  }
 
   public void setArmVoltage(double voltage) {
     armMotor.setVoltage(voltage);
@@ -228,12 +189,6 @@ public class ArmSubsystem extends SubsystemBase {
     }
     setpoint = target;
     lastDemandedRotation = getArmAngleFalcon();
-  }
-
-  public void holdArmPosition() {
-    if (armControlState != ArmControlState.TORQUE_CONTROL) {
-      armControlState = ArmControlState.TORQUE_CONTROL;
-    }
   }
 
   public void updateLastDemandedRotation(double rotation) {

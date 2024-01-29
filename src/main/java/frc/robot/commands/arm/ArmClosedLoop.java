@@ -10,19 +10,16 @@ import frc.robot.subsystems.ArmSubsystem;
 public class ArmClosedLoop extends Command {
   /** Creates a new ArmClosedLoop. */
   private ArmSubsystem mArm;
-  private double setpoint, cruiseVel, acceleration;
+  private double setpoint;
   private double finishPoint;
   private boolean finishable, stop;
 
-  public ArmClosedLoop(ArmSubsystem arm, double setpoint, double finishPoint, Boolean stop, double cruiseVel,
-      double acceleration) {
+  public ArmClosedLoop(ArmSubsystem arm, double setpoint, double finishPoint, Boolean stop) {
     mArm = arm;
     this.setpoint = setpoint;
     finishable = true;
     this.finishPoint = finishPoint;
     this.stop = stop;
-    this.cruiseVel = cruiseVel;
-    this.acceleration = acceleration;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }

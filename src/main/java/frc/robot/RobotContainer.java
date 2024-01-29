@@ -133,8 +133,7 @@ public class RobotContainer {
 
                 // ---------------------------- Arm
                 // Closed Loop
-                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false, ArmConstants.armCruiseVelocity,
-                                ArmConstants.armAcceleration));
+                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
 
                 // ---------------------------- Feeder
                 mOperator.y().onTrue(new SFeederCommand());

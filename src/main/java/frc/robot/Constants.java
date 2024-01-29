@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -174,18 +175,18 @@ public final class Constants {
         public static final int boreChannel = 0; // TODO: Config
         public static final Gearbox gearRatio = new Gearbox(119.5 / 1); // TODO: Config
         public static final boolean motorInverted = false; // TODO: Config
-
-        public static final double bottomSoftLimit = -25; // TODO: Config
-        public static final double topSoftLimit = 232; // TODO: Config
+        public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         public static final double armCruiseVelocity = 50; // Mind units!
         public static final double armAcceleration = 70; // Mind units!
 
         public static final double rampRate = 0.09;
-        public static final double kP = 0.085; // TODO: Config
-        public static final double kD = 4.5; // TODO: Config
+        public static final double kP = 0.0; // TODO: Config
+        public static final double kD = 0.0; // TODO: Config
         public static final double kI = 0; // TODO: Config
         public static final double kG = 0;
+        public static final double kS = 0.32; // TODO: Config
+        public static final double kV = 0; // TODO: Config
 
 
         public static final double resetAngle = 0; // TODO: Config
@@ -198,6 +199,7 @@ public final class Constants {
         public static final double SPEAKER = 56;
         public static final double AMP = -45; // Double check negative
         public static final double distancePerRotation = 0;
+        
   
     }
 
