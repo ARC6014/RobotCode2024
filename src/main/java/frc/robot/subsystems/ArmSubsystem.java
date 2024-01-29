@@ -11,9 +11,11 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
@@ -120,6 +122,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     lastDemandedRotation = getArmAngleFalcon();
 
+    SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
+    SmartDashboard.putNumber("Falcon Voltage", armMotor.getMotorVoltage().getValueAsDouble());
+
   }
 
   // resets falcon encoder to some pre-set zero position
@@ -176,7 +181,7 @@ public class ArmSubsystem extends SubsystemBase {
   // horizontally forward. From there, the RotorToSensor ratio must be configured
   // to the ratio between the absolute sensor and the Talon FX rotor.
   public void setArmAngleMotionMagic() {
-    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.radiansToRevolutions(Math.toRadians(setpoint)) * armGearbox.getRatio())
+    armMotor.setControl(motionMagicVoltage.withPosition(setpoint * armGearbox.getRatio())
         .withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
   }
 
