@@ -30,7 +30,7 @@ public class IntakeOpenLoop extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        
+        mIntakeSubsystem.setOpenLoop(0);
     }
 
     @Override
