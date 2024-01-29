@@ -47,10 +47,10 @@ import frc.team6014.lib.auto.ARCTrajectory;
 public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        //private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
-        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
+        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        //private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -68,23 +68,21 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
+        //private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
                         () -> mOperator.b().getAsBoolean());
-        private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
+        //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
 
-        com.ctre.phoenix6.Orchestra mOrchestraV6 = new com.ctre.phoenix6.Orchestra();
-        Orchestra mOrchestra = new Orchestra();
-
+       
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
-                mTelescopic.setDefaultCommand(telescopic);
+                //mTelescopic.setDefaultCommand(telescopic);
                 mArm.setDefaultCommand(armOpenLoop);
-                mShooter.setDefaultCommand(shooterIdle);
+                //mShooter.setDefaultCommand(shooterIdle);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -97,9 +95,6 @@ public class RobotContainer {
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
-
-                carpeDiemV5();
-                // carpeDiem();
         }
 
         /*
@@ -126,81 +121,29 @@ public class RobotContainer {
          */
         private void configureButtonBindings() {
 
-                mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
+                //mDriver.circle().onTrue(new AllignWithLL(1));
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                mOperator.x().onTrue(new Party());
+                //mOperator.x().onTrue(new Party());
 
                 // ---------------------------- Arm
                 // Closed Loop
                 mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
 
                 // ---------------------------- Feeder
-                mOperator.y().onTrue(new SFeederCommand());
+                //mOperator.y().onTrue(new SFeederCommand());
                 // Feeder arbitrary
                 // new SFeederCommand(mOperator.getLeftX());
 
                 // ---------------------------- Shooter
                 // Closed Loop
-                mOperator.leftBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
-                mOperator.rightBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
-                mOperator.leftTrigger().onTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                //mOperator.leftBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
+                //mOperator.rightBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
+                //mOperator.leftTrigger().onTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
                 // shooter arbitrary
                 // new ShooterCommand().withOpenLoop(mOperator.getLeftX());
 
-                // ---------------------------- Orchestra
-                // open/pause/stop
 
-                mDriver.options().toggleOnTrue(new Command() {
-                        @Override
-                        public void initialize() {
-                                mOrchestra.play();
-                        }
-                });
-
-                mDriver.share().toggleOnTrue(new Command() {
-                        @Override
-                        public void initialize() {
-                                mOrchestra.pause();
-                        }
-                });
-
-                // mDriver.options().onTrue(new Command() {
-                // @Override
-                // public void initialize() {
-                // mOrchestraV6.play();
-                // }
-                // });
-
-                // mDriver.share().onTrue(new Command() {
-                // @Override
-                // public void initialize() {
-                // mOrchestraV6.pause();
-                // }
-                // });
-
-        }
-
-        /*
-         * Talon FX Music
-         * Let's Have some fun
-         */
-        private void carpeDiem() {
-                mOrchestraV6.addInstrument(mIntake.getMotors().get(0));
-                mOrchestraV6.addInstrument(mIntake.getMotors().get(1));
-                mOrchestraV6.loadMusic("Never-Gonna-Give-You-Up-3.chrp");
-                mOrchestraV6.play();
-        }
-
-        /*
-         * Carpediem function WPI_TALON_FX For V5
-         */
-        private void carpeDiemV5() {
-                for (var motor : mDrive.getDriveMotors()) {
-                        mOrchestra.addInstrument(motor);
-                }
-                mOrchestra.loadMusic("Never-Gonna-Give-You-Up-3.chrp");
-                mOrchestra.play();
         }
 
         /**

@@ -14,7 +14,7 @@ public class OperatorTab extends ShuffleboardTabBase{
     private GenericEntry boreAngle, falconAngle, armState, atSetpoint, atZero;
 
     /* LEDS */
-    private CANdleLed mLed = CANdleLed.getInstance();
+    //private CANdleLed mLed = CANdleLed.getInstance();
     private GenericEntry currentAnimation;
     
 
@@ -59,11 +59,11 @@ public class OperatorTab extends ShuffleboardTabBase{
         .withWidget(BuiltInWidgets.kBooleanBox)
         .getEntry();
 
-        currentAnimation = mTab
-        .add("Current Anim", "NONE")
-        .withPosition(2, 0)
-        .withSize(1, 1)
-        .getEntry();
+        // currentAnimation = mTab
+        // .add("Current Anim", "NONE")
+        // .withPosition(2, 0)
+        // .withSize(1, 1)
+        // .getEntry();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class OperatorTab extends ShuffleboardTabBase{
         atZero.setBoolean(mArm.isAtZeroFalcon());
 
         /* LEDS */
-        currentAnimation.setString(mLed.getCurrentAnimation().toString());
+        //currentAnimation.setString(mLed.getCurrentAnimation().toString());
     }
 
 
