@@ -34,10 +34,9 @@ public final class Constants {
     public static final String CANIVORE_CANBUS = "CANivore"; 
     public static final String RIO_CANBUS = "rio";
     public static final int Pigeon2CanID = 50; 
-    public static final boolean tuningMode = false;
 
-    public static final double wheelBaseLength = 0.690; // TODO: Config
-    private static final double wheelBaseWidth = 0.690; // TODO: Config
+    public static final double wheelBaseLength = 0.56665; 
+    private static final double wheelBaseWidth = 0.56665;
     
     public static final double drivebaseRadius = Math.hypot(wheelBaseWidth / 2.0, wheelBaseLength / 2.0);
     public static final double maxModuleSpeed = 3.0;
@@ -137,7 +136,7 @@ public final class Constants {
         public static final int angleMotorID = 10;
         public static final int driveMotorID = 11;
         public static final int cancoderID = 01;
-        public static final double angleOffset = -206.63 - 45 - 17 + 180 + 3; // added 3
+        public static final double angleOffset = -206.63 - 45 - 17 + 180 + 3; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -146,7 +145,7 @@ public final class Constants {
         public static final int angleMotorID = 16;
         public static final int driveMotorID = 17;
         public static final int cancoderID = 02;
-        public static final double angleOffset = -152.06 - 12.48 + 2; // added 2
+        public static final double angleOffset = -152.06 - 12.48 + 2; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -155,7 +154,7 @@ public final class Constants {
         public static final int angleMotorID = 14;
         public static final int driveMotorID = 15;
         public static final int cancoderID = 03;
-        public static final double angleOffset = -22.06 + 180 -115 - 50; // -50
+        public static final double angleOffset = -22.06 + 180 -115 - 50; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -184,16 +183,19 @@ public final class Constants {
         public static final double kP = 0.0; // TODO: Config
         public static final double kD = 0.0; // TODO: Config
         public static final double kI = 0; // TODO: Config
-        public static final double kG = 0;
+        public static final double kG = 0; // TODO: Config
         public static final double kS = 0.32; // TODO: Config
         public static final double kV = 0; // TODO: Config
 
 
+        /** unit: degrees */
         public static final double resetAngle = 0; // TODO: Config
+
         public static final double positionOffset = 0; // TODO: Config starting position offset of bore
         public static final double angleTolerance = 1.5;
 
-        /* Arm angles for setpoints */
+        /* Arm angles for setpoints (the angle arm makes with the horizontal) */
+        /** unit: degrees */
         public static final double ZERO = 90;
         public static final double INTAKE = 75;
         public static final double SPEAKER = 56;
