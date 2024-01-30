@@ -61,8 +61,8 @@ public class RobotContainer {
         private SendableChooser<Command> autoChooser;
 
         // commands
-        private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY() * -1,
-                        () -> mDriver.getLeftX() * -1,
+        private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
+                        () -> mDriver.getLeftX(),
                         () -> mDriver.getRawAxis(2),
                         () -> mDriver.R2().getAsBoolean(),
                         () -> mDriver.L1().getAsBoolean(),
