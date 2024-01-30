@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -132,6 +133,9 @@ public class DriveSubsystem extends SubsystemBase {
         getRotation2d(),
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
+
+    SmartDashboard.putNumber("Voltage", getDriveMotors().get(0).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Current", getDriveMotors().get(0).getOutputCurrent());
 
   }
 
@@ -291,9 +295,9 @@ public class DriveSubsystem extends SubsystemBase {
   // Returns gyro angle relative to alliance station
   public Rotation2d getDriverCentricRotation2d() {
     return DriverStation.getAlliance().get() == Alliance.Red
-        ? Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle() + 180, 360.0))
+        ? Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle() , 360.0))
             .times(DriveConstants.invertGyro ? -1 : 1)
-        : Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle(), 360.0))
+        : Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle()+180, 360.0))
             .times(DriveConstants.invertGyro ? -1 : 1);
   }
 
