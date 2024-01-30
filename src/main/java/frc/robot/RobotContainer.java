@@ -89,8 +89,9 @@ public class RobotContainer {
                 LiveWindow.disableAllTelemetry();
                 LiveWindow.setEnabled(false);
 
-                configureButtonBindings();
                 configureNamedCommands();
+                configureButtonBindings();
+                
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
