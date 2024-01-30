@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.0,
+      "y": 6.6
+    },
+    "rotation": 0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BLSpeakerToNote"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BLNoteToSpeaker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "DoNothing"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BLSpeakerToNote2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "BLNoteToSpeaker2"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

@@ -22,6 +22,7 @@ import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.arm.ArmClosedLoop;
 import frc.robot.commands.arm.ArmOpenLoop;
+import frc.robot.commands.auto.DoNothing;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.shooter.SFeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
@@ -89,6 +90,7 @@ public class RobotContainer {
                 LiveWindow.setEnabled(false);
 
                 configureButtonBindings();
+                configureNamedCommands();
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
@@ -100,13 +102,14 @@ public class RobotContainer {
          */
         private void configureNamedCommands() {
 
-                NamedCommands.registerCommand("prepare & shoot amp",
-                                new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.AMP)
-                                                .withTimeout(1.2)));
+                // NamedCommands.registerCommand("prepare & shoot amp",
+                //                 new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.AMP)
+                //                                 .withTimeout(1.2)));
 
-                NamedCommands.registerCommand("prepare & shoot speaker",
-                                new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.SPEAKER)
-                                                .withTimeout(1.2)));
+                // NamedCommands.registerCommand("prepare & shoot speaker",
+                //                 new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.SPEAKER)
+                //                                 .withTimeout(1.2)));
+                NamedCommands.registerCommand("DoNothing", new DoNothing().withTimeout(1.0));
         }
 
         /**
