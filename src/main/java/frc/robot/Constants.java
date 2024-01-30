@@ -33,7 +33,7 @@ import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 public final class Constants {
     public static final String CANIVORE_CANBUS = "CANivore"; 
     public static final String RIO_CANBUS = "rio";
-    public static final int Pigeon2CanID = 50; 
+    public static final int Pigeon2CanID = 60; 
 
     public static final double wheelBaseLength = 0.56665; 
     private static final double wheelBaseWidth = 0.56665;
@@ -69,7 +69,7 @@ public final class Constants {
     public static final class DriveConstants {
         public static final boolean isFieldOriented = true;
         // TODO: Config gyro
-        public static final boolean invertGyro = false; // !! CCW+
+        public static final boolean invertGyro = true; // !! CCW+
 
         public static final int angleContinuousCurrentLimit = 20;
         public static final int anglePeakCurrentLimit = 35;
@@ -133,44 +133,44 @@ public final class Constants {
 
     // TODO: Configure each module's angle offset in calibration
     public static final class SwerveModuleFrontLeft {
-        public static final int angleMotorID = 10;
-        public static final int driveMotorID = 11;
+        public static final int angleMotorID = 50;
+        public static final int driveMotorID = 51;
         public static final int cancoderID = 01;
-        public static final double angleOffset = -206.63 - 45 - 17 + 180 + 3; 
+        public static final double angleOffset = -206.63 - 45 - 17 + 180 + 3 + 177; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
 
     public static final class SwerveModuleFrontRight {
-        public static final int angleMotorID = 16;
-        public static final int driveMotorID = 17;
+        public static final int angleMotorID = 56;
+        public static final int driveMotorID = 57;
         public static final int cancoderID = 02;
-        public static final double angleOffset = -152.06 - 12.48 + 2; 
+        public static final double angleOffset = -152.06 - 12.48 + 2 - 1.3; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
 
     public static final class SwerveModuleRearLeft {
-        public static final int angleMotorID = 14;
-        public static final int driveMotorID = 15;
+        public static final int angleMotorID = 54;
+        public static final int driveMotorID = 55;
         public static final int cancoderID = 03;
-        public static final double angleOffset = -22.06 + 180 -115 - 50; 
+        public static final double angleOffset = -22.06 + 180 -115 - 50 +55; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
 
     public static final class SwerveModuleRearRight {
-        public static final int angleMotorID = 12;
-        public static final int driveMotorID = 13;
+        public static final int angleMotorID = 52;
+        public static final int driveMotorID = 53;
         public static final int cancoderID = 04;
-        public static final double angleOffset = -1.49 + 109.4;
+        public static final double angleOffset = -1.49 + 109.4 + 9;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
   
     public static final class ArmConstants {
 
-        public static final int motorID = 30; // TODO: Config
+        public static final int motorID = 20; // TODO: Config
         public static final int boreChannel = 0; // TODO: Config
         public static final Gearbox gearRatio = new Gearbox(119.5 / 1); // TODO: Config
         public static final boolean motorInverted = false; // TODO: Config
@@ -207,8 +207,8 @@ public final class Constants {
 
     public static final class IntakeConstants {
         // TODO: determine actual ids
-        public static final int runningMotorId = 20;
-        public static final int angleMotorId = 21;
+        public static final int runningMotorId = 10;
+        public static final int angleMotorId = 11;
 
         public static final int boreEncoderDioId = 0;
         public static final int beamBreakSensorDioId = 0;
@@ -254,9 +254,9 @@ public final class Constants {
 
     public static final class ShooterConstants {
 
-		public static final int MASTER_MOTOR_ID = 40;
-        public static final int SLAVE_MOTOR_ID = 41;
-        public static final int FEEDER_MOTOR_ID = 42;
+		public static final int MASTER_MOTOR_ID = 30;
+        public static final int SLAVE_MOTOR_ID = 31;
+        public static final int FEEDER_MOTOR_ID = 32;
 		public static final double kP = 0; // TODO: Config
         public static final double maxRPM = 0; // TODO: Config
         public static final double kMinOutput = 0; // TODO: Config
@@ -274,8 +274,8 @@ public final class Constants {
     }
 
     public static final class TelescopicConstants {
-        public static final int MASTER_MOTOR_ID = 51; // TODO: Config
-        public static final int SLAVE_MOTOR_ID = 52; // TODO: Config
+        public static final int MASTER_MOTOR_ID = 40; // TODO: Config
+        public static final int SLAVE_MOTOR_ID = 41; // TODO: Config
 
         public static final int TELESCOPIC_GEAR_RATIO = 144 / 11 / 1;
 
@@ -293,7 +293,7 @@ public final class Constants {
 
     public static final class LEDConstants {
         public static final int BUFFER_LENGTH = 60; // TODO: set led length
-        public static final int CANdleID = 53; // TODO: config
+        public static final int CANdleID = 43; // TODO: config
     }
 
     public class LLConstants{

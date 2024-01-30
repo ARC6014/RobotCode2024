@@ -48,7 +48,7 @@ public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         //private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
-        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+        // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         //private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
 
@@ -69,8 +69,8 @@ public class RobotContainer {
                         () -> mDriver.R1().getAsBoolean());
 
         //private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
-        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
-                        () -> mOperator.b().getAsBoolean());
+        //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
+        //                () -> mOperator.b().getAsBoolean());
         //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
 
        
@@ -81,14 +81,12 @@ public class RobotContainer {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 //mTelescopic.setDefaultCommand(telescopic);
-                mArm.setDefaultCommand(armOpenLoop);
+                //mArm.setDefaultCommand(armOpenLoop);
                 //mShooter.setDefaultCommand(shooterIdle);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
                 LiveWindow.setEnabled(false);
-
-                configureNamedCommands();
 
                 configureButtonBindings();
 
@@ -128,7 +126,7 @@ public class RobotContainer {
 
                 // ---------------------------- Arm
                 // Closed Loop
-                mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
+                //mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
 
                 // ---------------------------- Feeder
                 //mOperator.y().onTrue(new SFeederCommand());
