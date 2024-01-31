@@ -212,10 +212,7 @@ public final class Constants {
         public static final double ZERO = 90;
         public static final double INTAKE = 75;
         public static final double SPEAKER = 56;
-        public static final double AMP = -45; // Double check negative
-        public static final double distancePerRotation = 0;
-        
-  
+        public static final double AMP = -45; // Double check negative  
     }
 
     public static final class IntakeConstants {
@@ -295,8 +292,10 @@ public final class Constants {
         public static final double TELESCOPIC_CONTROLLER_KD = 0;
         public static final double TELESCOPIC_CONTROLLER_KI = 0;
         public static final double TELESCOPIC_CONTROLLER_KP = 0;
-        public static final double TELESCOPIC_MOTION_ACCEL = 200;
-        public static final double TELESCOPIC_MOTION_VEL = 500;
+        /** units: r/s */
+        public static final double TELESCOPIC_MOTION_ACCEL = 50;
+        /** units: r/s^2 */
+        public static final double TELESCOPIC_MOTION_VEL = 70;
         public static final double TELESCOPIC_MOTION_TIMEOUT = 0;
         public static final double TELESCOPIC_RESET = 0;
         public static final double TELESCOPIC_TOLERANCE = 1;

@@ -32,7 +32,7 @@ import frc.robot.commands.shooter.SFeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.swerve.FieldOrientedTurn;
-import frc.robot.commands.telescopic.TelescopicDeneme;
+import frc.robot.commands.telescopic.TelescopicOpenLoop;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -58,8 +58,8 @@ public class RobotContainer {
         // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         //private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        //private final WristSubsystem mWrist = WristSubsystem.getInstance();
+        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -77,7 +77,7 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        //private final TelescopicDeneme telescopic = new TelescopicDeneme(() -> mOperator.getRightY());
+        //private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
         //                () -> mOperator.b().getAsBoolean());
         //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
@@ -91,7 +91,7 @@ public class RobotContainer {
         public RobotContainer() {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
-                //mTelescopic.setDefaultCommand(telescopic);
+                //mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 //mArm.setDefaultCommand(armOpenLoop);
                 //mShooter.setDefaultCommand(shooterIdle);
                 //mWrist.setDefaultCommand(wristOpenLoop);
