@@ -16,7 +16,7 @@ import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 
 public class WristSubsystem extends SubsystemBase {
-    private static IntakeSubsystem mInstance;
+    private static WristSubsystem mInstance;
 
     private TalonFX mTalonFX;
     private Gearbox mGearbox = IntakeConstants.gearbox;
@@ -49,9 +49,9 @@ public class WristSubsystem extends SubsystemBase {
         mPositionControl = new PositionVoltage(mPositionSetpoint);
     }
 
-    public static IntakeSubsystem getInstance() {
+    public static WristSubsystem getInstance() {
         if (mInstance == null) {
-            mInstance = new IntakeSubsystem();
+            mInstance = new WristSubsystem();
         }
         return mInstance;
     }
