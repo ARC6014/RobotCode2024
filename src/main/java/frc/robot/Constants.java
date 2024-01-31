@@ -39,7 +39,7 @@ public final class Constants {
     private static final double wheelBaseWidth = 0.56665;
     
     public static final double drivebaseRadius = Math.hypot(wheelBaseWidth / 2.0, wheelBaseLength / 2.0);
-    public static final double maxModuleSpeed = 3.0;
+    public static final double maxModuleSpeed = 4.0;
 
     // TODO: Tune PID
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
@@ -75,7 +75,6 @@ public final class Constants {
 
     public static final class DriveConstants {
         public static final boolean isFieldOriented = true;
-        // TODO: Config gyro
         public static final boolean invertGyro = true; // !! CCW+
 
         public static final int angleContinuousCurrentLimit = 20;
@@ -99,8 +98,8 @@ public final class Constants {
         public static final double driveSlewRateLimitY = 7;
         public static final double driveSlewRateLimitRot = 12;
 
-        public static final double angleGearboxRatio = 22.93; // TODO: Config
-        public static final double driveGearboxRatio = 6.59340659; // TODO: Config
+        public static final double angleGearboxRatio = 22.93; 
+        public static final double driveGearboxRatio = 6.59340659;
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
@@ -115,9 +114,16 @@ public final class Constants {
         public static final double anglekI = 0;
         public static final double anglekD = 0.0;
 
+        // snap PID is not used currently
         public static final double snapkP = 2.5;
         public static final double snapkI = 0.0;
         public static final double snapkD = 0.01;
+
+        /** will be used for FieldOrientedTurn */
+        public static final double kRotControllerP = 0.13; 
+        public static final double kRotControllerD = 0.28;
+        public static final double kRotControllerMaxVel = 5;
+        public static final double kRotControllerTolerance = 0.7;
 
         public static final double maxSpeed = 5;
 
@@ -143,7 +149,7 @@ public final class Constants {
         public static final int angleMotorID = 50;
         public static final int driveMotorID = 51;
         public static final int cancoderID = 01;
-        public static final double angleOffset = -84.37; // -83.32
+        public static final double angleOffset = -84.37;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -152,7 +158,7 @@ public final class Constants {
         public static final int angleMotorID = 56;
         public static final int driveMotorID = 57;
         public static final int cancoderID = 02;
-        public static final double angleOffset = 14.5; // 18
+        public static final double angleOffset = 14.5;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -161,7 +167,7 @@ public final class Constants {
         public static final int angleMotorID = 54;
         public static final int driveMotorID = 55;
         public static final int cancoderID = 03;
-        public static final double angleOffset = -136.93; // -137.98
+        public static final double angleOffset = -136.93;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -170,7 +176,7 @@ public final class Constants {
         public static final int angleMotorID = 52;
         public static final int driveMotorID = 53;
         public static final int cancoderID = 04;
-        public static final double angleOffset = -73.47; // 66.97
+        public static final double angleOffset = -73.47; 
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }

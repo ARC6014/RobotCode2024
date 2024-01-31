@@ -4,6 +4,8 @@
 
 package frc.team6014.lib.math;
 
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 /**
  * Inspired by team 254
  * Customized ARC CTRE configurations
@@ -115,5 +117,23 @@ public class Conversions {
 
     public static double radiansToRevolutions(double radians) {
         return radians / (2 * Math.PI);
+    }
+
+
+
+    public static double convertAngleByAlliance(Alliance alliance, double angle) {
+        angle = alliance == Alliance.Red ? angle + 180 : angle;
+
+        if (angle >= 360) {
+            angle -= 360;
+        } else if (angle <= -360) {
+            angle += 360;
+        }
+
+        return angle;
+    }
+
+    public static double clamp(double val, double min, double max) {
+        return Math.max(min, Math.min(max, val));
     }
 }

@@ -29,6 +29,7 @@ import frc.robot.commands.leds.Party;
 import frc.robot.commands.shooter.SFeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
+import frc.robot.commands.swerve.FieldOrientedTurn;
 import frc.robot.commands.telescopic.TelescopicDeneme;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -64,12 +65,6 @@ public class RobotContainer {
         private SendableChooser<Command> autoChooser;
 
         // commands
-        // private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
-        //                 () -> mDriver.getLeftX(),
-        //                 () -> -mDriver.getRightX(),
-        //                 () -> mDriver.R2().getAsBoolean(),
-        //                 () -> mDriver.L1().getAsBoolean(),
-        //                 () -> mDriver.R1().getAsBoolean());
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
                         () -> mDriver.getLeftX(),
                         () -> -mDriver.getRightX(),
@@ -120,6 +115,9 @@ public class RobotContainer {
                 //                                 .withTimeout(1.2)));
                 NamedCommands.registerCommand("Shoot", new FakeShoot().withTimeout(1.0));
                 NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
+                NamedCommands.registerCommand("Field-Oriented Turn (-45)", new FieldOrientedTurn(mDrive, -45));
+                NamedCommands.registerCommand("Field-Oriented Turn (45)", new FieldOrientedTurn(mDrive, 45));
+
 
         }
 
