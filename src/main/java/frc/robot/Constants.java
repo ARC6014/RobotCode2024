@@ -42,7 +42,14 @@ public final class Constants {
     public static final double maxModuleSpeed = 3.0;
 
     // TODO: Tune PID
-    public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(new PIDConstants(0.67, 0, 0), new PIDConstants(7.1, 0.79, 0), maxModuleSpeed, drivebaseRadius, new ReplanningConfig(), 0.01);
+    public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
+        new PIDConstants(1.0, 0, 0), 
+        new PIDConstants(5, 0, 0), 
+        maxModuleSpeed, 
+        drivebaseRadius, 
+        new ReplanningConfig(), 
+        0.02
+    );
 
     // Module coordinates according to the chassis
     public static final Translation2d swerveModuleLocations[] = {
@@ -97,7 +104,7 @@ public final class Constants {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        public static final double drivekP = 0.05;
+        public static final double drivekP = 0.30;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
         public static final double drivekS = 0.23; // prev: 0.016

@@ -23,6 +23,8 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.arm.ArmClosedLoop;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.auto.DoNothing;
+import frc.robot.commands.auto.FakeIntake;
+import frc.robot.commands.auto.FakeShoot;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.shooter.SFeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
@@ -62,9 +64,15 @@ public class RobotContainer {
         private SendableChooser<Command> autoChooser;
 
         // commands
+        // private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
+        //                 () -> mDriver.getLeftX(),
+        //                 () -> -mDriver.getRightX(),
+        //                 () -> mDriver.R2().getAsBoolean(),
+        //                 () -> mDriver.L1().getAsBoolean(),
+        //                 () -> mDriver.R1().getAsBoolean());
         private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
                         () -> mDriver.getLeftX(),
-                        () -> mDriver.getRawAxis(2),
+                        () -> -mDriver.getRightX(),
                         () -> mDriver.R2().getAsBoolean(),
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
@@ -110,7 +118,9 @@ public class RobotContainer {
                 // NamedCommands.registerCommand("prepare & shoot speaker",
                 //                 new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.SPEAKER)
                 //                                 .withTimeout(1.2)));
-                NamedCommands.registerCommand("DoNothing", new DoNothing().withTimeout(1.0));
+                NamedCommands.registerCommand("Shoot", new FakeShoot().withTimeout(1.0));
+                NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
+
         }
 
         /**

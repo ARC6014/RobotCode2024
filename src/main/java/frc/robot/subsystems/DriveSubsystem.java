@@ -24,8 +24,12 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -40,7 +44,7 @@ public class DriveSubsystem extends SubsystemBase {
   private static DriveSubsystem mInstance;
 
   private final Trigger brakeModeTrigger;
-  private final StartEndCommand brakeModeCommand;
+  private final Command brakeModeCommand;
 
   public SwerveModuleBase[] mSwerveModules; // collection of modules
   private SwerveModuleState[] states; // collection of modules' states
@@ -55,8 +59,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   private boolean isLocked = false;
 
-  private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
-      DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
+  //private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
+      //DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
 
   private final Timer snapTimer = new Timer();
 
@@ -93,7 +97,7 @@ public class DriveSubsystem extends SubsystemBase {
     snapTimer.reset();
     snapTimer.start();
 
-    snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that the PID controller knows -180 and 180 are
+    //snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that the PID controller knows -180 and 180 are
 
     zeroHeading();
 
@@ -106,16 +110,31 @@ public class DriveSubsystem extends SubsystemBase {
         new Pose2d());
 
     brakeModeTrigger = new Trigger(RobotState::isEnabled);
-    brakeModeCommand = new StartEndCommand(() -> {
-      for (SwerveModuleBase mod : mSwerveModules) {
-        mod.setNeutralMode2Brake(true);
-      }
-    }, () -> {
-      Timer.delay(1.5);
-      for (SwerveModuleBase mod : mSwerveModules) {
-        mod.setNeutralMode2Brake(false);
-      }
-    });
+
+    brakeModeCommand = new SequentialCommandGroup(
+      new InstantCommand(() -> {
+        for (SwerveModuleBase mod : mSwerveModules) {
+          mod.setNeutralMode2Brake(true);
+        }
+      }),
+      new WaitCommand(1.5),
+      new InstantCommand(() -> {
+        for (SwerveModuleBase mod : mSwerveModules) {
+          mod.setNeutralMode2Brake(false);
+        }
+      })
+    );
+    
+    //new StartEndCommand(() -> {
+    //  for (SwerveModuleBase mod : mSwerveModules) {
+    //    mod.setNeutralMode2Brake(true);
+    //  }
+    //}, () -> {
+    //  Timer.delay(1.5);
+    //  for (SwerveModuleBase mod : mSwerveModules) {
+    //    mod.setNeutralMode2Brake(false);
+    //  }
+    //});
   }
 
   public static DriveSubsystem getInstance() {
@@ -248,7 +267,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void resetSnapPID() {
-    snapPIDController.reset(getRotation2d().getRadians());
+    //snapPIDController.reset(getRotation2d().getRadians());
   }
 
   public void zeroHeading() {
