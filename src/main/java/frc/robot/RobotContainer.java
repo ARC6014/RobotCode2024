@@ -25,6 +25,8 @@ import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.auto.DoNothing;
 import frc.robot.commands.auto.FakeIntake;
 import frc.robot.commands.auto.FakeShoot;
+import frc.robot.commands.intake.IntakeOpenLoop;
+import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.leds.Party;
 import frc.robot.commands.shooter.SFeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
@@ -36,6 +38,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.team6014.lib.auto.ARCTrajectory;
 
@@ -55,6 +58,8 @@ public class RobotContainer {
         // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         //private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
+        private final WristSubsystem mWrist = WristSubsystem.getInstance();
+        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -76,6 +81,8 @@ public class RobotContainer {
         //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
         //                () -> mOperator.b().getAsBoolean());
         //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
+        //private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getRightY());
+        //private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
        
         /**
@@ -87,6 +94,8 @@ public class RobotContainer {
                 //mTelescopic.setDefaultCommand(telescopic);
                 //mArm.setDefaultCommand(armOpenLoop);
                 //mShooter.setDefaultCommand(shooterIdle);
+                //mWrist.setDefaultCommand(wristOpenLoop);
+                //mIntake.setDefaultCommand(intakeOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();

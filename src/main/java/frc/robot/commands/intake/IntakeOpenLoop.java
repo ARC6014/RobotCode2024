@@ -13,6 +13,7 @@ public class IntakeOpenLoop extends Command {
     public IntakeOpenLoop(IntakeSubsystem intakeSubsystem, DoubleSupplier outputSupplier) {
         mIntakeSubsystem = intakeSubsystem;
         mOutputSupplier = outputSupplier;
+        addRequirements(mIntakeSubsystem);
     }
 
     @Override
