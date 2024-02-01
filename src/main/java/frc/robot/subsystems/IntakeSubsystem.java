@@ -45,6 +45,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
         mRunningVelocitySetpoint = 0;
         mRunningVelocityControl = new VelocityVoltage(mRunningVelocitySetpoint);
+
+        mRunningOpenLoopOutput = 0;
+        mRunningOpenLoopControl = new DutyCycleOut(0);
     }
 
     public static IntakeSubsystem getInstance() {

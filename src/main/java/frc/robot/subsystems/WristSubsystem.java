@@ -47,6 +47,9 @@ public class WristSubsystem extends SubsystemBase {
         resetToAbsolute();
         mPositionSetpoint = mTalonFX.getPosition().getValueAsDouble();
         mPositionControl = new PositionVoltage(mPositionSetpoint);
+
+        mAngleOpenLoopOutput = 0;
+        mAngleOpenLoopControl = new DutyCycleOut(0);
     }
 
     public static WristSubsystem getInstance() {
