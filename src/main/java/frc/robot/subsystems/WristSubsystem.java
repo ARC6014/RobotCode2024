@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.IntakeConstants;
@@ -29,7 +30,7 @@ public class WristSubsystem extends SubsystemBase {
     private DutyCycleOut mAngleOpenLoopControl;
 
     public WristSubsystem() {
-        mTalonFX = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
+        mTalonFX = new TalonFX(IntakeConstants.angleMotorId, Constants.CANIVORE_CANBUS);
         mPosition = Position.CLOSED;
 
         /* mAngleMotor + PositionControl setup */
@@ -77,17 +78,18 @@ public class WristSubsystem extends SubsystemBase {
 
             default:
                 /* GRAVITY FF */
-                mTalonFX.setControl(mPositionControl.withFeedForward(
-                        IntakeConstants.kG * Math.cos(Conversions.revolutionsToRadians(getBoreEncoderPosition()))));
+                mTalonFX.setControl(mPositionControl);
                 break;
         }
 
-        // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
-        if (getBoreEncoderPosition() < IntakeConstants.stopPosition) {
-            setOpenLoop(0);
-            mTalonFX.stopMotor();
-            resetToAbsolute();
-        }
+        // // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
+        // if (getBoreEncoderPosition() < IntakeConstants.stopPosition) {
+        //     setOpenLoop(0);
+        //     mTalonFX.stopMotor();
+        //     resetToAbsolute();
+        // }
+
+        SmartDashboard.putNumber("Bore Angle", getBoreEncoderPosition());
     }
 
     /* CALCULATIONS */
@@ -100,20 +102,20 @@ public class WristSubsystem extends SubsystemBase {
     }
     
     /* ENCODERS */
-    // theoretically, Falcon position / 72 = Bore encoder position + offset at all
+    // theoretically, Falcon position / 72 = Bore encoder position at all
     // times
 
     public double getFalconPosition() {
         return mTalonFX.getPosition().getValueAsDouble();
     }
 
-    /** Bore encoder reading (with position offset) */
+    /** Bore encoder reading (without position offset) */
     public double getBoreEncoderPosition() {
-        return mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset;
+        return mBoreEncoder.getAbsolutePosition();
     }
 
     public void resetToAbsolute() {
-        double position = drivenToDriver(mBoreEncoder.getAbsolutePosition() + IntakeConstants.positionOffset);
+        double position = drivenToDriver(mBoreEncoder.getAbsolutePosition());
         mTalonFX.setPosition(position);
     }
 
@@ -162,8 +164,7 @@ public class WristSubsystem extends SubsystemBase {
     public void setOpenLoop(double output) {
         mPosition = Position.OPENLOOP;
         mAngleOpenLoopOutput = output;
-        mAngleOpenLoopControl.Output = mAngleOpenLoopOutput;
-        mTalonFX.setControl(mAngleOpenLoopControl);
+        mTalonFX.setControl(mAngleOpenLoopControl.withOutput(output));
     }
 
     public ArrayList<TalonFX> getMotors() {

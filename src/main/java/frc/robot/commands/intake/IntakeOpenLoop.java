@@ -26,6 +26,8 @@ public class IntakeOpenLoop extends Command {
         double output = mOutputSupplier.getAsDouble();
         if (output > 0.04 || output < -0.04) {
             mIntakeSubsystem.setOpenLoop(output);
+        } else {
+            mIntakeSubsystem.setOpenLoop(0);
         }
     }
 

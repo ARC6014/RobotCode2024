@@ -81,7 +81,7 @@ public class RobotContainer {
         //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
         //                () -> mOperator.b().getAsBoolean());
         //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
-        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getRightY());
+        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
        

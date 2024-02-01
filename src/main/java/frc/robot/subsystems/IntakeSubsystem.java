@@ -148,8 +148,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setOpenLoop(double output) {
         mRunning = Running.OPENLOOP;
         mRunningOpenLoopOutput = output;
-        mRunningOpenLoopControl.Output = mRunningOpenLoopOutput;
-        mTalonFX.setControl(mRunningOpenLoopControl);
+        mTalonFX.setControl(mRunningOpenLoopControl.withOutput(output));
     }
 
     public ArrayList<TalonFX> getMotors() {
