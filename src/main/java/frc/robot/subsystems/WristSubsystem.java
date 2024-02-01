@@ -20,7 +20,7 @@ public class WristSubsystem extends SubsystemBase {
 
     private TalonFX mTalonFX;
     private Gearbox mGearbox = IntakeConstants.gearbox;
-    public DutyCycleEncoder mBoreEncoder;
+    public DutyCycleEncoder mBoreEncoder = new DutyCycleEncoder(IntakeConstants.boreEncoderDioId);
 
     private Position mPosition;
     private double mPositionSetpoint;

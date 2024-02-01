@@ -58,8 +58,8 @@ public class RobotContainer {
         // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         //private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        //private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        private final WristSubsystem mWrist = WristSubsystem.getInstance();
+        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         // controllers
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -81,8 +81,8 @@ public class RobotContainer {
         //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
         //                () -> mOperator.b().getAsBoolean());
         //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
-        //private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getRightY());
-        //private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
+        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getRightY());
+        private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
        
         /**
@@ -94,8 +94,8 @@ public class RobotContainer {
                 //mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 //mArm.setDefaultCommand(armOpenLoop);
                 //mShooter.setDefaultCommand(shooterIdle);
-                //mWrist.setDefaultCommand(wristOpenLoop);
-                //mIntake.setDefaultCommand(intakeOpenLoop);
+                mWrist.setDefaultCommand(wristOpenLoop);
+                mIntake.setDefaultCommand(intakeOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -126,6 +126,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
                 NamedCommands.registerCommand("Field-Oriented Turn (-45)", new FieldOrientedTurn(mDrive, -45));
                 NamedCommands.registerCommand("Field-Oriented Turn (45)", new FieldOrientedTurn(mDrive, 45));
+                NamedCommands.registerCommand("Do Nothing", new DoNothing());
 
 
         }
