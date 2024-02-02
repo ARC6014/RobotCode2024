@@ -4,17 +4,16 @@
 ## Docs
 Explanation of codes can be found under [docs](/docs):
 
-- [Arm Subsytem](/docs/ARM.md)
+- [Arm & Telescopic](/docs/ARM.md)
   - Cr: CAN
 - [Intake](/docs/INTAKE.md)
   - Cr: Ouz
 - [Shooter & Feeder](/docs/SH_FR.md)
-  - Cr: Alia % Cr
+  - Cr: Alia & Cr
 
 ### Editing Guidelines:
 - Every subsystem should have Open & Closed Loop commands.
-  - Open Loop should be bound to necessary Operator/Driver joysticks.
-  - Open Loop commands will be created under the [Deneme](/src/main/java/frc/robot/commands/deneme)
+- Open Loop should be bound to necessary Operator/Driver joysticks.
 - Subsystem-specific constants should be capsulated in respective subsystem constant classes.
 - Naming Conventions
   - Fields in form of `mName`
@@ -26,5 +25,3 @@ Explanation of codes can be found under [docs](/docs):
 ### Formatting code:
 - Explanatory comments labeled `FIX!` and `TODO:` are a must.
 - Every commit should include necessary changes done.
-
-## Lets have some fun 😏
