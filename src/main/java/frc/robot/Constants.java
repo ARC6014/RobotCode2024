@@ -31,25 +31,24 @@ import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final String CANIVORE_CANBUS = "CANivore"; 
+    public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    public static final int Pigeon2CanID = 60; 
+    public static final int Pigeon2CanID = 60;
 
-    public static final double wheelBaseLength = 0.56665; 
+    public static final double wheelBaseLength = 0.56665;
     private static final double wheelBaseWidth = 0.56665;
-    
+
     public static final double drivebaseRadius = Math.hypot(wheelBaseWidth / 2.0, wheelBaseLength / 2.0);
     public static final double maxModuleSpeed = 4.0;
 
     // TODO: Tune PID
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-        new PIDConstants(1.0, 0, 0), 
-        new PIDConstants(5, 0, 0), 
-        maxModuleSpeed, 
-        drivebaseRadius, 
-        new ReplanningConfig(), 
-        0.02
-    );
+            new PIDConstants(1.0, 0, 0),
+            new PIDConstants(5, 0, 0),
+            maxModuleSpeed,
+            drivebaseRadius,
+            new ReplanningConfig(),
+            0.02);
 
     // Module coordinates according to the chassis
     public static final Translation2d swerveModuleLocations[] = {
@@ -90,15 +89,15 @@ public final class Constants {
         public static final NeutralMode angleMotorNeutralMode = NeutralMode.Coast;
         public static final NeutralMode driveMotorNeutralMode = NeutralMode.Brake;
 
-        public static final double openLoopRamp = 0; 
+        public static final double openLoopRamp = 0;
         public static final double closedLoopRamp = 0;
 
-        public static final double drivePowerScalar = 0.55; 
+        public static final double drivePowerScalar = 0.55;
         public static final double driveSlewRateLimitX = 7;
         public static final double driveSlewRateLimitY = 7;
         public static final double driveSlewRateLimitRot = 12;
 
-        public static final double angleGearboxRatio = 22.93; 
+        public static final double angleGearboxRatio = 22.93;
         public static final double driveGearboxRatio = 6.59340659;
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
@@ -107,8 +106,8 @@ public final class Constants {
         public static final double drivekI = 0;
         public static final double drivekD = 0;
         public static final double drivekS = 0.23; // prev: 0.016
-        public static final double drivekV = 0.19;
-        public static final double drivekA = 0.0;
+        public static final double drivekV = 2.2;
+        public static final double drivekA = 0.25;
 
         public static final double anglekP = 0.27;
         public static final double anglekI = 0;
@@ -120,7 +119,7 @@ public final class Constants {
         public static final double snapkD = 0.01;
 
         /** will be used for FieldOrientedTurn */
-        public static final double kRotControllerP = 0.13; 
+        public static final double kRotControllerP = 0.13;
         public static final double kRotControllerD = 0.28;
         public static final double kRotControllerMaxVel = 5;
         public static final double kRotControllerTolerance = 0.7;
@@ -129,14 +128,16 @@ public final class Constants {
 
         public static final double maxTransSpeedMetersPerSecond = 3.3; // translation speed (x/y)
         public static final double maxAngularSpeedRadPerSec = 2 * Math.PI; // angular speed (omega)
-        public static final double maxAngularAccelRadPerSecSq = Math.pow(maxAngularSpeedRadPerSec, 2); // angular acceleration
+        public static final double maxAngularAccelRadPerSecSq = Math.pow(maxAngularSpeedRadPerSec, 2); // angular
+                                                                                                       // acceleration
 
         public static final TrapezoidProfile.Constraints rotPIDconstraints = new TrapezoidProfile.Constraints(
                 maxAngularSpeedRadPerSec, maxAngularAccelRadPerSecSq);
 
         // added these two for LLalignment not sure if it makes sense
-        private static final double maxTransAccelMetersPerSecSq = 2; 
-        public static final TrapezoidProfile.Constraints transPIDconstraints = new TrapezoidProfile.Constraints(maxTransSpeedMetersPerSecond, maxTransAccelMetersPerSecSq);
+        private static final double maxTransAccelMetersPerSecSq = 2;
+        public static final TrapezoidProfile.Constraints transPIDconstraints = new TrapezoidProfile.Constraints(
+                maxTransSpeedMetersPerSecond, maxTransAccelMetersPerSecSq);
 
         public static SwerveDriveConstants swerveConstants = SwerveDriveConstants.generateSwerveConstants(
                 angleContinuousCurrentLimit,
@@ -176,11 +177,11 @@ public final class Constants {
         public static final int angleMotorID = 52;
         public static final int driveMotorID = 53;
         public static final int cancoderID = 04;
-        public static final double angleOffset = -73.47; 
+        public static final double angleOffset = -73.47;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
-  
+
     public static final class ArmConstants {
 
         public static final int motorID = 20; // TODO: Config
@@ -200,7 +201,6 @@ public final class Constants {
         public static final double kS = 0.32; // TODO: Config
         public static final double kV = 0; // TODO: Config
 
-
         /** unit: degrees */
         public static final double resetAngle = 0; // TODO: Config
 
@@ -212,7 +212,7 @@ public final class Constants {
         public static final double ZERO = 90;
         public static final double INTAKE = 75;
         public static final double SPEAKER = 56;
-        public static final double AMP = -45; // Double check negative  
+        public static final double AMP = -45; // Double check negative
     }
 
     public static final class IntakeConstants {
@@ -264,10 +264,10 @@ public final class Constants {
 
     public static final class ShooterConstants {
 
-		public static final int MASTER_MOTOR_ID = 30;
+        public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
-		public static final double kP = 0; // TODO: Config
+        public static final double kP = 0; // TODO: Config
         public static final double maxRPM = 0; // TODO: Config
         public static final double kMinOutput = 0; // TODO: Config
         public static final double kMaxOutput = 0; // TODO: Config
@@ -275,10 +275,10 @@ public final class Constants {
         public static final double kIz = 0; // TODO: Config
         public static final double kD = 0; // TODO: Config
         public static final double kI = 0; // TODO: Config
-        
+
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
-		public static final IdleMode MASTER_MODE = IdleMode.kBrake;
-		public static final int BEAM_BREAK_ID = 0; // TODO: Config
+        public static final IdleMode MASTER_MODE = IdleMode.kBrake;
+        public static final int BEAM_BREAK_ID = 0; // TODO: Config
         public static final double AMP_SHOOT_RPM = 0; // TODO: Config
         public static final double SPEAKER_SHOOT_RPM = 0; // TODO: Config
     }
@@ -300,7 +300,6 @@ public final class Constants {
         public static final double TELESCOPIC_RESET = 0;
         public static final double TELESCOPIC_TOLERANCE = 1;
 
-
     }
 
     public static final class LEDConstants {
@@ -308,9 +307,9 @@ public final class Constants {
         public static final int CANdleID = 43; // TODO: config
     }
 
-    public class LLConstants{
+    public class LLConstants {
         public static String name = "limelight";
         public static double height = 0;
         public static double Pitch = 0; // vertical angle
-      }
+    }
 }
