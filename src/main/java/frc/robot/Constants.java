@@ -184,16 +184,20 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final int motorID = 20; // TODO: Config
-        public static final int boreChannel = 0; // TODO: Config
-        public static final Gearbox gearRatio = new Gearbox(119.5 / 1); // TODO: Config
+        public static final int motorID = 20; 
+        public static final int boreChannel = 1;
+
+        public static final Gearbox gearRatio = new Gearbox(119.5 / 1);
         public static final boolean motorInverted = false; // TODO: Config
+
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
-        public static final double armCruiseVelocity = 50; // Mind units!
-        public static final double armAcceleration = 70; // Mind units!
+        /** unit: rev/s */
+        public static final double armCruiseVelocity = 50; 
+        /** unit: rev/s^2 */
+        public static final double armAcceleration = 70; 
 
-        public static final double rampRate = 0.09;
+        public static final double rampRate = 0.09; // TODO: Config
         public static final double kP = 0.0; // TODO: Config
         public static final double kD = 0.0; // TODO: Config
         public static final double kI = 0; // TODO: Config
@@ -201,24 +205,30 @@ public final class Constants {
         public static final double kS = 0.32; // TODO: Config
         public static final double kV = 0; // TODO: Config
 
-        /** unit: degrees */
+        /** unit: rotations */
         public static final double resetAngle = 0; // TODO: Config
-
+        
+        /** unit: rotations */   
         public static final double positionOffset = 0; // TODO: Config starting position offset of bore
-        public static final double angleTolerance = 1.5;
+
+        /** unit: degrees */
+        public static final double angleTolerance = 1.5; // TODO: Config
 
         /* Arm angles for setpoints (the angle arm makes with the horizontal) */
         /** unit: degrees */
         public static final double ZERO = 90;
+        /** unit: degrees */
         public static final double INTAKE = 75;
+        /** unit: degrees */
         public static final double SPEAKER = 56;
+        /** unit: degrees */
         public static final double AMP = -45; // Double check negative
     }
 
     public static final class IntakeConstants {
 
         public static final int runningMotorId = 10;
-        public static final int beamBreakSensorDioId = 1;
+        public static final int beamBreakSensorDioId = 2;
 
         /** unit: rps */
         public static final double forwardVelocity = 0;

@@ -119,11 +119,8 @@ public class Conversions {
         return radians / (2 * Math.PI);
     }
 
-
-
     public static double convertAngleByAlliance(Alliance alliance, double angle) {
         angle = alliance == Alliance.Red ? angle + 180 : angle;
-
         if (angle >= 360) {
             angle -= 360;
         } else if (angle <= -360) {
