@@ -216,33 +216,17 @@ public final class Constants {
     }
 
     public static final class IntakeConstants {
-        // TODO: determine actual ids
+
         public static final int runningMotorId = 10;
-        public static final int angleMotorId = 11;
+        public static final int beamBreakSensorDioId = 1;
 
-        public static final int boreEncoderDioId = 0;
-        public static final int beamBreakSensorDioId = 0;
-
-        public static final double positionOffset = 0;
-
-        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
-        public static final double openPosition = 0;
-        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
-        public static final double closedPosition = 0;
-
+        /** unit: rps */
         public static final double forwardVelocity = 0;
+        /** unit: rps */
         public static final double reverseVelocity = 0;
 
-        // TODO: equality tolerances
-        public static final double positionEqualityTolerance = 0;
+        // TODO: tolerance
         public static final double velocityEqualityTolerance = 0;
-
-        /** unit: V/rev */
-        public static final double ANGLE_kP = 0;
-        /** unit: V/(rev * s) */
-        public static final double ANGLE_kI = 0;
-        /** unit: Vs/rev */
-        public static final double ANGLE_kD = 0;
 
         /** unit: V/(rev/s) */
         public static final double RUN_kP = 0;
@@ -251,34 +235,72 @@ public final class Constants {
         /** unit: Vs/(rev/s) */
         public static final double RUN_kD = 0;
 
-        // TODO: voltage cutoff
-        public static final double maxVoltageCutoff = 0;
+              
+    }
 
-        public static final double kG = 0;
-
-        /** unit: revolutions */
-        public static final double stopPosition = 0;
+    public static final class WristConstants {
+        public static final int angleMotorId = 11;
+        public static final int boreEncoderDioId = 0;
 
         public static final Gearbox gearbox = new Gearbox(72, 1);
+
+        /** REV Bore Encoder position offset, unit: revolutions */
+        public static final double positionOffset = 0;
+        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
+        public static final double openPosition = 0;
+        /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
+        public static final double closedPosition = 0;
+        /** unit: revolutions */
+        public static final double stopPosition = 0;  
+
+        // TODO: tolerance
+        public static final double positionEqualityTolerance = 0;
+
+        /** unit: V/rev */
+        public static final double ANGLE_kP = 0;
+        /** unit: V/(rev * s) */
+        public static final double ANGLE_kI = 0;
+        /** unit: Vs/rev */
+        public static final double ANGLE_kD = 0;
+
+        // TODO: voltage cutoff
+        public static final double maxVoltageCutoff = 0;
+        // TODO: kG
+        public static final double kG = 0;
+
     }
 
     public static final class ShooterConstants {
 
+        /* Motors & Sensors */
         public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
-        public static final double kP = 0; // TODO: Config
-        public static final double maxRPM = 0; // TODO: Config
+        public static final int BEAM_BREAK_ID = 3; // TODO: Config
+
+
         public static final double kMinOutput = 0; // TODO: Config
         public static final double kMaxOutput = 0; // TODO: Config
+        
+        /* PID & FF */
+        public static final double kP = 0; // TODO: Config
         public static final double kFF = 0; // TODO: Config
         public static final double kIz = 0; // TODO: Config
         public static final double kD = 0; // TODO: Config
         public static final double kI = 0; // TODO: Config
 
+        /* Neutral Modes */
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
         public static final IdleMode MASTER_MODE = IdleMode.kBrake;
-        public static final int BEAM_BREAK_ID = 0; // TODO: Config
+
+        /* Inverts */
+        // TODO: inverts
+        public static final boolean masterInverted = true;
+        public static final boolean slaveInverted = false;
+        public static final boolean feederInverted = false; 
+
+        /* RPMs */
+        public static final double maxRPM = 0; // TODO: Config
         public static final double AMP_SHOOT_RPM = 0; // TODO: Config
         public static final double SPEAKER_SHOOT_RPM = 0; // TODO: Config
     }
