@@ -41,6 +41,7 @@ import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.team6014.lib.auto.ARCTrajectory;
+import io.github.oblarg.oblog.Loggable;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -51,13 +52,14 @@ import frc.team6014.lib.auto.ARCTrajectory;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        //private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        // private final TelescopicSubsystem mTelescopic =
+        // TelescopicSubsystem.getInstance();
         // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
-        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        //private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
+        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
@@ -77,23 +79,25 @@ public class RobotContainer {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        //private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
-        //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
-        //                () -> mOperator.b().getAsBoolean());
-        //private final ShooterCommand shooterIdle = new ShooterCommand().withOpenLoop(0.1);
+        // private final TelescopicOpenLoop telescopicOpenLoop = new
+        // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
+        // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
+        // mOperator.getLeftY(),
+        // () -> mOperator.b().getAsBoolean());
+        // private final ShooterCommand shooterIdle = new
+        // ShooterCommand().withOpenLoop(0.1);
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
-       
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
-                //mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                //mArm.setDefaultCommand(armOpenLoop);
-                //mShooter.setDefaultCommand(shooterIdle);
+                // mTelescopic.setDefaultCommand(telescopicOpenLoop);
+                // mArm.setDefaultCommand(armOpenLoop);
+                // mShooter.setDefaultCommand(shooterIdle);
                 mWrist.setDefaultCommand(wristOpenLoop);
                 mIntake.setDefaultCommand(intakeOpenLoop);
 
@@ -103,7 +107,6 @@ public class RobotContainer {
 
                 configureNamedCommands();
                 configureButtonBindings();
-                
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
@@ -116,18 +119,19 @@ public class RobotContainer {
         private void configureNamedCommands() {
 
                 // NamedCommands.registerCommand("prepare & shoot amp",
-                //                 new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.AMP)
-                //                                 .withTimeout(1.2)));
+                // new SFeederCommand().andThen(new
+                // ShooterCommand().withShooterState(ShooterState.AMP)
+                // .withTimeout(1.2)));
 
                 // NamedCommands.registerCommand("prepare & shoot speaker",
-                //                 new SFeederCommand().andThen(new ShooterCommand().withShooterState(ShooterState.SPEAKER)
-                //                                 .withTimeout(1.2)));
+                // new SFeederCommand().andThen(new
+                // ShooterCommand().withShooterState(ShooterState.SPEAKER)
+                // .withTimeout(1.2)));
                 NamedCommands.registerCommand("Shoot", new FakeShoot().withTimeout(1.0));
                 NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
                 NamedCommands.registerCommand("Field-Oriented Turn (-45)", new FieldOrientedTurn(mDrive, -45));
                 NamedCommands.registerCommand("Field-Oriented Turn (45)", new FieldOrientedTurn(mDrive, 45));
                 NamedCommands.registerCommand("Do Nothing", new DoNothing());
-
 
         }
 
@@ -141,28 +145,30 @@ public class RobotContainer {
          */
         private void configureButtonBindings() {
 
-                //mDriver.circle().onTrue(new AllignWithLL(1));
+                // mDriver.circle().onTrue(new AllignWithLL(1));
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                //mOperator.x().onTrue(new Party());
+                // mOperator.x().onTrue(new Party());
 
                 // ---------------------------- Arm
                 // Closed Loop
-                //mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
+                // mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
 
                 // ---------------------------- Feeder
-                //mOperator.y().onTrue(new SFeederCommand());
+                // mOperator.y().onTrue(new SFeederCommand());
                 // Feeder arbitrary
                 // new SFeederCommand(mOperator.getLeftX());
 
                 // ---------------------------- Shooter
                 // Closed Loop
-                //mOperator.leftBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
-                //mOperator.rightBumper().onTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
-                //mOperator.leftTrigger().onTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                // mOperator.leftBumper().onTrue(new
+                // ShooterCommand().withShooterState(ShooterState.AMP));
+                // mOperator.rightBumper().onTrue(new
+                // ShooterCommand().withShooterState(ShooterState.SPEAKER));
+                // mOperator.leftTrigger().onTrue(new
+                // ShooterCommand().withShooterState(ShooterState.CLOSED));
                 // shooter arbitrary
                 // new ShooterCommand().withOpenLoop(mOperator.getLeftX());
-
 
         }
 

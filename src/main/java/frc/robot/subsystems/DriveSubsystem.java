@@ -59,7 +59,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   public SwerveDriveOdometry mOdometry;
 
-  @Log()
+  @Log
   private double[] velocityDesired = new double[4];
   private double[] velocityCurrent = new double[4];
   private double[] angleDesired = new double[4];
