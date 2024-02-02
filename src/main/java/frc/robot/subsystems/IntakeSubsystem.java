@@ -22,8 +22,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /* RUNNING/INTAKING MOTOR CONTROL */
     private Running mRunning;
+    /** unit: rps */
     private double mRunningVelocitySetpoint;
     private VelocityVoltage mRunningVelocityControl;
+
     private double mRunningOpenLoopOutput;
     private DutyCycleOut mRunningOpenLoopControl;
 
@@ -83,6 +85,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
             case NEUTRAL:
                 mTalonFX.stopMotor();
+                break;
 
             default:
                 mTalonFX.setControl(mRunningVelocityControl);
@@ -141,8 +144,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setOverride(double velocity) {
         mRunning = Running.OVERRIDE;
         mRunningVelocitySetpoint = velocity;
-        mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
-        mTalonFX.setControl(mRunningVelocityControl);
+        mTalonFX.setControl(mRunningVelocityControl.withVelocity(velocity));
     }
 
     public void setOpenLoop(double output) {

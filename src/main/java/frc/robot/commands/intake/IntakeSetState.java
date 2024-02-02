@@ -30,6 +30,7 @@ public class IntakeSetState extends Command {
 
     @Override
     public boolean isFinished() {
+        // TODO: Possibly remove this as we want the intake to spin as long as we press its
         return mIntakeSubsystem.isAtSetpoint();
     }
 }
