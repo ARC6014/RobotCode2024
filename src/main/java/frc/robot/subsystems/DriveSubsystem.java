@@ -35,8 +35,10 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.team6014.lib.drivers.SwerveModuleBase;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements Logged {
   // Swerve numbering:
   // 0 1
   // 2 3
@@ -52,7 +54,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   public SwerveDriveOdometry mOdometry;
 
+  @Log
   private double[] velocityDesired = new double[4];
+  @Log
+  private double[] velocityRealised = new double[4];
   private double[] angleDesired = new double[4];
 
   WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
@@ -190,6 +195,7 @@ public class DriveSubsystem extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       mSwerveModules[i].setDesiredState(states[i], true);
       velocityDesired[i] = states[i].speedMetersPerSecond;
+      velocityRealised[i] = mSwerveModules[i].getDriveMotor().getSelectedSensorVelocity();
       angleDesired[i] = states[i].angle.getDegrees();
     }
 

@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,6 +13,9 @@ import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.CANdleLed.AnimationTypes;
 import frc.shuffleboard.ShuffleBoardInteractions;
+
+import monologue.Monologue;
+import monologue.Logged;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,7 +26,7 @@ import frc.shuffleboard.ShuffleBoardInteractions;
  * build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot implements Logged {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
@@ -40,6 +44,9 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    boolean fileOnly = false;
+    boolean lazyLogging = false;
+    Monologue.setupMonologue(this, "Robot", fileOnly, lazyLogging);
   }
 
   /**
@@ -65,7 +72,10 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().run();
     mShuffleboard.update();
-
+    
+    // setFileOnly is used to shut off NetworkTables broadcasting for most logging calls.
+     // Basing this condition on the connected state of the FMS is a suggestion only.
+    Monologue.updateAll();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
