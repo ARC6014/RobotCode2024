@@ -18,7 +18,7 @@ public class ArmOpenLoop extends Command {
   private final BooleanSupplier setpointButton;
   private final double targetAngle = ArmConstants.INTAKE; // TODO: CONFIG
 
-  public ArmOpenLoop(ArmSubsystem arm, DoubleSupplier output, BooleanSupplier button ) {
+  public ArmOpenLoop(ArmSubsystem arm, DoubleSupplier output, BooleanSupplier button) {
     mArm = arm;
     joystick = output;
     setpointButton = button;
@@ -38,6 +38,9 @@ public class ArmOpenLoop extends Command {
     }
     else if(setpointButton.getAsBoolean()) {
       mArm.setArmPosition(targetAngle);
+    }
+    else {
+      mArm.setArmPercentOutput(0.0);
     }
   }
 

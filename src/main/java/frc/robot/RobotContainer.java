@@ -87,7 +87,7 @@ public class RobotContainer implements Loggable {
         // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
         // mOperator.getLeftY(),
         // () -> mOperator.b().getAsBoolean());
-        // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLefty());
+        // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
         
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
