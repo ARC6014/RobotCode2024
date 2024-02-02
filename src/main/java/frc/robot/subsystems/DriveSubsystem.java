@@ -137,7 +137,7 @@ public class DriveSubsystem extends SubsystemBase {
             mod.setNeutralMode2Brake(false);
           }
         }));
-
+    logInit();
     // new StartEndCommand(() -> {
     // for (SwerveModuleBase mod : mSwerveModules) {
     // mod.setNeutralMode2Brake(true);
@@ -180,8 +180,12 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void log() {
-    velocityDesiredLog.append(velocityDesired);
-    velocityActualLog.append(velocityCurrent);
+    if (velocityDesired != null) {
+      velocityDesiredLog.append(velocityDesired);
+    }
+    if (velocityCurrent != null) {
+      velocityActualLog.append(velocityCurrent);
+    }
   }
 
   /*
