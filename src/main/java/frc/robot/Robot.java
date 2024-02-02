@@ -68,13 +68,12 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().run();
     mShuffleboard.update();
-
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    //CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
+    // CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
 
   }
 
@@ -94,7 +93,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      //Timer.delay(0.5);
+      // Timer.delay(0.5);
       m_autonomousCommand.schedule();
     }
   }
