@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,6 +41,8 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    boolean fileOnly = false;
+    boolean lazyLogging = false;
   }
 
   /**
@@ -66,12 +69,15 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
     mShuffleboard.update();
 
+    // setFileOnly is used to shut off NetworkTables broadcasting for most logging
+    // calls.
+    // Basing this condition on the connected state of the FMS is a suggestion only.
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    //CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
+    // CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
 
   }
 
@@ -91,7 +97,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      //Timer.delay(0.5);
+      // Timer.delay(0.5);
       m_autonomousCommand.schedule();
     }
   }

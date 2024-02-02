@@ -53,14 +53,17 @@ public class DriveSubsystem extends SubsystemBase {
   public SwerveDriveOdometry mOdometry;
 
   private double[] velocityDesired = new double[4];
+  private double[] velocityRealised = new double[4];
   private double[] angleDesired = new double[4];
 
   WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
 
   private boolean isLocked = false;
 
-  //private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
-      //DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
+  // private ProfiledPIDController snapPIDController = new
+  // ProfiledPIDController(DriveConstants.snapkP,
+  // DriveConstants.snapkI, DriveConstants.snapkD,
+  // DriveConstants.rotPIDconstraints);
 
   private final Timer snapTimer = new Timer();
 
@@ -97,7 +100,8 @@ public class DriveSubsystem extends SubsystemBase {
     snapTimer.reset();
     snapTimer.start();
 
-    //snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that the PID controller knows -180 and 180 are
+    // snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that
+    // the PID controller knows -180 and 180 are
 
     zeroHeading();
 
@@ -112,29 +116,28 @@ public class DriveSubsystem extends SubsystemBase {
     brakeModeTrigger = new Trigger(RobotState::isEnabled);
 
     brakeModeCommand = new SequentialCommandGroup(
-      new InstantCommand(() -> {
-        for (SwerveModuleBase mod : mSwerveModules) {
-          mod.setNeutralMode2Brake(true);
-        }
-      }),
-      new WaitCommand(1.5),
-      new InstantCommand(() -> {
-        for (SwerveModuleBase mod : mSwerveModules) {
-          mod.setNeutralMode2Brake(false);
-        }
-      })
-    );
-    
-    //new StartEndCommand(() -> {
-    //  for (SwerveModuleBase mod : mSwerveModules) {
-    //    mod.setNeutralMode2Brake(true);
-    //  }
-    //}, () -> {
-    //  Timer.delay(1.5);
-    //  for (SwerveModuleBase mod : mSwerveModules) {
-    //    mod.setNeutralMode2Brake(false);
-    //  }
-    //});
+        new InstantCommand(() -> {
+          for (SwerveModuleBase mod : mSwerveModules) {
+            mod.setNeutralMode2Brake(true);
+          }
+        }),
+        new WaitCommand(1.5),
+        new InstantCommand(() -> {
+          for (SwerveModuleBase mod : mSwerveModules) {
+            mod.setNeutralMode2Brake(false);
+          }
+        }));
+
+    // new StartEndCommand(() -> {
+    // for (SwerveModuleBase mod : mSwerveModules) {
+    // mod.setNeutralMode2Brake(true);
+    // }
+    // }, () -> {
+    // Timer.delay(1.5);
+    // for (SwerveModuleBase mod : mSwerveModules) {
+    // mod.setNeutralMode2Brake(false);
+    // }
+    // });
   }
 
   public static DriveSubsystem getInstance() {
@@ -190,6 +193,7 @@ public class DriveSubsystem extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       mSwerveModules[i].setDesiredState(states[i], true);
       velocityDesired[i] = states[i].speedMetersPerSecond;
+      velocityRealised[i] = mSwerveModules[i].getDriveMotor().getSelectedSensorVelocity();
       angleDesired[i] = states[i].angle.getDegrees();
     }
 
@@ -267,12 +271,12 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void resetSnapPID() {
-    //snapPIDController.reset(getRotation2d().getRadians());
+    // snapPIDController.reset(getRotation2d().getRadians());
   }
 
   public void zeroHeading() {
     mGyro.reset();
-    //mGyro.setYaw(0);
+    // mGyro.setYaw(0);
   }
 
   public void stop() {
@@ -314,9 +318,9 @@ public class DriveSubsystem extends SubsystemBase {
   // Returns gyro angle relative to alliance station
   public Rotation2d getDriverCentricRotation2d() {
     return DriverStation.getAlliance().get() == Alliance.Red
-        ? Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle() , 360.0))
+        ? Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle(), 360.0))
             .times(DriveConstants.invertGyro ? -1 : 1)
-        : Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle()+180, 360.0))
+        : Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle() + 180, 360.0))
             .times(DriveConstants.invertGyro ? -1 : 1);
   }
 
