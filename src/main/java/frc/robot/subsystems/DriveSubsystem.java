@@ -59,7 +59,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   public SwerveDriveOdometry mOdometry;
 
-  @Log(name = "Velocity Desired")
+  @Log()
   private double[] velocityDesired = new double[4];
   private double[] velocityCurrent = new double[4];
   private double[] angleDesired = new double[4];
@@ -226,7 +226,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       velocityCurrent[i] = mSwerveModules[i].getVelocityMPS();
       angleDesired[i] = states[i].angle.getDegrees();
     }
-    
+
     log();
   }
 

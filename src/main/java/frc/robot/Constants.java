@@ -150,7 +150,7 @@ public final class Constants {
         public static final int angleMotorID = 50;
         public static final int driveMotorID = 51;
         public static final int cancoderID = 01;
-        public static final double angleOffset = -84.37;
+        public static final double angleOffset = -84.37 + 0.2;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -168,7 +168,7 @@ public final class Constants {
         public static final int angleMotorID = 54;
         public static final int driveMotorID = 55;
         public static final int cancoderID = 03;
-        public static final double angleOffset = -136.93;
+        public static final double angleOffset = -136.93 - 2;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
@@ -177,7 +177,7 @@ public final class Constants {
         public static final int angleMotorID = 52;
         public static final int driveMotorID = 53;
         public static final int cancoderID = 04;
-        public static final double angleOffset = -73.47;
+        public static final double angleOffset = -73.47 - 0.26;
         public static final double modulekS = DriveConstants.drivekS;
         public static final double modulekV = DriveConstants.drivekV;
     }
