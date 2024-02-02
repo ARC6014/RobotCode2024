@@ -35,8 +35,10 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.team6014.lib.drivers.SwerveModuleBase;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Log;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements Loggable {
   // Swerve numbering:
   // 0 1
   // 2 3
@@ -52,6 +54,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   public SwerveDriveOdometry mOdometry;
 
+  @Log(name = "Velocity Desired")
   private double[] velocityDesired = new double[4];
   private double[] velocityRealised = new double[4];
   private double[] angleDesired = new double[4];

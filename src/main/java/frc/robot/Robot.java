@@ -13,6 +13,7 @@ import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.CANdleLed.AnimationTypes;
 import frc.shuffleboard.ShuffleBoardInteractions;
+import io.github.oblarg.oblog.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -43,6 +44,9 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     boolean fileOnly = false;
     boolean lazyLogging = false;
+
+    Logger.configureLoggingAndConfig(this, false);
+
   }
 
   /**
@@ -65,6 +69,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods. This must be called from the
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
+    Logger.updateEntries();
 
     CommandScheduler.getInstance().run();
     mShuffleboard.update();
