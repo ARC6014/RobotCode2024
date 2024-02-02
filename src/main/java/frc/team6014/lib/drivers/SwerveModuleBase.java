@@ -121,6 +121,10 @@ public class SwerveModuleBase {
 
     }
 
+    public double getVelocityMPS() {
+        return Conversions.falconToMPS(getDriveMotor().getSelectedSensorVelocity(), mWheelCircumference, driveGearbox.getRatio());
+    }
+
     public void setNeutralMode2Brake(boolean brake) {
         mDriveMotor.setNeutralMode(brake ? NeutralMode.Brake : NeutralMode.Coast);
     }
