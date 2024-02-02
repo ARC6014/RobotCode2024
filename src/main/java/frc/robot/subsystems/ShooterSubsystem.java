@@ -4,21 +4,26 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
 
+  /* MOTORS */
   private CANSparkMax m_master = new CANSparkMax(ShooterConstants.MASTER_MOTOR_ID, MotorType.kBrushless);
-  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
-  private SparkPIDController m_masterPIDController;
   private CANSparkMax m_slave = new CANSparkMax(ShooterConstants.SLAVE_MOTOR_ID, MotorType.kBrushless);
   private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
+
+  /* SENSORS */
+  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+
+  private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
 
   private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
@@ -79,9 +84,18 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slavePIDController.setIZone(kIz);
     m_slavePIDController.setFF(kFF);
     m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);
+
+    m_slave.follow(m_master, true);
+
+    //m_slave.setInverted(ShooterConstants.slaveInverted);
+    //m_master.setInverted(ShooterConstants.masterInverted);
+    m_feeder.setInverted(ShooterConstants.feederInverted);
+
+
     // save settings to flash
     m_master.burnFlash();
     m_slave.burnFlash();
+    m_feeder.burnFlash();
   }
 
   @Override
@@ -94,7 +108,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Setters
-
   public void setShooterState(ShooterState newState) {
     m_shootState = newState;
   }
@@ -112,14 +125,10 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.set(percentOutput);
   }
 
+  /** unit: rot per minute */
   public void setShooterMotorsRPM(double rpm) {
     m_masterPIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
     m_slavePIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
-  }
-
-  public void invertMotors(boolean isInverted) {
-    m_master.setInverted(isInverted);
-    m_slave.setInverted(isInverted);
   }
 
   public void stopShMotors() {
@@ -136,6 +145,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_feeder.get();
   }
 
+  /** returns beam break reading */
   public boolean getSensorState() {
     return m_beamBreaker.get();
   }
