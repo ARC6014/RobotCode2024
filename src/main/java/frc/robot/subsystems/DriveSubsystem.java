@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,9 +35,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.team6014.lib.drivers.SwerveModuleBase;
+import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
 import io.github.oblarg.oblog.Loggable;
 import io.github.oblarg.oblog.annotations.Log;
+import edu.wpi.first.util.datalog.DataLog;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
 
 public class DriveSubsystem extends SubsystemBase implements Loggable {
   // Swerve numbering:
@@ -56,7 +61,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   @Log(name = "Velocity Desired")
   private double[] velocityDesired = new double[4];
-  private double[] velocityRealised = new double[4];
+  private double[] velocityCurrent = new double[4];
   private double[] angleDesired = new double[4];
 
   WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
@@ -71,6 +76,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private final Timer snapTimer = new Timer();
 
   public SwerveDrivePoseEstimator poseEstimator;
+
+  // LOGS
+
+  private DoubleArrayLogEntry velocityDesiredLog;
+  private DoubleArrayLogEntry velocityActualLog;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -130,7 +140,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             mod.setNeutralMode2Brake(false);
           }
         }));
-
+    logInit();
     // new StartEndCommand(() -> {
     // for (SwerveModuleBase mod : mSwerveModules) {
     // mod.setNeutralMode2Brake(true);
@@ -162,6 +172,23 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     SmartDashboard.putNumber("Voltage", getDriveMotors().get(0).getMotorOutputVoltage());
     SmartDashboard.putNumber("Current", getDriveMotors().get(0).getOutputCurrent());
 
+    log();
+
+  }
+
+  public void logInit() {
+    DataLog log = DataLogManager.getLog();
+    velocityDesiredLog = new DoubleArrayLogEntry(log, "/DriveSubsystem/velocityDesired");
+    velocityActualLog = new DoubleArrayLogEntry(log, "/DriveSubsystem/velocityActual");
+  }
+
+  public void log() {
+    if (velocityDesired != null) {
+      velocityDesiredLog.append(velocityDesired);
+    }
+    if (velocityCurrent != null) {
+      velocityActualLog.append(velocityCurrent);
+    }
   }
 
   /*
@@ -196,10 +223,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     for (int i = 0; i < 4; i++) {
       mSwerveModules[i].setDesiredState(states[i], true);
       velocityDesired[i] = states[i].speedMetersPerSecond;
-      velocityRealised[i] = mSwerveModules[i].getDriveMotor().getSelectedSensorVelocity();
+      velocityCurrent[i] = mSwerveModules[i].getVelocityMPS();
       angleDesired[i] = states[i].angle.getDegrees();
     }
-
+    
+    log();
   }
 
   /*
