@@ -63,8 +63,8 @@ public class RobotContainer implements Loggable {
         // TelescopicSubsystem.getInstance();
         // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        // private final WristSubsystem mWrist = WristSubsystem.getInstance();
+        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         public static Orchestra mOrchestra = new Orchestra();
 
         /* CONTROLLERS */
@@ -91,8 +91,10 @@ public class RobotContainer implements Loggable {
         // private final ShooterCommand shooterOpenLoop = new
         // ShooterCommand().withOpenLoop(mOperator.getLeftY());
 
-        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
-        private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
+        // private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () ->
+        // mOperator.getLeftX());
+        // private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, ()
+        // -> mOperator.getRightX());
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -103,8 +105,8 @@ public class RobotContainer implements Loggable {
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 // mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
-                mWrist.setDefaultCommand(wristOpenLoop);
-                mIntake.setDefaultCommand(intakeOpenLoop);
+                // mWrist.setDefaultCommand(wristOpenLoop);
+                // mIntake.setDefaultCommand(intakeOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -152,13 +154,13 @@ public class RobotContainer implements Loggable {
 
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                /* INTAKE */
-                mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                // /* INTAKE */
+                // mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                // mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
 
-                /* WRIST */
-                mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
-                mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
+                // /* WRIST */
+                // mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
+                // mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
 
                 // /* ARM */
                 // mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
