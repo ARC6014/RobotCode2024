@@ -153,7 +153,7 @@ public class ArmSubsystem extends SubsystemBase {
   // theoretically, Falcon position / 119.5 = Bore encoder position + offset at
   // all times
   public void resetToAbsolute() {
-    var position=getArmAngleBore()*armGearbox.getRatio();
+    var position = getArmAngleBore() * armGearbox.getRatio();
     armMotor.setPosition(position);
   }
 
@@ -191,9 +191,10 @@ public class ArmSubsystem extends SubsystemBase {
   // configured such that a position of 0 represents the arm being held
   // horizontally forward. From there, the RotorToSensor ratio must be configured
   // to the ratio between the absolute sensor and the Talon FX rotor.
-  public void setArmAngleMotionMagic() {
-    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.radiansToRevolutions(Math.toRadians(setpoint)) * armGearbox.getRatio())
-        .withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
+  public void setArmAngleMotionMagic(double target) {
+    setpoint=target;
+    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.radiansToRevolutions(Math.toRadians(setpoint)) * armGearbox.getRatio()));
+        //.withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
   }
 
   public void setArmVoltage(double voltage) {

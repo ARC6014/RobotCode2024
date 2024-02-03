@@ -14,11 +14,9 @@ import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ArmStateSet extends Command {
   private ArmSubsystem mArm;
-  //private double angle;
 
   public ArmStateSet(ArmSubsystem arm) {
     mArm=arm;
-    //angle=target;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }
@@ -27,13 +25,11 @@ public class ArmStateSet extends Command {
   @Override
   public void initialize() {
     mArm.setArmControlState(ArmControlState.MOTION_MAGIC);
-    System.out.println("Init MM");
     
   }
 
   @Override
     public void execute() {
-      //mArm.setArmAngleMotionMagic(angle);
     }
 
     @Override

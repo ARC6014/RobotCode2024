@@ -64,10 +64,9 @@ public class RobotContainer implements Loggable {
         // private final TelescopicSubsystem mTelescopic =
         // TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
-        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        //// private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        //// private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        // private final WristSubsystem mWrist = WristSubsystem.getInstance();
+        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         public static Orchestra mOrchestra = new Orchestra();
 
         /* CONTROLLERS */
@@ -91,8 +90,8 @@ public class RobotContainer implements Loggable {
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> -mOperator.getLeftY());
         // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
         
-        //private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
-        //private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
+        // private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
+        // private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -100,13 +99,12 @@ public class RobotContainer implements Loggable {
         public RobotContainer() {
                 /* Open loop commands */
                 // mDrive.setDefaultCommand(mDrive.orchestraCommand());
-
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
-                //// mWrist.setDefaultCommand(wristOpenLoop);
-                //// mIntake.setDefaultCommand(intakeOpenLoop);
+                // mWrist.setDefaultCommand(wristOpenLoop);
+                // mIntake.setDefaultCommand(intakeOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -156,24 +154,24 @@ public class RobotContainer implements Loggable {
 
                 mOperator.b().toggleOnTrue(new ArmStateSet(mArm));
 
-                // /* INTAKE */
-                //// mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                //// mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                /* INTAKE */
+                // mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                // mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
 
-                // /* WRIST */
-                //// mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
-                //// mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
+                /* WRIST */
+                // mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
+                // mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
 
-                // /* ARM */
+                /* ARM */
                 // mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
 
-                // /* FEEDER */
+                /* FEEDER */
                 // mOperator.y().onTrue(new SFeederCommand());
 
                 // open loop
                 // new SFeederCommand(mOperator.getLeftX());
 
-                // /* SHOOTER */
+                /* SHOOTER */
                 // mOperator.leftBumper().onTrue(new
                 // ShooterCommand().withShooterState(ShooterState.AMP));
                 // mOperator.rightBumper().onTrue(new
