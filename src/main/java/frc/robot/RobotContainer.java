@@ -152,7 +152,7 @@ public class RobotContainer implements Loggable {
          */
         private void configureButtonBindings() {
 
-                mDriver.cross().onTrue(new ResetGyro(mDrive));
+                // mDriver.cross().onTrue(mDrive.orchestraCommand());
 
                 // /* INTAKE */
                 // mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));

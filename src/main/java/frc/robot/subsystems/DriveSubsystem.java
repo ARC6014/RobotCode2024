@@ -39,6 +39,7 @@ import frc.team6014.lib.drivers.SwerveModuleBase;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
 import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
 import io.github.oblarg.oblog.annotations.Log;
 import edu.wpi.first.util.datalog.DataLog;
 import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
@@ -52,7 +53,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private static DriveSubsystem mInstance;
 
   private final Trigger brakeModeTrigger;
+
   private final Command brakeModeCommand;
+
+  @Log
+  private int a;
 
   public SwerveModuleBase[] mSwerveModules; // collection of modules
   private SwerveModuleState[] states; // collection of modules' states
@@ -85,6 +90,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
+    a = 0;
     mSwerveModules = new SwerveModuleBase[] {
         new SwerveModuleBase(0, "FL", SwerveModuleConstants.generateModuleConstants(
             Constants.SwerveModuleFrontLeft.driveMotorID, Constants.SwerveModuleFrontLeft.angleMotorID,
@@ -179,17 +185,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     SmartDashboard.putNumber("Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
     SmartDashboard.putNumber("Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
     SmartDashboard.putNumber("Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
-
-    SmartDashboard.putNumber("Bus Voltage 0 ", getDriveMotors().get(0).getBusVoltage());
-    SmartDashboard.putNumber("Bus Voltage 1", getDriveMotors().get(1).getBusVoltage());
-    SmartDashboard.putNumber("Bus Voltage 2", getDriveMotors().get(2).getBusVoltage());
-    SmartDashboard.putNumber("Bus Voltage 3", getDriveMotors().get(3).getBusVoltage());
-
-    SmartDashboard.putNumber("Current 0", getDriveMotors().get(0).getOutputCurrent());
-    SmartDashboard.putNumber("Current 1", getDriveMotors().get(1).getOutputCurrent());
-    SmartDashboard.putNumber("Current 2", getDriveMotors().get(2).getOutputCurrent());
-    SmartDashboard.putNumber("Current 3", getDriveMotors().get(3).getOutputCurrent());
-
     log();
 
   }
@@ -431,7 +426,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   public Command orchestraCommand() {
     return startEnd(
         () -> {
-          RobotContainer.mOrchestra.loadMusic("nevergonnagiveyouup.chrp");
+          RobotContainer.mOrchestra.loadMusic("RickRollCHRP.chrp");
 
           RobotContainer.mOrchestra.play();
         },
@@ -439,6 +434,24 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
           RobotContainer.mOrchestra.stop();
         })
         .withName("Orchestra");
+  }
+
+  @Config
+  public void setDrivePID(double p, double i, double d) {
+    for (SwerveModuleBase module : mSwerveModules) {
+      module.getDriveMotor().config_kP(0, p);
+      module.getDriveMotor().config_kI(0, i);
+      module.getDriveMotor().config_kD(0, d);
+    }
+  }
+
+  @Config
+  public void setAnglePID(double p, double i, double d) {
+    for (SwerveModuleBase module : mSwerveModules) {
+      module.getAngleMotor().config_kP(0, p);
+      module.getAngleMotor().config_kI(0, i);
+      module.getAngleMotor().config_kD(0, d);
+    }
   }
 
   /*

@@ -12,14 +12,20 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 
 import frc.robot.Constants.DriveConstants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
 
-public class CTREConfigs {
+public class CTREConfigs implements Loggable {
+
+    @Config
+    int a;
+
     public static WPI_TalonFX swerveDriveFXConfig(WPI_TalonFX talon) {
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
-            DriveConstants.driveEnableCurrentLimit, 
-            DriveConstants.driveContinuousCurrentLimit, 
-            DriveConstants.drivePeakCurrentLimit, 
-            DriveConstants.drivePeakCurrentDuration);
+                DriveConstants.driveEnableCurrentLimit,
+                DriveConstants.driveContinuousCurrentLimit,
+                DriveConstants.drivePeakCurrentLimit,
+                DriveConstants.drivePeakCurrentDuration);
         talon.configAllowableClosedloopError(0, 0, 20);
         talon.configSupplyCurrentLimit(driveSupplyLimit);
         talon.configOpenloopRamp(DriveConstants.openLoopRamp);
@@ -33,10 +39,10 @@ public class CTREConfigs {
 
     public static WPI_TalonFX swerveAngleFXConfig(WPI_TalonFX talon) {
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(
-            DriveConstants.angleEnableCurrentLimit, 
-            DriveConstants.angleContinuousCurrentLimit, 
-            DriveConstants.anglePeakCurrentLimit, 
-            DriveConstants.anglePeakCurrentDuration);
+                DriveConstants.angleEnableCurrentLimit,
+                DriveConstants.angleContinuousCurrentLimit,
+                DriveConstants.anglePeakCurrentLimit,
+                DriveConstants.anglePeakCurrentDuration);
         talon.configAllowableClosedloopError(0, 0, 20);
         talon.configSupplyCurrentLimit(driveSupplyLimit);
         talon.configOpenloopRamp(DriveConstants.openLoopRamp);
@@ -48,7 +54,7 @@ public class CTREConfigs {
         return talon;
     }
 
-    public static WPI_CANCoder swerveCancoderConfig(WPI_CANCoder CANcoder) { 
+    public static WPI_CANCoder swerveCancoderConfig(WPI_CANCoder CANcoder) {
         CANcoder.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         CANCoderConfiguration config = new CANCoderConfiguration();
         config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
