@@ -8,27 +8,25 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 
 public class ArmOpenLoop extends Command {
   /** Creates a new ArmOpenLoop. */
   private ArmSubsystem mArm;
   private final DoubleSupplier joystick;
-  //private final BooleanSupplier setpointButton;
 
   public ArmOpenLoop(ArmSubsystem arm, DoubleSupplier output) {
     mArm = arm;
     joystick = output;
-    //setpointButton = button;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    mArm.updateLastDemandedRotation(mArm.getArmAngleFalcon());
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

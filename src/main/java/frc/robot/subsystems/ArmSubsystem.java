@@ -36,7 +36,6 @@ public class ArmSubsystem extends SubsystemBase {
    */
   private double setpoint = 0;
 
-  // TODO: FOC is false for now
   private final DutyCycleOut m_percentOut = new DutyCycleOut(0);
 
   /**
@@ -53,7 +52,7 @@ public class ArmSubsystem extends SubsystemBase {
   /** unit: degrees */
   private double target = 10;
 
-  private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
+  //private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
   /** unit: rotations */
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
@@ -66,9 +65,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     motorConfig();
-    //lastDemandedRotation = getArmAngleFalcon();
+    lastDemandedRotation = getArmAngleFalcon();
 
-    SmartDashboard.putData("Zero Setpoint", new InstantCommand(() -> zeroSetpoint()));
+    /** sets Bore reading to the desired "zero" position */
+    boreEncoder.setPositionOffset(ArmConstants.positionOffset);
+    //resetFalconEncoder();
+    resetToAbsolute();
+    
+    SmartDashboard.putData("Move Arm to Zero", new InstantCommand(() -> zeroSetpoint()));
   }
 
   public static ArmSubsystem getInstance() {
@@ -81,7 +85,7 @@ public class ArmSubsystem extends SubsystemBase {
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
     TalonFXConfiguration configs = new TalonFXConfiguration();
-    // Slot0 is for MotionMagicVoltage
+
     configs.Slot0.kP = ArmConstants.kP;
     configs.Slot0.kI = ArmConstants.kI;
     configs.Slot0.kD = ArmConstants.kD;
@@ -93,28 +97,24 @@ public class ArmSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
     
-    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration; // change
-    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity; // change
+    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration; // CONFIG
+    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity; // CONFIG
     //configs.CurrentLimits.StatorCurrentLimit = 300;
     //configs.CurrentLimits.StatorCurrentLimitEnable = true;
     //configs.CurrentLimits.SupplyCurrentLimit = 80;
     //configs.CurrentLimits.SupplyCurrentLimitEnable = true;
-
     armMotor.getConfigurator().apply(configs);
-
-    resetFalconEncoder();
-    resetToAbsolute();
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Bore Rot", getArmAngleBore());
-    SmartDashboard.putNumber("Arm Falcon Rot", getArmAngleFalcon());
+    SmartDashboard.putNumber("Arm Bore Degrees", Conversions.revolutionsToDegrees(getArmAngleBore()));
+    SmartDashboard.putNumber("Arm Falcon Degrees", Conversions.revolutionsToDegrees(getArmAngleFalcon()));
+    SmartDashboard.putBoolean("Arm At Setpoint", isAtSetpointFalcon());
     SmartDashboard.putString("Arm State", armControlState.toString());
-    SmartDashboard.putNumber("Last Demanded Angle", Conversions.revolutionsToRadians(Math.toDegrees(lastDemandedRotation)));
     SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
-    SmartDashboard.putNumber("Falcon Voltage", armMotor.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Last Demanded Rot", Conversions.revolutionsToDegrees(lastDemandedRotation));
 
     switch (armControlState) {
       case OPEN_LOOP:
@@ -131,16 +131,15 @@ public class ArmSubsystem extends SubsystemBase {
         break;
     }
 
-    //lastDemandedRotation = getArmAngleFalcon();
-
+    lastDemandedRotation = getArmAngleFalcon();
   }
 
-  // resets falcon encoder to some pre-set zero position
+  /** resets Falcon encoder to zero */
   public void resetFalconEncoder() {
     armMotor.setPosition(0);
   }
 
-  /* Conversions */
+  /* CONVERSIONS */
   public double drivenToDriver(double revolutions) {
     return revolutions / armGearbox.getRatio();
   }
@@ -149,9 +148,8 @@ public class ArmSubsystem extends SubsystemBase {
     return armGearbox.calculate(revolutions);
   }
 
-  // resets falcon encoder so that bore and falcon have the same initial reading
-  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at
-  // all times
+  // resets falcon encoder to the bore reading so that bore and falcon have the same initial reading
+  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
   public void resetToAbsolute() {
     var position = getArmAngleBore() * armGearbox.getRatio();
     armMotor.setPosition(position);
@@ -159,7 +157,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** @return true if within angle tolerance */
   public boolean isAtSetpointFalcon() {
-    return Math.abs(getArmAngleFalcon() - Conversions.radiansToRevolutions(Math.toRadians(setpoint))) < ArmConstants.angleTolerance;
+    return Math.abs(getArmAngleFalcon() - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.angleTolerance;
   }
 
   public boolean isAtZeroFalcon() {
@@ -171,13 +169,14 @@ public class ArmSubsystem extends SubsystemBase {
     return setpoint;
   }
 
+  /** basically "zeros" arm */
   public double zeroSetpoint() {
     return setpoint = 0;
   }
+
   /** unit: revolutions */
   public double getArmAngleFalcon() {
     return armMotor.getRotorPosition().getValueAsDouble() / armGearbox.getRatio();
-
   }
 
   /** unit: revolutions */
@@ -186,31 +185,30 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   // TODO: add max/min angles here!
-  // TODO: Check rad-angle conversion
-  // When using an absolute sensor, such as a CANcoder, the sensor offset must be
-  // configured such that a position of 0 represents the arm being held
-  // horizontally forward. From there, the RotorToSensor ratio must be configured
-  // to the ratio between the absolute sensor and the Talon FX rotor.
   public void setArmAngleMotionMagic(double target) {
-    setpoint=target;
-    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.radiansToRevolutions(Math.toRadians(setpoint)) * armGearbox.getRatio()));
+    setpoint = target;
+    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.degreesToRevolutions(setpoint) * armGearbox.getRatio()));
         //.withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
   }
 
   public void setArmVoltage(double voltage) {
     armMotor.setVoltage(voltage);
-  }
-
-  public void setArmPercentOutput(double percent) {
-    if (armControlState != ArmControlState.OPEN_LOOP) {
-      armControlState = ArmControlState.OPEN_LOOP;
-    }
-    targetOutput = percent;
     lastDemandedRotation = getArmAngleFalcon();
   }
 
+  public void setArmPercentOutput(double percent) {
+    armControlState = ArmControlState.OPEN_LOOP;
+    targetOutput = percent;
+    armMotor.setControl(m_percentOut.withOutput(targetOutput));
+    lastDemandedRotation = getArmAngleFalcon();
+  }
 
-  /** unit: degree */
+  public void hold() {
+    armControlState = ArmControlState.HOLD;
+    armMotor.setControl(new NeutralOut());
+  }
+
+  /** unit: rotation */
   public void updateLastDemandedRotation(double rotation) {
     lastDemandedRotation = rotation;
   }
@@ -223,13 +221,7 @@ public class ArmSubsystem extends SubsystemBase {
     return armControlState;
   }
 
-  public void hold() {
-    armControlState = ArmControlState.HOLD;
-    armMotor.setControl(new NeutralOut());
-  }
-
   public void setMotorOutput() {
-    armMotor.setControl(m_percentOut.withOutput(targetOutput));
+      armMotor.setControl(m_percentOut.withOutput(targetOutput));
   }
-
 }

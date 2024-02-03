@@ -215,10 +215,10 @@ public class Constants implements Loggable {
         public static final double resetAngle = 0; // TODO: Config
         
         /** unit: rotations */   
-        public static final double positionOffset = 0; // TODO: Config starting position offset of bore
+        public static final double positionOffset = 0.06; // TODO: Config starting position offset of bore
 
         /** unit: rotations */
-        public static final double angleTolerance = Conversions.radiansToRevolutions(Math.toRadians(1.5)); // TODO: Config
+        public static final double angleTolerance = Conversions.degreesToRevolutions(1.5); // TODO: Config
 
         /* Arm angles for setpoints (the angle arm makes with the horizontal) */
         /** unit: degrees */

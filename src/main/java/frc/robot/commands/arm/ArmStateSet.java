@@ -5,7 +5,6 @@
 package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 
@@ -16,7 +15,7 @@ public class ArmStateSet extends Command {
   private ArmSubsystem mArm;
 
   public ArmStateSet(ArmSubsystem arm) {
-    mArm=arm;
+    mArm = arm;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }
@@ -25,20 +24,17 @@ public class ArmStateSet extends Command {
   @Override
   public void initialize() {
     mArm.setArmControlState(ArmControlState.MOTION_MAGIC);
-    
+    mArm.updateLastDemandedRotation(mArm.getArmAngleFalcon());
   }
 
   @Override
-    public void execute() {
-    }
+  public void execute() {}
 
-    @Override
-    public void end(boolean interrupted) {
+  @Override
+  public void end(boolean interrupted) {}
 
-    }
-
-    @Override
-    public boolean isFinished() {
-        return mArm.isAtSetpointFalcon();
-    }
+  @Override
+  public boolean isFinished() {
+    return mArm.isAtSetpointFalcon();
+  }
 }

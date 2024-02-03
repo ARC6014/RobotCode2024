@@ -6,6 +6,7 @@ package frc.robot.commands.arm;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.team6014.lib.math.Conversions;
 
 public class ArmClosedLoop extends Command {
   /** Creates a new ArmClosedLoop. */
@@ -48,8 +49,8 @@ public class ArmClosedLoop extends Command {
   public boolean isFinished() {
     // TODO: Format get arm angle and finishpoint tolerance
     if (finishable
-        && mArm.getArmAngleFalcon() > (finishPoint - 1.0)
-        && mArm.getArmAngleFalcon() < (finishPoint + 1.0)) {
+        && mArm.getArmAngleFalcon() > (finishPoint - Conversions.degreesToRevolutions(1.0))
+        && mArm.getArmAngleFalcon() < (finishPoint + Conversions.degreesToRevolutions(1.0))) {
       return true;
     }
 

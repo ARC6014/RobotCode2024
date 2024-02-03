@@ -118,6 +118,14 @@ public class Conversions {
     public static double radiansToRevolutions(double radians) {
         return radians / (2 * Math.PI);
     }
+    
+    public static double revolutionsToDegrees(double revolutions) {
+        return revolutions * 360;
+    }
+
+    public static double degreesToRevolutions(double degrees) {
+        return degrees / 360;
+    }
 
     public static double convertAngleByAlliance(Alliance alliance, double angle) {
         angle = alliance == Alliance.Red ? angle + 180 : angle;
