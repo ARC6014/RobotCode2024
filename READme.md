@@ -11,6 +11,14 @@ Explanation of codes can be found under [docs](/docs):
 - [Shooter & Feeder](/docs/SH_FR.md)
   - Cr: Alia & Cr
 
+## Autos
+- Blue4NoteLongAligned
+  - Alignment for shooter with custom swerve turn command (appr. 45 degrees)✅
+  - SDT: around 11s
+- Blue3NoteShort
+  - Bot comes back near the speaker to shoot the notes 
+  - SDT: around 10s
+
 ### Editing Guidelines:
 - Every subsystem should have Open & Closed Loop commands.
 - Open Loop should be bound to necessary Operator/Driver joysticks.
