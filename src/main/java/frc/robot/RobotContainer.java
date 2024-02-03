@@ -61,7 +61,7 @@ public class RobotContainer implements Loggable {
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         // private final TelescopicSubsystem mTelescopic =
         // TelescopicSubsystem.getInstance();
-        // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         // private final WristSubsystem mWrist = WristSubsystem.getInstance();
         // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
@@ -85,9 +85,8 @@ public class RobotContainer implements Loggable {
 
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
-        // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
-        // mOperator.getLeftY(),
-        // () -> mOperator.b().getAsBoolean());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> mOperator.getLeftY(),
+                        () -> mOperator.b().getAsBoolean());
         // private final ShooterCommand shooterOpenLoop = new
         // ShooterCommand().withOpenLoop(mOperator.getLeftY());
 
@@ -101,9 +100,11 @@ public class RobotContainer implements Loggable {
          */
         public RobotContainer() {
                 /* Open loop commands */
-                mDrive.setDefaultCommand(mDrive.orchestraCommand());
+                // mDrive.setDefaultCommand(mDrive.orchestraCommand());
+
+                mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                // mArm.setDefaultCommand(armOpenLoop);
+                mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
                 // mWrist.setDefaultCommand(wristOpenLoop);
                 // mIntake.setDefaultCommand(intakeOpenLoop);
