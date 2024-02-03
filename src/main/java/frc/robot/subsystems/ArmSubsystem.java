@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,17 +30,19 @@ public class ArmSubsystem extends SubsystemBase {
   private static ArmSubsystem mInstance;
   public Gearbox armGearbox = ArmConstants.gearRatio;
 
-  /** Angle to go by the arm 
+  /**
+   * Angle to go by the arm
    * unit: degrees
-  */
-  private double setpoint = 0; 
-  
+   */
+  private double setpoint = 0;
+
   // TODO: FOC is false for now
   private final DutyCycleOut m_percentOut = new DutyCycleOut(0);
 
-  /** Output to set in open loop
+  /**
+   * Output to set in open loop
    * unit: percent
-  */
+   */
   private double targetOutput = 0;
 
   private ArmControlState armControlState = ArmControlState.HOLD;
@@ -99,11 +102,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     armMotor.getConfigurator().apply(configs);
 
-    armMotor.setNeutralMode(ArmConstants.neutralMode);
-    armMotor.setInverted(ArmConstants.motorInverted);
-
-    boreEncoder.setPositionOffset(ArmConstants.positionOffset);
-
     resetFalconEncoder();
     resetToAbsolute();
   }
@@ -111,15 +109,12 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Bore Degree", Math.toDegrees(Conversions.revolutionsToRadians(getArmAngleBore())));
-
-    SmartDashboard.putNumber("Arm Falcon Degree", Math.toDegrees(Conversions.revolutionsToRadians(getArmAngleFalcon())));
+    SmartDashboard.putNumber("Arm Bore Rot", getArmAngleBore());
+    SmartDashboard.putNumber("Arm Falcon Rot", getArmAngleFalcon());
     SmartDashboard.putString("Arm State", armControlState.toString());
-    SmartDashboard.putString("MotMag Working", armMotor.getMotionMagicIsRunning().getValue().toString());
-
-    SmartDashboard.putBoolean("Is At setpoint", isAtSetpointFalcon());
-    
-
+    SmartDashboard.putNumber("Last Demanded Angle", Conversions.revolutionsToRadians(Math.toDegrees(lastDemandedRotation)));
+    SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
+    SmartDashboard.putNumber("Falcon Voltage", armMotor.getMotorVoltage().getValueAsDouble());
 
     switch (armControlState) {
       case OPEN_LOOP:
@@ -149,12 +144,14 @@ public class ArmSubsystem extends SubsystemBase {
   public double drivenToDriver(double revolutions) {
     return revolutions / armGearbox.getRatio();
   }
+
   public double driverToDriven(double revolutions) {
     return armGearbox.calculate(revolutions);
   }
 
   // resets falcon encoder so that bore and falcon have the same initial reading
-  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
+  // theoretically, Falcon position / 119.5 = Bore encoder position + offset at
+  // all times
   public void resetToAbsolute() {
     var position=getArmAngleBore()*armGearbox.getRatio();
     armMotor.setPosition(position);
@@ -194,13 +191,10 @@ public class ArmSubsystem extends SubsystemBase {
   // configured such that a position of 0 represents the arm being held
   // horizontally forward. From there, the RotorToSensor ratio must be configured
   // to the ratio between the absolute sensor and the Talon FX rotor.
-  public void setArmAngleMotionMagic(double target) {
-    setpoint=target;
-    System.out.println(setpoint);
-    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.radiansToRevolutions(Math.toRadians(setpoint)) * armGearbox.getRatio()));
-    // .withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore())))
+  public void setArmAngleMotionMagic() {
+    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.radiansToRevolutions(Math.toRadians(setpoint)) * armGearbox.getRatio())
+        .withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
   }
-  
 
   public void setArmVoltage(double voltage) {
     armMotor.setVoltage(voltage);

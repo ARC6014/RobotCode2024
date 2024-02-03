@@ -23,16 +23,21 @@ import frc.team6014.lib.util.SwerveUtils.CTREConfigs;
 import frc.team6014.lib.util.SwerveUtils.CTREModuleState;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
+import io.github.oblarg.oblog.Loggable;
 
-/** Base for constructing any swerve module
+/**
+ * Base for constructing any swerve module
  * * Basic Logic is that:
  * * we have 3 fields: xspd, yspd, rot
  * * 1) convert the speeds to the robot's perspective --> ChassisSpeeds
- * * 2) convert the chassis speeds to the individual module's perspective --> SwerveModuleState
- * * 3) optimize the module states to minimize the change in heading --> CTREModuleState
- * * 4) apply the states to the modules --> setDesiredState (done with FF and PID) 
+ * * 2) convert the chassis speeds to the individual module's perspective -->
+ * SwerveModuleState
+ * * 3) optimize the module states to minimize the change in heading -->
+ * CTREModuleState
+ * * 4) apply the states to the modules --> setDesiredState (done with FF and
+ * PID)
  */
-public class SwerveModuleBase {
+public class SwerveModuleBase implements Loggable {
 
     private String mId;
     private int mModuleNumber;
@@ -63,7 +68,8 @@ public class SwerveModuleBase {
      * @param swerveConstants Global swerve base constants
      */
 
-    public SwerveModuleBase(int moduleNum, String name, SwerveModuleConstants constants, SwerveDriveConstants swerveConstants) {
+    public SwerveModuleBase(int moduleNum, String name, SwerveModuleConstants constants,
+            SwerveDriveConstants swerveConstants) {
 
         mId = name;
 
@@ -71,8 +77,8 @@ public class SwerveModuleBase {
 
         kAngleOffset = constants.CANCoderAngleOffset;
 
-
-        mDriveFeedforward = new SimpleMotorFeedforward(constants.moduleTuningkS, constants.moduleTuningkV, DriveConstants.drivekA);
+        mDriveFeedforward = new SimpleMotorFeedforward(constants.moduleTuningkS, constants.moduleTuningkV,
+                DriveConstants.drivekA);
 
         mRotEncoder = new WPI_CANCoder(constants.CANCoderID, Constants.CANIVORE_CANBUS);
         mDriveMotor = new WPI_TalonFX(constants.driveMotorID, Constants.CANIVORE_CANBUS);
@@ -99,7 +105,8 @@ public class SwerveModuleBase {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-        desiredState = CTREModuleState.optimize(desiredState, getState().angle); // minimize the change in heading/easiest way
+        desiredState = CTREModuleState.optimize(desiredState, getState().angle); // minimize the change in
+                                                                                 // heading/easiest way
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / maxSpeed;
@@ -114,15 +121,16 @@ public class SwerveModuleBase {
         double angle = (Math.abs(desiredState.speedMetersPerSecond) <= (maxSpeed * 0.01))
                 ? lastAngle
                 : desiredState.angle.getDegrees();
-       
-       mAngleMotor.set(TalonFXControlMode.Position, Conversions.degreesToFalcon(lastAngle, angleGearbox.getRatio()));
-        
+
+        mAngleMotor.set(TalonFXControlMode.Position, Conversions.degreesToFalcon(lastAngle, angleGearbox.getRatio()));
+
         lastAngle = angle;
 
     }
 
     public double getVelocityMPS() {
-        return Conversions.falconToMPS(getDriveMotor().getSelectedSensorVelocity(), mWheelCircumference, driveGearbox.getRatio());
+        return Conversions.falconToMPS(getDriveMotor().getSelectedSensorVelocity(), mWheelCircumference,
+                driveGearbox.getRatio());
     }
 
     public void setNeutralMode2Brake(boolean brake) {
@@ -175,7 +183,7 @@ public class SwerveModuleBase {
     }
 
     // public double getDriveMotorCurrent() {
-    //     return mDriveMotor.getStatorCurrent().getValue();
+    // return mDriveMotor.getStatorCurrent().getValue();
     // }
 
     public WPI_TalonFX getAngleMotor() {
@@ -194,17 +202,20 @@ public class SwerveModuleBase {
         return Rotation2d.fromDegrees(mRotEncoder.getAbsolutePosition());
     }
 
-    public SwerveModulePosition getPosition(){
-        double position = Conversions.falconToRotation(mDriveMotor.getSelectedSensorPosition(), driveGearbox.getRatio()) * mWheelCircumference;
-        Rotation2d angle = Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), angleGearbox.getRatio()));
+    public SwerveModulePosition getPosition() {
+        double position = Conversions.falconToRotation(mDriveMotor.getSelectedSensorPosition(), driveGearbox.getRatio())
+                * mWheelCircumference;
+        Rotation2d angle = Rotation2d.fromDegrees(
+                Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), angleGearbox.getRatio()));
         return new SwerveModulePosition(position, angle);
     }
 
     public SwerveModuleState getState() {
-        double velocity = Conversions.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), mWheelCircumference, driveGearbox.getRatio());
-        Rotation2d angle = Rotation2d.fromDegrees(Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), angleGearbox.getRatio()));
+        double velocity = Conversions.falconToMPS(mDriveMotor.getSelectedSensorVelocity(), mWheelCircumference,
+                driveGearbox.getRatio());
+        Rotation2d angle = Rotation2d.fromDegrees(
+                Conversions.falconToDegrees(mAngleMotor.getSelectedSensorPosition(), angleGearbox.getRatio()));
         return new SwerveModuleState(velocity, angle);
     }
-
 
 }

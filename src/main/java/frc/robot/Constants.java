@@ -18,6 +18,9 @@ import edu.wpi.first.math.util.Units;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
+import io.github.oblarg.oblog.Loggable;
+import io.github.oblarg.oblog.annotations.Config;
+import io.github.oblarg.oblog.annotations.Log;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -31,10 +34,11 @@ import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
  * wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {
+public class Constants implements Loggable {
     public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    public static final int Pigeon2CanID = 60;
+    @Log
+    public static int Pigeon2CanID = 60;
 
     public static final double wheelBaseLength = 0.56665;
     private static final double wheelBaseWidth = 0.56665;
@@ -103,6 +107,7 @@ public final class Constants {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
+        @Config
         public static final double drivekP = 0.30;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
@@ -185,7 +190,7 @@ public final class Constants {
 
     public static final class ArmConstants {
 
-        public static final int motorID = 20; 
+        public static final int motorID = 20;
         public static final int boreChannel = 1;
 
         public static final Gearbox gearRatio = new Gearbox(119.5 / 1);
@@ -194,7 +199,7 @@ public final class Constants {
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 120; 
+        public static final double armCruiseVelocity = 120;
         /** unit: rev/s^2 */
         public static final double armAcceleration = 150; 
 
@@ -210,7 +215,7 @@ public final class Constants {
         public static final double resetAngle = 0; // TODO: Config
         
         /** unit: rotations */   
-        public static final double positionOffset = 0.06; // TODO: Config starting position offset of bore
+        public static final double positionOffset = 0; // TODO: Config starting position offset of bore
 
         /** unit: rotations */
         public static final double angleTolerance = Conversions.radiansToRevolutions(Math.toRadians(1.5)); // TODO: Config
@@ -246,7 +251,6 @@ public final class Constants {
         /** unit: Vs/(rev/s) */
         public static final double RUN_kD = 0;
 
-              
     }
 
     public static final class WristConstants {
@@ -262,7 +266,7 @@ public final class Constants {
         /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
         public static final double closedPosition = 0;
         /** unit: revolutions */
-        public static final double stopPosition = 0;  
+        public static final double stopPosition = 0;
 
         // TODO: tolerance
         public static final double positionEqualityTolerance = 0;
@@ -289,10 +293,9 @@ public final class Constants {
         public static final int FEEDER_MOTOR_ID = 32;
         public static final int BEAM_BREAK_ID = 3; // TODO: Config
 
-
         public static final double kMinOutput = 0; // TODO: Config
         public static final double kMaxOutput = 0; // TODO: Config
-        
+
         /* PID & FF */
         public static final double kP = 0; // TODO: Config
         public static final double kFF = 0; // TODO: Config
@@ -308,7 +311,7 @@ public final class Constants {
         // TODO: inverts
         public static final boolean masterInverted = true;
         public static final boolean slaveInverted = false;
-        public static final boolean feederInverted = false; 
+        public static final boolean feederInverted = false;
 
         /* RPMs */
         public static final double maxRPM = 0; // TODO: Config
