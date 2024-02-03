@@ -15,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 
@@ -106,8 +107,8 @@ public final class Constants {
         public static final double drivekI = 0;
         public static final double drivekD = 0;
         public static final double drivekS = 0.23; // prev: 0.016
-        public static final double drivekV = 2.2;
-        public static final double drivekA = 0.25;
+        public static final double drivekV = 0.19;
+        public static final double drivekA = 0;
 
         public static final double anglekP = 0.27;
         public static final double anglekI = 0;
@@ -119,10 +120,10 @@ public final class Constants {
         public static final double snapkD = 0.01;
 
         /** will be used for FieldOrientedTurn */
-        public static final double kRotControllerP = 0.13;
+        public static final double kRotControllerP = 0.15; // prev: 0.13
         public static final double kRotControllerD = 0.28;
         public static final double kRotControllerMaxVel = 5;
-        public static final double kRotControllerTolerance = 0.7;
+        public static final double kRotControllerTolerance = 3.5;
 
         public static final double maxSpeed = 5;
 
@@ -188,31 +189,31 @@ public final class Constants {
         public static final int boreChannel = 1;
 
         public static final Gearbox gearRatio = new Gearbox(119.5 / 1);
-        public static final boolean motorInverted = false; // TODO: Config
+        public static final boolean motorInverted = false; 
 
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 50; 
+        public static final double armCruiseVelocity = 120; 
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 70; 
+        public static final double armAcceleration = 150; 
 
-        public static final double rampRate = 0.09; // TODO: Config
-        public static final double kP = 0.0; // TODO: Config
+        public static final double rampRate = 0; // TODO: Config
+        public static final double kP = 0.3; // TODO: Config
         public static final double kD = 0.0; // TODO: Config
         public static final double kI = 0; // TODO: Config
         public static final double kG = 0; // TODO: Config
-        public static final double kS = 0.32; // TODO: Config
+        public static final double kS = 0.1; // TODO: Config
         public static final double kV = 0; // TODO: Config
 
         /** unit: rotations */
         public static final double resetAngle = 0; // TODO: Config
         
         /** unit: rotations */   
-        public static final double positionOffset = 0; // TODO: Config starting position offset of bore
+        public static final double positionOffset = 0.06; // TODO: Config starting position offset of bore
 
-        /** unit: degrees */
-        public static final double angleTolerance = 1.5; // TODO: Config
+        /** unit: rotations */
+        public static final double angleTolerance = Conversions.radiansToRevolutions(Math.toRadians(1.5)); // TODO: Config
 
         /* Arm angles for setpoints (the angle arm makes with the horizontal) */
         /** unit: degrees */

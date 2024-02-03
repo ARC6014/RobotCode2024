@@ -22,6 +22,7 @@ import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.arm.ArmClosedLoop;
 import frc.robot.commands.arm.ArmOpenLoop;
+import frc.robot.commands.arm.ArmStateSet;
 import frc.robot.commands.auto.DoNothing;
 import frc.robot.commands.auto.FakeIntake;
 import frc.robot.commands.auto.FakeShoot;
@@ -41,6 +42,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.WristSubsystem.Position;
@@ -61,10 +63,10 @@ public class RobotContainer implements Loggable {
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         // private final TelescopicSubsystem mTelescopic =
         // TelescopicSubsystem.getInstance();
-        // private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        //private final WristSubsystem mWrist = WristSubsystem.getInstance();
+        //private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -84,13 +86,11 @@ public class RobotContainer implements Loggable {
 
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
-        // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
-        // mOperator.getLeftY(),
-        // () -> mOperator.b().getAsBoolean());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> -mOperator.getLeftY());
         // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
         
-        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
-        private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
+        //private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
+        //private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -99,10 +99,10 @@ public class RobotContainer implements Loggable {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                // mArm.setDefaultCommand(armOpenLoop);
+                mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
-                mWrist.setDefaultCommand(wristOpenLoop);
-                mIntake.setDefaultCommand(intakeOpenLoop);
+                //mWrist.setDefaultCommand(wristOpenLoop);
+                //mIntake.setDefaultCommand(intakeOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -133,8 +133,8 @@ public class RobotContainer implements Loggable {
                 NamedCommands.registerCommand("Shoot", new FakeShoot().withTimeout(1.0));
                 NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
                 NamedCommands.registerCommand("Field-Oriented Turn (-45)", new FieldOrientedTurn(mDrive, -45));
-                NamedCommands.registerCommand("Field-Oriented Turn (45)", new FieldOrientedTurn(mDrive, 45));
-                NamedCommands.registerCommand("Do Nothing", new DoNothing());
+                NamedCommands.registerCommand("Field-Oriented Turn (45)", new FieldOrientedTurn(mDrive, 45).withTimeout(1));
+                NamedCommands.registerCommand("DoNothing", new DoNothing());
 
         }
 
@@ -150,13 +150,15 @@ public class RobotContainer implements Loggable {
 
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
+                mOperator.b().toggleOnTrue(new ArmStateSet(mArm));
+
                 /* INTAKE */
-                mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                //mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                //mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
 
                 /* WRIST */
-                mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
-                mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
+                //mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
+                //mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
 
                 // /* ARM */
                 // mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));

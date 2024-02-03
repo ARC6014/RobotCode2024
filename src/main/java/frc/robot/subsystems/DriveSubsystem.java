@@ -169,20 +169,20 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    SmartDashboard.putNumber("Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
 
-    SmartDashboard.putNumber("Bus Voltage 0 ", getDriveMotors().get(0).getBusVoltage());
-    SmartDashboard.putNumber("Bus Voltage 1", getDriveMotors().get(1).getBusVoltage());
-    SmartDashboard.putNumber("Bus Voltage 2", getDriveMotors().get(2).getBusVoltage());
-    SmartDashboard.putNumber("Bus Voltage 3", getDriveMotors().get(3).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 0 ", getDriveMotors().get(0).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 1", getDriveMotors().get(1).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 2", getDriveMotors().get(2).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 3", getDriveMotors().get(3).getBusVoltage());
 
-    SmartDashboard.putNumber("Current 0", getDriveMotors().get(0).getOutputCurrent());
-    SmartDashboard.putNumber("Current 1", getDriveMotors().get(1).getOutputCurrent());
-    SmartDashboard.putNumber("Current 2", getDriveMotors().get(2).getOutputCurrent());
-    SmartDashboard.putNumber("Current 3", getDriveMotors().get(3).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 0", getDriveMotors().get(0).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 1", getDriveMotors().get(1).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 2", getDriveMotors().get(2).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 3", getDriveMotors().get(3).getOutputCurrent());
 
     log();
 

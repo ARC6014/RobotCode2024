@@ -10,18 +10,18 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 
 public class ArmOpenLoop extends Command {
   /** Creates a new ArmOpenLoop. */
   private ArmSubsystem mArm;
   private final DoubleSupplier joystick;
-  private final BooleanSupplier setpointButton;
-  private final double targetAngle = ArmConstants.INTAKE; // TODO: CONFIG
+  //private final BooleanSupplier setpointButton;
 
-  public ArmOpenLoop(ArmSubsystem arm, DoubleSupplier output, BooleanSupplier button) {
+  public ArmOpenLoop(ArmSubsystem arm, DoubleSupplier output) {
     mArm = arm;
     joystick = output;
-    setpointButton = button;
+    //setpointButton = button;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }
@@ -35,9 +35,6 @@ public class ArmOpenLoop extends Command {
   public void execute() {
     if(joystick.getAsDouble() >= 0.04 || joystick.getAsDouble() <= -0.04){
       mArm.setArmPercentOutput(joystick.getAsDouble() / 5);
-    }
-    else if(setpointButton.getAsBoolean()) {
-      mArm.setArmPosition(targetAngle);
     }
     else {
       mArm.setArmPercentOutput(0.0);

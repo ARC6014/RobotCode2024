@@ -6,6 +6,7 @@ package frc.robot.commands.swerve;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Robot;
@@ -60,6 +61,8 @@ public class FieldOrientedTurn extends Command {
     m_output = Conversions.clamp(
         m_output, -DriveConstants.kRotControllerMaxVel, DriveConstants.kRotControllerMaxVel);
     mSwerve.swerveDrive(0, 0, m_output, true);
+
+    SmartDashboard.putBoolean("Field Turn AtSetpoint", atSetpoint);
   }
 
   // Called once the command ends or is interrupted.

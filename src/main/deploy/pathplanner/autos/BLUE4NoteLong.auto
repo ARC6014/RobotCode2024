@@ -5,7 +5,7 @@
       "x": 1.0,
       "y": 6.6
     },
-    "rotation": 45.0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -27,6 +27,12 @@
           "type": "named",
           "data": {
             "name": "Intake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Field-Oriented Turn (-45)"
           }
         },
         {
@@ -69,6 +75,12 @@
           "type": "named",
           "data": {
             "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Field-Oriented Turn (-45)"
           }
         }
       ]

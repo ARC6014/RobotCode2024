@@ -12,9 +12,27 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "BLDrive"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Field-Oriented Turn (-45)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Turn"
           }
         }
       ]

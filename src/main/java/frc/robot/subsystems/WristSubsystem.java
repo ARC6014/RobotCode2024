@@ -51,7 +51,7 @@ public class WristSubsystem extends SubsystemBase {
         mTalonFX.getConfigurator().apply(angleMotorConfigs);
         mTalonFX.setNeutralMode(NeutralModeValue.Brake);
 
-        // TODO: mBoreEncoder.getAbsolutePosition() + WristConstants.positionOffset()
+        // TODO: mBoreEncoder.getAbsolutePosition() + WristConstants.positionOffset
         // must output a position relative to the horizontal, which is 0
         resetToAbsolute();
         mPositionSetpoint = mTalonFX.getPosition().getValueAsDouble();
