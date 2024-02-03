@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.RobotContainer;
 import frc.team6014.lib.drivers.SwerveModuleBase;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
@@ -119,6 +120,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     zeroHeading();
 
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
+
+    for (SwerveModuleBase module : mSwerveModules) {
+      RobotContainer.mOrchestra.addInstrument(module.getDriveMotor());
+      RobotContainer.mOrchestra.addInstrument(module.getAngleMotor());
+    }
 
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
@@ -420,6 +426,19 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       motors.add(module.getDriveMotor());
     }
     return motors;
+  }
+
+  public Command orchestraCommand() {
+    return startEnd(
+        () -> {
+          RobotContainer.mOrchestra.loadMusic("nevergonnagiveyouup.chrp");
+
+          RobotContainer.mOrchestra.play();
+        },
+        () -> {
+          RobotContainer.mOrchestra.stop();
+        })
+        .withName("Orchestra");
   }
 
   /*

@@ -65,6 +65,7 @@ public class RobotContainer implements Loggable {
         // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        public static Orchestra mOrchestra = new Orchestra();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -87,8 +88,9 @@ public class RobotContainer implements Loggable {
         // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
         // mOperator.getLeftY(),
         // () -> mOperator.b().getAsBoolean());
-        // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
-        
+        // private final ShooterCommand shooterOpenLoop = new
+        // ShooterCommand().withOpenLoop(mOperator.getLeftY());
+
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
@@ -97,7 +99,7 @@ public class RobotContainer implements Loggable {
          */
         public RobotContainer() {
                 /* Open loop commands */
-                mDrive.setDefaultCommand(driveByJoystick);
+                mDrive.setDefaultCommand(mDrive.orchestraCommand());
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 // mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
