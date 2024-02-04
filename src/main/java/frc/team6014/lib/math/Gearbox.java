@@ -6,6 +6,8 @@ package frc.team6014.lib.math;
 
 public class Gearbox {
     private double m_gearRatio;
+    private double drivingGear;
+    private double drivenGear;
 
     public Gearbox(double drivingGear, double drivenGear) {
         m_gearRatio = drivenGear / drivingGear;
@@ -23,11 +25,11 @@ public class Gearbox {
         return m_gearRatio;
     }
 
-    public double drivenToDriver(double revolutions) {
-      return revolutions / getRatio();
+    public double drivenToDriving(double revolutions) {
+      return revolutions / drivenGear * drivingGear;
     }
 
-    public double driverToDriven(double revolutions) {
-      return calculate(revolutions);
+    public double drivingToDriven(double revolutions) {
+      return revolutions / drivingGear * drivenGear;
     }
 }

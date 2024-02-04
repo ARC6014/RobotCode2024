@@ -139,19 +139,10 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.setPosition(0);
   }
 
-  /* CONVERSIONS */
-  public double drivenToDriver(double revolutions) {
-    return revolutions / armGearbox.getRatio();
-  }
-
-  public double driverToDriven(double revolutions) {
-    return armGearbox.calculate(revolutions);
-  }
-
   // resets falcon encoder to the bore reading so that bore and falcon have the same initial reading
   // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
   public void resetToAbsolute() {
-    var position = drivenToDriver(getArmAngleBore());
+    var position = armGearbox.drivenToDriving(getArmAngleBore());
     armMotor.setPosition(position);
   }
 
@@ -161,7 +152,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public boolean isAtZeroFalcon() {
-    return armMotor.getRotorPosition().getValue() / armGearbox.getRatio() < ArmConstants.angleTolerance;
+    return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValue()) < ArmConstants.angleTolerance;
   }
 
   /** @return setpoint unit: degrees */
@@ -176,19 +167,20 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** unit: revolutions */
   public double getArmAngleFalcon() {
-    return armMotor.getRotorPosition().getValueAsDouble() / armGearbox.getRatio();
+    return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValueAsDouble());
   }
 
   /** unit: revolutions */
   public double getArmAngleBore() {
-    return boreEncoder.getAbsolutePosition();
+    return boreEncoder.getAbsolutePosition() + ArmConstants.positionOffset;
   }
 
   // TODO: add max/min angles here!
   public void setArmAngleMotionMagic(double target) {
     setpoint = target;
-    armMotor.setControl(motionMagicVoltage.withPosition(Conversions.degreesToRevolutions(setpoint) * armGearbox.getRatio()));
-        //.withFeedForward(ArmConstants.kG * Math.cos(Conversions.revolutionsToRadians(getArmAngleBore()))));
+    armMotor.setControl(motionMagicVoltage.withPosition(
+      armGearbox.drivenToDriving(Conversions.degreesToRevolutions(setpoint))
+    ));
   }
 
   public void setArmVoltage(double voltage) {
