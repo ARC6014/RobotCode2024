@@ -143,6 +143,8 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     lastDemandedRotation = getArmAngleFalcon();
+
+    autoCalibration();
   }
 
   /** resets Falcon encoder to zero */
@@ -230,13 +232,13 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   /** Resets to absolute if:
-   * time has elapsed x seconds after previous calibration
+   * time has elapsed 10 seconds since previous calibration
    * AND
-   * current Falcon rotation is y degrees off from the Bore reading
+   * current Falcon rotation is 1.5 degrees off from the Bore reading
    */
   // TODO: Calibrate!
   public void autoCalibration(){
-    if( (m_timer.get() - lastAbsoluteTime) > 0.2  && (Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(1.5))) {
+    if( (m_timer.get() - lastAbsoluteTime) > 10  && (Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(1.5))) {
     resetToAbsolute();
     lastAbsoluteTime = m_timer.get();
     }
