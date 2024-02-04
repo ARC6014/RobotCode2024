@@ -14,6 +14,7 @@ import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,6 +30,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   private static ArmSubsystem mInstance;
   public Gearbox armGearbox = ArmConstants.gearRatio;
+
+  /** Checking elapsed time for absolute calibration */
+  private final Timer m_timer = new Timer();
+  /** Last time when we resetted to absolute */
+  private double lastAbsoluteTime;
 
   /**
    * Angle to go by the arm
@@ -71,6 +77,11 @@ public class ArmSubsystem extends SubsystemBase {
     boreEncoder.setPositionOffset(ArmConstants.positionOffset);
     //resetFalconEncoder();
     resetToAbsolute();
+
+    m_timer.reset();
+    m_timer.start();
+
+    lastAbsoluteTime = m_timer.get();
     
     SmartDashboard.putData("Move Arm to Zero", new InstantCommand(() -> zeroSetpoint()));
   }
@@ -144,6 +155,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void resetToAbsolute() {
     var position = armGearbox.drivenToDriving(getArmAngleBore());
     armMotor.setPosition(position);
+    lastAbsoluteTime = m_timer.get();
   }
 
   /** @return true if within angle tolerance */
@@ -215,5 +227,18 @@ public class ArmSubsystem extends SubsystemBase {
 
   public void setMotorOutput() {
       armMotor.setControl(m_percentOut.withOutput(targetOutput));
+  }
+
+  /** Resets to absolute if:
+   * time has elapsed x seconds after previous calibration
+   * AND
+   * current Falcon rotation is y degrees off from the Bore reading
+   */
+  // TODO: Calibrate!
+  public void autoCalibration(){
+    if( (m_timer.get() - lastAbsoluteTime) > 0.2  && (Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(1.5))) {
+    resetToAbsolute();
+    lastAbsoluteTime = m_timer.get();
+    }
   }
 }
