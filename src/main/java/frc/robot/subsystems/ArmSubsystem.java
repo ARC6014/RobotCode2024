@@ -151,7 +151,7 @@ public class ArmSubsystem extends SubsystemBase {
   // resets falcon encoder to the bore reading so that bore and falcon have the same initial reading
   // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
   public void resetToAbsolute() {
-    var position = getArmAngleBore() * armGearbox.getRatio();
+    var position = drivenToDriver(getArmAngleBore());
     armMotor.setPosition(position);
   }
 
@@ -181,7 +181,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** unit: revolutions */
   public double getArmAngleBore() {
-    return boreEncoder.getAbsolutePosition() - boreEncoder.getPositionOffset();
+    return boreEncoder.getAbsolutePosition();
   }
 
   // TODO: add max/min angles here!

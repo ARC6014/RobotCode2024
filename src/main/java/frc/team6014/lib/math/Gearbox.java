@@ -22,4 +22,12 @@ public class Gearbox {
     public double getRatio() {
         return m_gearRatio;
     }
+
+    public double drivenToDriver(double revolutions) {
+      return revolutions / getRatio();
+    }
+
+    public double driverToDriven(double revolutions) {
+      return calculate(revolutions);
+    }
 }
