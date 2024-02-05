@@ -199,9 +199,9 @@ public class Constants implements Loggable {
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 400;
+        public static final double armCruiseVelocity = 600;
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 350; 
+        public static final double armAcceleration = 500; 
 
         public static final double rampRate = 0; // TODO: Config
         public static final double kP = 1.2; // TODO: Config
@@ -222,13 +222,15 @@ public class Constants implements Loggable {
 
         /* Arm angles for setpoints (the angle arm makes with the horizontal) */
         /** unit: degrees */
-        public static final double ZERO = 90;
+        public static final double ZERO = 0;
         /** unit: degrees */
         public static final double INTAKE = 75;
         /** unit: degrees */
-        public static final double SPEAKER = 56;
+        public static final double SPEAKER_LONG = 30;
         /** unit: degrees */
-        public static final double AMP = -45; // Double check negative
+        public static final double SPEAKER_SHORT = 11;
+        /** unit: degrees */
+        public static final double AMP = 90;
     }
 
     public static final class IntakeConstants {

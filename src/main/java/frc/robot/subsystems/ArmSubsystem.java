@@ -57,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double lastDemandedRotation;
 
   /** unit: degrees */
-  private double target = 120;
+  private double target = 170;
 
   //private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
@@ -66,6 +66,10 @@ public class ArmSubsystem extends SubsystemBase {
 
   public enum ArmControlState {
     OPEN_LOOP,
+    INTAKE,
+    SPEAKER_SHORT,
+    SPEAKER_LONG,
+    AMP,
     MOTION_MAGIC,
     HOLD,
     ZERO,
@@ -126,6 +130,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putString("Arm State", armControlState.toString());
     SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
     SmartDashboard.putNumber("Last Demanded Rot", Conversions.revolutionsToDegrees(lastDemandedRotation));
+    SmartDashboard.putNumber("Motor Current", armMotor.getStatorCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Arm Voltage", armMotor.getMotorVoltage().getValueAsDouble());
 
     switch (armControlState) {
@@ -135,11 +140,23 @@ public class ArmSubsystem extends SubsystemBase {
       case MOTION_MAGIC:
         setArmAngleMotionMagic(target);
         break;
+      case SPEAKER_SHORT:
+        setArmAngleMotionMagic(ArmConstants.SPEAKER_SHORT);
+        break;
+      case SPEAKER_LONG:
+        setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
+        break;
+      case AMP:
+        setArmAngleMotionMagic(ArmConstants.AMP);
+      case INTAKE:
+        setArmAngleMotionMagic(ArmConstants.INTAKE);
+        break;
       case HOLD:
         armMotor.setControl(new NeutralOut());
         break;
       case ZERO:
-        setArmAngleMotionMagic(0);
+        setArmAngleMotionMagic(ArmConstants.ZERO);
+        break;
       default:
         setArmPercentOutput(0.0);
         break;
