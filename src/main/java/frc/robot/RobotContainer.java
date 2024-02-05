@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
-import frc.robot.commands.arm.ArmClosedLoop;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.arm.ArmStateSet;
 import frc.robot.commands.auto.DoNothing;
@@ -67,7 +66,7 @@ public class RobotContainer implements Loggable {
         // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         // private final WristSubsystem mWrist = WristSubsystem.getInstance();
         // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        public static Orchestra mOrchestra = new Orchestra();
+        // public static Orchestra mOrchestra = new Orchestra();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -98,10 +97,8 @@ public class RobotContainer implements Loggable {
          */
         public RobotContainer() {
                 /* Open loop commands */
-                // mDrive.setDefaultCommand(mDrive.orchestraCommand());
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                //mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
                 // mWrist.setDefaultCommand(wristOpenLoop);
                 // mIntake.setDefaultCommand(intakeOpenLoop);
@@ -151,21 +148,23 @@ public class RobotContainer implements Loggable {
         private void configureButtonBindings() {
 
                 // mDriver.cross().onTrue(mDrive.orchestraCommand());
+                mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                mOperator.b().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.MOTION_MAGIC));
-                mOperator.x().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
-                mOperator.y().onTrue(armOpenLoop);
+                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
+                mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
+                mOperator.b().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
+                mOperator.x().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
+                mOperator.y().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
+                mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* INTAKE */
-                // mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                // mOperator.leftBumper().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                // mOperator.povRight().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                // mOperator.povLeft().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
 
                 /* WRIST */
                 // mOperator.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
                 // mOperator.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
 
-                /* ARM */
-                // mOperator.a().onTrue(new ArmClosedLoop(mArm, 0, 0, false));
 
                 /* FEEDER */
                 // mOperator.y().onTrue(new SFeederCommand());

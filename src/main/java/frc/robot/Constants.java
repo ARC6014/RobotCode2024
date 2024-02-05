@@ -203,28 +203,25 @@ public class Constants implements Loggable {
         /** unit: rev/s^2 */
         public static final double armAcceleration = 500; 
 
-        public static final double rampRate = 0; // TODO: Config
-        public static final double kP = 1.2; // TODO: Config
-        public static final double kD = 0.0; // TODO: Config
-        public static final double kI = 0; // TODO: Config
+        public static final double kP = 1.2; 
+        public static final double kD = 0.0; 
+        public static final double kI = 0;
         public static final double kG = 0; // TODO: Config
-        public static final double kS = 0.14; // TODO: Config
+        public static final double kS = 0.14; 
         public static final double kV = 0; // TODO: Config
 
-        /** unit: rotations */
-        public static final double resetAngle = 0; // TODO: Config
         
         /** unit: rotations */   
         public static final double positionOffset = Conversions.degreesToRevolutions(13); // TODO: Config starting position offset of bore
 
         /** unit: rotations */
-        public static final double angleTolerance = Conversions.degreesToRevolutions(1); // TODO: Config
+        public static final double angleTolerance = Conversions.degreesToRevolutions(1);
 
-        /* Arm angles for setpoints (the angle arm makes with the horizontal) */
+        /* Arm angles for setpoints (relative to the zero of Bore) */
         /** unit: degrees */
         public static final double ZERO = 0;
         /** unit: degrees */
-        public static final double INTAKE = 75;
+        public static final double INTAKE = 9;
         /** unit: degrees */
         public static final double SPEAKER_LONG = 30;
         /** unit: degrees */
@@ -257,7 +254,7 @@ public class Constants implements Loggable {
 
     public static final class WristConstants {
         public static final int angleMotorId = 11;
-        public static final int boreEncoderDioId = 0;
+        public static final int boreEncoderDioId = 3;
 
         public static final Gearbox gearbox = new Gearbox(72, 1);
 
@@ -270,8 +267,8 @@ public class Constants implements Loggable {
         /** unit: revolutions */
         public static final double stopPosition = 0;
 
-        // TODO: tolerance
-        public static final double positionEqualityTolerance = 0;
+        /** unit: revolutions */
+        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(0.5);
 
         /** unit: V/rev */
         public static final double ANGLE_kP = 0;
@@ -293,7 +290,7 @@ public class Constants implements Loggable {
         public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
-        public static final int BEAM_BREAK_ID = 3; // TODO: Config
+        public static final int BEAM_BREAK_ID = 4; // TODO: Config
 
         public static final double kMinOutput = 0; // TODO: Config
         public static final double kMaxOutput = 0; // TODO: Config

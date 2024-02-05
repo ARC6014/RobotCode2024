@@ -56,8 +56,6 @@ public class ArmSubsystem extends SubsystemBase {
   /** unit: rotations */
   private double lastDemandedRotation;
 
-  /** unit: degrees */
-  private double target = 170;
 
   //private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
@@ -70,7 +68,6 @@ public class ArmSubsystem extends SubsystemBase {
     SPEAKER_SHORT,
     SPEAKER_LONG,
     AMP,
-    MOTION_MAGIC,
     HOLD,
     ZERO,
   }
@@ -81,7 +78,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     /** sets Bore reading to the desired "zero" position */
     boreEncoder.setPositionOffset(ArmConstants.positionOffset);
-    //resetFalconEncoder();
 
     m_timer.reset();
     m_timer.start();
@@ -112,8 +108,8 @@ public class ArmSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
     
-    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration; // CONFIG
-    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity; // CONFIG
+    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration; 
+    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity; 
     //configs.CurrentLimits.StatorCurrentLimit = 300;
     //configs.CurrentLimits.StatorCurrentLimitEnable = true;
     //configs.CurrentLimits.SupplyCurrentLimit = 80;
@@ -124,21 +120,18 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Arm Bore Degrees", Conversions.revolutionsToDegrees(getArmAngleBore()));
-    SmartDashboard.putNumber("Arm Falcon Degrees", Conversions.revolutionsToDegrees(getArmAngleFalcon()));
-    SmartDashboard.putBoolean("Arm At Setpoint", isAtSetpointFalcon());
-    SmartDashboard.putString("Arm State", armControlState.toString());
-    SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
-    SmartDashboard.putNumber("Last Demanded Rot", Conversions.revolutionsToDegrees(lastDemandedRotation));
-    SmartDashboard.putNumber("Motor Current", armMotor.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Arm Voltage", armMotor.getMotorVoltage().getValueAsDouble());
+    // SmartDashboard.putNumber("Arm Bore Degrees", Conversions.revolutionsToDegrees(getArmAngleBore()));
+    // SmartDashboard.putNumber("Arm Falcon Degrees", Conversions.revolutionsToDegrees(getArmAngleFalcon()));
+    // SmartDashboard.putBoolean("Arm At Setpoint", isAtSetpointFalcon());
+    // SmartDashboard.putString("Arm State", armControlState.toString());
+    // SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
+    // SmartDashboard.putNumber("Last Demanded Rot", Conversions.revolutionsToDegrees(lastDemandedRotation));
+    // SmartDashboard.putNumber("Motor Current", armMotor.getStatorCurrent().getValueAsDouble());
+    // SmartDashboard.putNumber("Arm Voltage", armMotor.getMotorVoltage().getValueAsDouble());
 
     switch (armControlState) {
       case OPEN_LOOP:
         setMotorOutput();
-        break;
-      case MOTION_MAGIC:
-        setArmAngleMotionMagic(target);
         break;
       case SPEAKER_SHORT:
         setArmAngleMotionMagic(ArmConstants.SPEAKER_SHORT);
@@ -253,12 +246,21 @@ public class ArmSubsystem extends SubsystemBase {
       armMotor.setControl(m_percentOut.withOutput(targetOutput));
   }
 
+  public TalonFX getArmMotor() {
+    return armMotor;
+  }
+
+  public double getLastDemandedRotation() {
+    return lastDemandedRotation;
+  }
+ 
   /** Resets to absolute if:
    * time has elapsed 10 seconds since previous calibration
+   * OR
+   * current Falcon rotation is 0.5 degrees off from the Bore reading
    * AND
-   * current Falcon rotation is 1.5 degrees off from the Bore reading
+   * the mechanism isn't moving
    */
-  // TODO: Calibrate!
   public void autoCalibration(){
     boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
     boolean angleCondition = Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(0.5);

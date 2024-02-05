@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -24,18 +25,22 @@ public class WristSubsystem extends SubsystemBase {
     private TalonFX mTalonFX;
     private Gearbox mGearbox = WristConstants.gearbox;
 
-    /* Bore Encoder */ 
+    /* Bore Encoder */
     public DutyCycleEncoder mBoreEncoder = new DutyCycleEncoder(WristConstants.boreEncoderDioId);
 
-    /**WRIST ANGLE POSITION */
+    /** WRIST ANGLE POSITION */
     private Position mPosition;
     /** unit: revolutions */
     private double mPositionSetpoint;
     private PositionVoltage mPositionControl;
 
-
     private double mAngleOpenLoopOutput;
     private DutyCycleOut mAngleOpenLoopControl;
+
+    /** Checking elapsed time for absolute calibration */
+    private final Timer m_timer = new Timer();
+    /** Last time when we resetted to absolute */
+    private double lastAbsoluteTime;
 
     public WristSubsystem() {
         mTalonFX = new TalonFX(WristConstants.angleMotorId, Constants.CANIVORE_CANBUS);
@@ -51,14 +56,18 @@ public class WristSubsystem extends SubsystemBase {
         mTalonFX.getConfigurator().apply(angleMotorConfigs);
         mTalonFX.setNeutralMode(NeutralModeValue.Brake);
 
-        // TODO: mBoreEncoder.getAbsolutePosition() + WristConstants.positionOffset
+        mBoreEncoder.setPositionOffset(WristConstants.positionOffset);
         // must output a position relative to the horizontal, which is 0
-        resetToAbsolute();
         mPositionSetpoint = mTalonFX.getPosition().getValueAsDouble();
         mPositionControl = new PositionVoltage(mPositionSetpoint);
 
         mAngleOpenLoopOutput = 0;
         mAngleOpenLoopControl = new DutyCycleOut(0);
+
+        m_timer.reset();
+        m_timer.start();
+
+        lastAbsoluteTime = m_timer.get();
     }
 
     public static WristSubsystem getInstance() {
@@ -94,42 +103,36 @@ public class WristSubsystem extends SubsystemBase {
 
         // // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
         // if (getBoreEncoderPosition() < WristConstants.stopPosition) {
-        //     setOpenLoop(0);
-        //     mTalonFX.stopMotor();
-        //     resetToAbsolute();
+        // setOpenLoop(0);
+        // mTalonFX.stopMotor();
+        // resetToAbsolute();
         // }
 
-        SmartDashboard.putNumber("Wrist Bore Reading", getBoreEncoderPosition());
-        SmartDashboard.putNumber("Wrist Falcon Reading", getFalconPosition());
+        SmartDashboard.putNumber("Wrist Bore Reading", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
+        SmartDashboard.putNumber("Wrist Falcon Reading", Conversions.revolutionsToDegrees(getFalconPosition()));
     }
 
-    /* CALCULATIONS */
-    public double drivenToDriver(double revolutions) {
-        return revolutions * (1.0 / mGearbox.getRatio());
-    }
-
-    public double driverToDriven(double revolutions) {
-        return mGearbox.calculate(revolutions);
-    }
-    
     /* ENCODERS */
     // theoretically, Falcon position / 72 = Bore encoder position at all times
     /** unit: revolutions */
     public double getFalconPosition() {
-        return mTalonFX.getPosition().getValueAsDouble();
+        return mGearbox.drivingToDriven(mTalonFX.getPosition().getValueAsDouble());
     }
 
-    /** Bore encoder reading (without position offset) 
+    /**
+     * Bore encoder reading (without position offset)
      * unit: revolutions
-    */
+     */
     public double getBoreEncoderPosition() {
-        return mBoreEncoder.getAbsolutePosition();
+        return mBoreEncoder.getAbsolutePosition() + mBoreEncoder.getPositionOffset();
     }
 
     /** resets Falcon reading to absolute Bore reading */
     public void resetToAbsolute() {
-        double position = drivenToDriver(mBoreEncoder.getAbsolutePosition());
+        double angle = getBoreEncoderPosition();
+        var position = mGearbox.drivenToDriving(angle);
         mTalonFX.setPosition(position);
+        lastAbsoluteTime = m_timer.get();
     }
 
     public boolean isAtSetpoint() {
@@ -149,11 +152,11 @@ public class WristSubsystem extends SubsystemBase {
 
         switch (mPosition) {
             case OPEN:
-                mPositionSetpoint = drivenToDriver(WristConstants.openPosition);
+                mPositionSetpoint = mGearbox.drivenToDriving(WristConstants.openPosition);
                 break;
 
             case CLOSED:
-                mPositionSetpoint = drivenToDriver(WristConstants.openPosition);
+                mPositionSetpoint = mGearbox.drivenToDriving(WristConstants.openPosition);
                 break;
 
             case OVERRIDE:
@@ -178,6 +181,26 @@ public class WristSubsystem extends SubsystemBase {
         mPosition = Position.OPENLOOP;
         mAngleOpenLoopOutput = output;
         mTalonFX.setControl(mAngleOpenLoopControl.withOutput(output));
+    }
+
+    /**
+     * Resets to absolute if:
+     * time has elapsed 10 seconds since previous calibration
+     * OR
+     * current Falcon rotation is 0.5 degrees off from the Bore reading
+     * AND
+     * the mechanism isn't moving
+     */
+    // TODO: Calibrate!
+    public void autoCalibration() {
+        boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
+        boolean angleCondition = Math.abs(getBoreEncoderPosition() - getFalconPosition()) >= Conversions
+                .degreesToRevolutions(0.5);
+        boolean speedCondition = Math.abs(mTalonFX.getRotorVelocity().getValueAsDouble()) < 0.005;
+        if ((timerCondition || angleCondition) && speedCondition) {
+            resetToAbsolute();
+            lastAbsoluteTime = m_timer.get();
+        }
     }
 
     public ArrayList<TalonFX> getMotors() {

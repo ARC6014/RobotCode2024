@@ -127,10 +127,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
 
-    for (SwerveModuleBase module : mSwerveModules) {
-      RobotContainer.mOrchestra.addInstrument(module.getDriveMotor());
-      RobotContainer.mOrchestra.addInstrument(module.getAngleMotor());
-    }
+    // for (SwerveModuleBase module : mSwerveModules) {
+    //   RobotContainer.mOrchestra.addInstrument(module.getDriveMotor());
+    //   RobotContainer.mOrchestra.addInstrument(module.getAngleMotor());
+    // }
 
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
@@ -438,18 +438,18 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     return motors;
   }
 
-  public Command orchestraCommand() {
-    return startEnd(
-        () -> {
-          RobotContainer.mOrchestra.loadMusic("RickRollCHRP.chrp");
+  // public Command orchestraCommand() {
+  //   return startEnd(
+  //       () -> {
+  //         RobotContainer.mOrchestra.loadMusic("RickRollCHRP.chrp");
 
-          RobotContainer.mOrchestra.play();
-        },
-        () -> {
-          RobotContainer.mOrchestra.stop();
-        })
-        .withName("Orchestra");
-  }
+  //         RobotContainer.mOrchestra.play();
+  //       },
+  //       () -> {
+  //         RobotContainer.mOrchestra.stop();
+  //       })
+  //       .withName("Orchestra");
+  // }
 
   @Config
   public void setDrivePID(double p, double i, double d) {
