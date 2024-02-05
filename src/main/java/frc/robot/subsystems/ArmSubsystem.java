@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.arm.ArmStateSet;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 
@@ -56,7 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double lastDemandedRotation;
 
   /** unit: degrees */
-  private double target = 10;
+  private double target = 120;
 
   //private final MotionMagicTorqueCurrentFOC motionMagic = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
@@ -67,6 +68,7 @@ public class ArmSubsystem extends SubsystemBase {
     OPEN_LOOP,
     MOTION_MAGIC,
     HOLD,
+    ZERO,
   }
 
   public ArmSubsystem() {
@@ -76,14 +78,12 @@ public class ArmSubsystem extends SubsystemBase {
     /** sets Bore reading to the desired "zero" position */
     boreEncoder.setPositionOffset(ArmConstants.positionOffset);
     //resetFalconEncoder();
-    resetToAbsolute();
 
     m_timer.reset();
     m_timer.start();
 
     lastAbsoluteTime = m_timer.get();
     
-    SmartDashboard.putData("Move Arm to Zero", new InstantCommand(() -> zeroSetpoint()));
   }
 
   public static ArmSubsystem getInstance() {
@@ -126,6 +126,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putString("Arm State", armControlState.toString());
     SmartDashboard.putBoolean("MotMag Working", armMotor.getMotionMagicIsRunning().getValue() == MotionMagicIsRunningValue.Enabled);
     SmartDashboard.putNumber("Last Demanded Rot", Conversions.revolutionsToDegrees(lastDemandedRotation));
+    SmartDashboard.putNumber("Arm Voltage", armMotor.getMotorVoltage().getValueAsDouble());
 
     switch (armControlState) {
       case OPEN_LOOP:
@@ -137,6 +138,8 @@ public class ArmSubsystem extends SubsystemBase {
       case HOLD:
         armMotor.setControl(new NeutralOut());
         break;
+      case ZERO:
+        setArmAngleMotionMagic(0);
       default:
         setArmPercentOutput(0.0);
         break;
@@ -155,10 +158,12 @@ public class ArmSubsystem extends SubsystemBase {
   // resets falcon encoder to the bore reading so that bore and falcon have the same initial reading
   // theoretically, Falcon position / 119.5 = Bore encoder position + offset at all times
   public void resetToAbsolute() {
-    var position = armGearbox.drivenToDriving(getArmAngleBore());
+    double angle = getArmAngleBore();
+    var position = armGearbox.drivenToDriving(angle);
     armMotor.setPosition(position);
     lastAbsoluteTime = m_timer.get();
   }
+
 
   /** @return true if within angle tolerance */
   public boolean isAtSetpointFalcon() {
@@ -181,12 +186,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** unit: revolutions */
   public double getArmAngleFalcon() {
-    return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValueAsDouble());
+    return armGearbox.drivingToDriven(armMotor.getPosition().getValueAsDouble());
   }
 
   /** unit: revolutions */
   public double getArmAngleBore() {
-    return boreEncoder.getAbsolutePosition() + ArmConstants.positionOffset;
+    return boreEncoder.getAbsolutePosition() - boreEncoder.getPositionOffset();
   }
 
   // TODO: add max/min angles here!
@@ -238,9 +243,12 @@ public class ArmSubsystem extends SubsystemBase {
    */
   // TODO: Calibrate!
   public void autoCalibration(){
-    if( (m_timer.get() - lastAbsoluteTime) > 10  && (Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(1.5))) {
-    resetToAbsolute();
-    lastAbsoluteTime = m_timer.get();
+    boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
+    boolean angleCondition = Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(0.5);
+    boolean speedCondition = Math.abs(armMotor.getRotorVelocity().getValueAsDouble()) < 0.005;
+    if((timerCondition || angleCondition) && speedCondition) {
+      resetToAbsolute();
+      lastAbsoluteTime = m_timer.get();
     }
   }
 }

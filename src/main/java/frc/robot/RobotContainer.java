@@ -101,7 +101,7 @@ public class RobotContainer implements Loggable {
                 // mDrive.setDefaultCommand(mDrive.orchestraCommand());
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                mArm.setDefaultCommand(armOpenLoop);
+                //mArm.setDefaultCommand(armOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
                 // mWrist.setDefaultCommand(wristOpenLoop);
                 // mIntake.setDefaultCommand(intakeOpenLoop);
@@ -152,7 +152,9 @@ public class RobotContainer implements Loggable {
 
                 // mDriver.cross().onTrue(mDrive.orchestraCommand());
 
-                mOperator.b().toggleOnTrue(new ArmStateSet(mArm));
+                mOperator.b().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.MOTION_MAGIC));
+                mOperator.x().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
+                mOperator.y().onTrue(armOpenLoop);
 
                 /* INTAKE */
                 // mOperator.rightBumper().onTrue(new IntakeSetState(mIntake, Running.FORWARD));

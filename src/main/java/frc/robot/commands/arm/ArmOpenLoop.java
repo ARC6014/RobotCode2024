@@ -32,7 +32,7 @@ public class ArmOpenLoop extends Command {
   @Override
   public void execute() {
     if(joystick.getAsDouble() >= 0.04 || joystick.getAsDouble() <= -0.04){
-      mArm.setArmPercentOutput(joystick.getAsDouble() / 5);
+      mArm.setArmPercentOutput(joystick.getAsDouble() / 6);
     }
     else {
       mArm.setArmPercentOutput(0.0);

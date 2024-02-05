@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.CANdleLed.AnimationTypes;
@@ -95,6 +96,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
+    ArmSubsystem.getInstance().resetToAbsolute();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -119,7 +121,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     DriveSubsystem.getInstance().resetToAbsolute();
-
+    ArmSubsystem.getInstance().resetToAbsolute();
   }
 
   /** This function is called periodically during operator control. */

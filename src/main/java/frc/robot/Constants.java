@@ -193,32 +193,32 @@ public class Constants implements Loggable {
         public static final int motorID = 20;
         public static final int boreChannel = 1;
 
-        public static final Gearbox gearRatio = new Gearbox(119.5 / 1);
+        public static final Gearbox gearRatio = new Gearbox(1, 119.5);
         public static final boolean motorInverted = false; 
 
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 120;
+        public static final double armCruiseVelocity = 400;
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 150; 
+        public static final double armAcceleration = 350; 
 
         public static final double rampRate = 0; // TODO: Config
-        public static final double kP = 0.3; // TODO: Config
+        public static final double kP = 1.2; // TODO: Config
         public static final double kD = 0.0; // TODO: Config
         public static final double kI = 0; // TODO: Config
         public static final double kG = 0; // TODO: Config
-        public static final double kS = 0.1; // TODO: Config
+        public static final double kS = 0.14; // TODO: Config
         public static final double kV = 0; // TODO: Config
 
         /** unit: rotations */
         public static final double resetAngle = 0; // TODO: Config
         
         /** unit: rotations */   
-        public static final double positionOffset = -0.06; // TODO: Config starting position offset of bore
+        public static final double positionOffset = Conversions.degreesToRevolutions(13); // TODO: Config starting position offset of bore
 
         /** unit: rotations */
-        public static final double angleTolerance = Conversions.degreesToRevolutions(1.5); // TODO: Config
+        public static final double angleTolerance = Conversions.degreesToRevolutions(1); // TODO: Config
 
         /* Arm angles for setpoints (the angle arm makes with the horizontal) */
         /** unit: degrees */

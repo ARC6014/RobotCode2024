@@ -13,9 +13,11 @@ import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ArmStateSet extends Command {
   private ArmSubsystem mArm;
+  private ArmControlState mTarget;
 
-  public ArmStateSet(ArmSubsystem arm) {
+  public ArmStateSet(ArmSubsystem arm, ArmControlState targetState) {
     mArm = arm;
+    mTarget = targetState;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mArm);
   }
@@ -23,7 +25,7 @@ public class ArmStateSet extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mArm.setArmControlState(ArmControlState.MOTION_MAGIC);
+    mArm.setArmControlState(mTarget);
     mArm.updateLastDemandedRotation(mArm.getArmAngleFalcon());
   }
 
