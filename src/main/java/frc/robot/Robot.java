@@ -72,10 +72,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    //LEDSubsystem.getInstance().setColor(LEDConstants.Colors.DISABLED);
-    //LEDSubsystem.getInstance().breathe(Colors.DISABLED, Colors.NO_COLOR, LEDConstants.BREATHE_DURATION);
-    CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
-
+    
   }
 
   @Override

@@ -55,7 +55,7 @@ public class AllignWithLL extends Command {
       System.out.println("April tag is not the target");
     }
 
-    mDrive.swerveDrive(xSpeed, 0, tethaSpeed, false); //not sure if it should be fieldRelative or not
+    mDrive.swerveDrive(xSpeed, 0, tethaSpeed, true); //not sure if it should be fieldRelative or not
   }
 
   // Called once the command ends or is interrupted.

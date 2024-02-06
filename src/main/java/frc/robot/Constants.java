@@ -99,12 +99,12 @@ public final class Constants {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        public static final double drivekP = 0.05;
+        public static final double drivekP = 0.30;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
-        public static final double drivekS = 0.016;
+        public static final double drivekS = 0.23; // prev: 0.016
         public static final double drivekV = 0.19;
-        public static final double drivekA = 0.0;
+        public static final double drivekA = 0;
 
         public static final double anglekP = 0.27;
         public static final double anglekI = 0;
