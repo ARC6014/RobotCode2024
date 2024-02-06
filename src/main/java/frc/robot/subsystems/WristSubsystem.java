@@ -3,7 +3,9 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -13,6 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.WristConstants;
 import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
@@ -37,6 +40,10 @@ public class WristSubsystem extends SubsystemBase {
     private double mAngleOpenLoopOutput;
     private DutyCycleOut mAngleOpenLoopControl;
 
+    /** unit: rotations */
+    private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
+
+
     /** Checking elapsed time for absolute calibration */
     private final Timer m_timer = new Timer();
     /** Last time when we resetted to absolute */
@@ -46,20 +53,31 @@ public class WristSubsystem extends SubsystemBase {
         mTalonFX = new TalonFX(WristConstants.angleMotorId, Constants.CANIVORE_CANBUS);
         mPosition = Position.CLOSED;
 
+        mTalonFX.getConfigurator().apply(new TalonFXConfiguration());
+        TalonFXConfiguration configs = new TalonFXConfiguration();
+
         /* mAngleMotor + PositionControl setup */
         // TODO: fix PID constants
-        var angleMotorConfigs = new Slot0Configs();
-        angleMotorConfigs.kP = WristConstants.ANGLE_kP;
-        angleMotorConfigs.kI = WristConstants.ANGLE_kI;
-        angleMotorConfigs.kD = WristConstants.ANGLE_kD;
+        configs.Slot0.kP = WristConstants.ANGLE_kP;
+        configs.Slot0.kI = WristConstants.ANGLE_kI;
+        configs.Slot0.kD = WristConstants.ANGLE_kD;
 
-        mTalonFX.getConfigurator().apply(angleMotorConfigs);
+        configs.Voltage.PeakForwardVoltage = 12;
+        configs.Voltage.PeakReverseVoltage = -12;
+        configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
+        configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
+
+        configs.MotionMagic.MotionMagicAcceleration = WristConstants.armAcceleration; 
+        configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.armCruiseVelocity; 
+    
+
+        mTalonFX.getConfigurator().apply(configs);
         mTalonFX.setNeutralMode(NeutralModeValue.Brake);
 
         mBoreEncoder.setPositionOffset(WristConstants.positionOffset);
         // must output a position relative to the horizontal, which is 0
-        mPositionSetpoint = mTalonFX.getPosition().getValueAsDouble();
-        mPositionControl = new PositionVoltage(mPositionSetpoint);
+        mPositionSetpoint = 0;
+        //mPositionControl = new PositionVoltage(mPositionSetpoint);
 
         mAngleOpenLoopOutput = 0;
         mAngleOpenLoopControl = new DutyCycleOut(0);
@@ -94,10 +112,16 @@ public class WristSubsystem extends SubsystemBase {
             case OPENLOOP:
                 mTalonFX.setControl(mAngleOpenLoopControl);
                 break;
-
+            case OPEN:
+                setWristAngleMotionMagic(WristConstants.openPosition);
+                break;
+            case CLOSED:
+                setWristAngleMotionMagic(WristConstants.closedPosition);
+                break;
             default:
                 // TODO: add gravity FF
-                mTalonFX.setControl(mPositionControl);
+                //mTalonFX.setControl(mPositionControl);
+                setOpenLoop(0.0);
                 break;
         }
 
@@ -127,6 +151,13 @@ public class WristSubsystem extends SubsystemBase {
         return mBoreEncoder.getAbsolutePosition() + mBoreEncoder.getPositionOffset();
     }
 
+    public void setWristAngleMotionMagic(double target) {
+        mPositionSetpoint = target;
+        mTalonFX.setControl(motionMagicVoltage.withPosition(
+          mGearbox.drivenToDriving(Conversions.degreesToRevolutions(mPositionSetpoint))
+        ));
+      }
+
     /** resets Falcon reading to absolute Bore reading */
     public void resetToAbsolute() {
         double angle = getBoreEncoderPosition();
@@ -149,32 +180,16 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setState(Position pos) {
         mPosition = pos;
-
-        switch (mPosition) {
-            case OPEN:
-                mPositionSetpoint = mGearbox.drivenToDriving(WristConstants.openPosition);
-                break;
-
-            case CLOSED:
-                mPositionSetpoint = mGearbox.drivenToDriving(WristConstants.openPosition);
-                break;
-
-            case OVERRIDE:
-                break;
-
-            case OPENLOOP:
-                return;
-        }
-
-        mPositionControl.Position = mPositionSetpoint;
-        mTalonFX.setControl(mPositionControl);
+        //mPositionControl.Position = mPositionSetpoint;
+        //mTalonFX.setControl(mPositionControl);
     }
 
     public void setOverride(double position) {
         mPosition = Position.OVERRIDE;
         mPositionSetpoint = position;
-        mPositionControl.Position = mPositionSetpoint;
-        mTalonFX.setControl(mPositionControl);
+        //mPositionControl.Position = mPositionSetpoint;
+        //mTalonFX.setControl(mPositionControl);
+        setWristAngleMotionMagic(position);
     }
 
     public void setOpenLoop(double output) {

@@ -250,6 +250,8 @@ public class Constants implements Loggable {
         /** unit: Vs/(rev/s) */
         public static final double RUN_kD = 0;
 
+      
+
     }
 
     public static final class WristConstants {
@@ -276,6 +278,11 @@ public class Constants implements Loggable {
         public static final double ANGLE_kI = 0;
         /** unit: Vs/rev */
         public static final double ANGLE_kD = 0;
+
+          /** unit: rev/s */
+        public static final double armCruiseVelocity = 120;
+        /** unit: rev/s^2 */
+        public static final double armAcceleration = 70; 
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
