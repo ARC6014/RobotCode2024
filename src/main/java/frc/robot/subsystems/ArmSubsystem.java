@@ -141,6 +141,7 @@ public class ArmSubsystem extends SubsystemBase {
         break;
       case AMP:
         setArmAngleMotionMagic(ArmConstants.AMP);
+        break;
       case INTAKE:
         setArmAngleMotionMagic(ArmConstants.INTAKE);
         break;

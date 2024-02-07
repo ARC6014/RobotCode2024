@@ -199,9 +199,9 @@ public class Constants implements Loggable {
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 600;
+        public static final double armCruiseVelocity = 150;
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 500; 
+        public static final double armAcceleration = 120; 
 
         public static final double kP = 1.2; 
         public static final double kD = 0.0; 
@@ -212,7 +212,7 @@ public class Constants implements Loggable {
 
         
         /** unit: rotations */   
-        public static final double positionOffset = Conversions.degreesToRevolutions(13); // TODO: Config starting position offset of bore
+        public static final double positionOffset = Conversions.degreesToRevolutions(13.34); // TODO: Config starting position offset of bore
 
         /** unit: rotations */
         public static final double angleTolerance = Conversions.degreesToRevolutions(1);
@@ -221,13 +221,13 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double ZERO = 0;
         /** unit: degrees */
-        public static final double INTAKE = 9;
+        public static final double INTAKE = 9 + 15;
         /** unit: degrees */
-        public static final double SPEAKER_LONG = 30;
+        public static final double SPEAKER_LONG = 30 + 15;
         /** unit: degrees */
-        public static final double SPEAKER_SHORT = 11;
+        public static final double SPEAKER_SHORT = 11 + 15;
         /** unit: degrees */
-        public static final double AMP = 90;
+        public static final double AMP = 90 + 15;
     }
 
     public static final class IntakeConstants {
