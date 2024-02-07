@@ -11,13 +11,13 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
 public class ShooterCommand extends Command {
 
-  private ShooterSubsystem mShooterSubsystem;
+  private ShooterSubsystem mShooterSubsystem = ShooterSubsystem.getInstance();
   private double percentOutput;
 
   /** Creates a new ShooterComand. */
   public ShooterCommand() {
     percentOutput = 0;
-    addRequirements(ShooterSubsystem.getInstance());
+    addRequirements(mShooterSubsystem);
   }
 
   public ShooterCommand withOpenLoop(double percentOutput) {
@@ -67,6 +67,7 @@ public class ShooterCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     mShooterSubsystem.setShooterState(ShooterState.CLOSED);
+    mShooterSubsystem.stopShMotors();
   }
 
   @Override

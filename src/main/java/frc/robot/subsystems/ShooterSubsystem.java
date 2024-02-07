@@ -10,6 +10,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
@@ -18,10 +19,10 @@ public class ShooterSubsystem extends SubsystemBase {
   /* MOTORS */
   private CANSparkMax m_master = new CANSparkMax(ShooterConstants.MASTER_MOTOR_ID, MotorType.kBrushless);
   private CANSparkMax m_slave = new CANSparkMax(ShooterConstants.SLAVE_MOTOR_ID, MotorType.kBrushless);
-  private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
+  //private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  //private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -51,12 +52,12 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_master.restoreFactoryDefaults();
     m_slave.restoreFactoryDefaults();
-    m_feeder.restoreFactoryDefaults();
+    //m_feeder.restoreFactoryDefaults();
 
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
 
-    m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
+    //m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
     m_master.setIdleMode(ShooterConstants.MASTER_MODE);
     m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
 
@@ -89,22 +90,25 @@ public class ShooterSubsystem extends SubsystemBase {
 
     //m_slave.setInverted(ShooterConstants.slaveInverted);
     //m_master.setInverted(ShooterConstants.masterInverted);
-    m_feeder.setInverted(ShooterConstants.feederInverted);
+    //m_feeder.setInverted(ShooterConstants.feederInverted);
 
 
     // save settings to flash
     m_master.burnFlash();
     m_slave.burnFlash();
-    m_feeder.burnFlash();
+    //m_feeder.burnFlash();
   }
 
   @Override
   public void periodic() {
+    /* 
     if (getSensorState()) {
       m_feederState = FeederState.STOP_WAIT_A_SEC;
     } else {
       m_feederState = FeederState.LET_HIM_COOK;
-    }
+    } */
+
+    //SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
   }
 
   // Setters
@@ -116,9 +120,10 @@ public class ShooterSubsystem extends SubsystemBase {
     m_feederState = newState;
   }
 
+  /* 
   public void setFeederMotorSpeed(double percentOutput) {
     m_feeder.set(percentOutput);
-  }
+  } */
 
   public void setShooterMotorSpeed(double percentOutput) {
     m_master.set(percentOutput);
@@ -141,14 +146,16 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_master.get();
   }
 
+  /* 
   public double getFeederMotorSpeed() {
     return m_feeder.get();
-  }
+  } */
 
   /** returns beam break reading */
+  /* 
   public boolean getSensorState() {
     return m_beamBreaker.get();
-  }
+  } */
 
   public FeederState getFeederState() {
     return m_feederState;

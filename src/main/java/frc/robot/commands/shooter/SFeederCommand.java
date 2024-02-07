@@ -37,13 +37,13 @@ public class SFeederCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterSubsystem.setFeederMotorSpeed(percentOutput);
+    //shooterSubsystem.setFeederMotorSpeed(percentOutput);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterSubsystem.setFeederMotorSpeed(0);
+    //shooterSubsystem.setFeederMotorSpeed(0);
   }
 
   // Returns true when the command should end.

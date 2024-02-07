@@ -62,8 +62,8 @@ public class RobotContainer implements Loggable {
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         // private final TelescopicSubsystem mTelescopic =
         // TelescopicSubsystem.getInstance();
-        private final ArmSubsystem mArm = ArmSubsystem.getInstance();
-        // private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
+        //private final ArmSubsystem mArm = ArmSubsystem.getInstance();
+        private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         // private final WristSubsystem mWrist = WristSubsystem.getInstance();
         // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         // public static Orchestra mOrchestra = new Orchestra();
@@ -86,8 +86,8 @@ public class RobotContainer implements Loggable {
 
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
-        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> -mOperator.getLeftY());
-        // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
+        //private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, ()-> -mOperator.getLeftY());
+        private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
         
         // private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         // private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
@@ -99,7 +99,7 @@ public class RobotContainer implements Loggable {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                // mShooter.setDefaultCommand(shooterOpenLoop);
+                mShooter.setDefaultCommand(shooterOpenLoop);
                 // mWrist.setDefaultCommand(wristOpenLoop);
                 // mIntake.setDefaultCommand(intakeOpenLoop);
 
@@ -150,12 +150,12 @@ public class RobotContainer implements Loggable {
                 // mDriver.cross().onTrue(mDrive.orchestraCommand());
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
-                mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
-                mOperator.b().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
-                mOperator.x().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
-                mOperator.y().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
-                mOperator.rightBumper().onTrue(armOpenLoop);
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
+                // mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
+                // mOperator.b().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
+                // mOperator.x().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
+                // mOperator.y().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
+                //mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* INTAKE */
                 // mOperator.povRight().onTrue(new IntakeSetState(mIntake, Running.FORWARD));
