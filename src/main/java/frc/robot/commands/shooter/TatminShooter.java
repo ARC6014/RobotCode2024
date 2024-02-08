@@ -10,17 +10,19 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
 public class TatminShooter extends Command {
 
-  private ShooterSubsystem mShooterSubsystem = ShooterSubsystem.getInstance();
-  private ShooterState state = ShooterState.CLOSED;
+  private ShooterSubsystem mShooterSubsystem;
+  private ShooterState state;
 
-  public TatminShooter(ShooterState state) {
+  public TatminShooter(ShooterSubsystem shooterSubsystem, ShooterState state) {
+    this.mShooterSubsystem = shooterSubsystem;
     addRequirements(mShooterSubsystem);
+    this.state = state;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mShooterSubsystem.setShooterTatminState(state);
+    mShooterSubsystem.setShooterState(state);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

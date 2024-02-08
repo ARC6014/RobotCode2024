@@ -298,12 +298,12 @@ public class Constants implements Loggable {
         public static final int FEEDER_MOTOR_ID = 32;
         public static final int BEAM_BREAK_ID = 4; // TODO: Config
 
-        public static final double kMinOutput = 0; // TODO: Config
-        public static final double kMaxOutput = 0; // TODO: Config
+        public static final double kMinOutput = -1; // TODO: Config
+        public static final double kMaxOutput = 1; // TODO: Config
 
         /* PID & FF */
-        public static final double kP = 0; // TODO: Config
-        public static final double kFF = 0; // TODO: Config
+        public static final double kP = 6e-5; // TODO: Config
+        public static final double kFF = 0.000015; // TODO: Config
         public static final double kIz = 0; // TODO: Config
         public static final double kD = 0; // TODO: Config
         public static final double kI = 0; // TODO: Config
@@ -319,7 +319,7 @@ public class Constants implements Loggable {
         public static final boolean feederInverted = false;
 
         /* RPMs */
-        public static final double maxRPM = 0; // TODO: Config
+        public static final double maxRPM = 5700; // TODO: Config
         public static final double AMP_SHOOT_RPM = 0; // TODO: Config
         public static final double SPEAKER_SHOOT_RPM = 0; // TODO: Config
     }
