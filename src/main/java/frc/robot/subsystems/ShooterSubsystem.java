@@ -128,10 +128,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     switch (m_shootState) {
       case AMP:
-        shooter_rpm = 4000.0;
+        shooter_rpm = 500.0;
         break;
       case SPEAKER:
-        shooter_rpm = 5700.0;
+        shooter_rpm = 2700.0;
         break;
       case CLOSED:
         shooter_rpm = 0;

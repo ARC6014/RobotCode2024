@@ -302,10 +302,10 @@ public class Constants implements Loggable {
         public static final double kMaxOutput = 1; // TODO: Config
 
         /* PID & FF */
-        public static final double kP = 6e-5; // TODO: Config
-        public static final double kFF = 0.000015; // TODO: Config
+        public static final double kP = 0.000594; // TODO: Config
+        public static final double kFF = 0.0002219; // TODO: Config .000085
         public static final double kIz = 0; // TODO: Config
-        public static final double kD = 0; // TODO: Config
+        public static final double kD = 0.182; // TODO: Config burayı biraz daha artttırcaz 0.202 fazla geldi
         public static final double kI = 0; // TODO: Config
 
         /* Neutral Modes */

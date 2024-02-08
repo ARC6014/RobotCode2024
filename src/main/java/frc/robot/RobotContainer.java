@@ -165,7 +165,7 @@ public class RobotContainer implements Loggable {
                 // mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* INTAKE */
-                mOperator.x().onTrue(new TatminShooter(mShooter, ShooterState.AMP));
+                mOperator.x().whileTrue(new TatminShooter(mShooter, ShooterState.AMP));
                 mOperator.y().onTrue(new TatminShooter(mShooter, ShooterState.SPEAKER));
 
                 // mOperator.povLeft().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
