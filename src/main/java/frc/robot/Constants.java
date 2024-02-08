@@ -76,6 +76,7 @@ public class Constants implements Loggable {
             FRONTRIGHTMODULE_TRANSLATION2D, // FR
             REARLEFTMODULE_TRANSLATION2D, // RL
             REARRIGHTMODULE_TRANSLATION2D); // RR
+    public static final boolean IS_TATMIN = true;
 
     public static final class DriveConstants {
         public static final boolean isFieldOriented = true;
@@ -194,25 +195,25 @@ public class Constants implements Loggable {
         public static final int boreChannel = 1;
 
         public static final Gearbox gearRatio = new Gearbox(1, 119.5);
-        public static final boolean motorInverted = false; 
+        public static final boolean motorInverted = false;
 
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
         public static final double armCruiseVelocity = 150;
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 120; 
+        public static final double armAcceleration = 120;
 
-        public static final double kP = 1.2; 
-        public static final double kD = 0.0; 
+        public static final double kP = 1.2;
+        public static final double kD = 0.0;
         public static final double kI = 0;
         public static final double kG = 0; // TODO: Config
-        public static final double kS = 0.14; 
+        public static final double kS = 0.14;
         public static final double kV = 0; // TODO: Config
 
-        
-        /** unit: rotations */   
-        public static final double positionOffset = Conversions.degreesToRevolutions(13.34); // TODO: Config starting position offset of bore
+        /** unit: rotations */
+        public static final double positionOffset = Conversions.degreesToRevolutions(13.34); // TODO: Config starting
+                                                                                             // position offset of bore
 
         /** unit: rotations */
         public static final double angleTolerance = Conversions.degreesToRevolutions(1);
@@ -250,8 +251,6 @@ public class Constants implements Loggable {
         /** unit: Vs/(rev/s) */
         public static final double RUN_kD = 0;
 
-      
-
     }
 
     public static final class WristConstants {
@@ -279,10 +278,10 @@ public class Constants implements Loggable {
         /** unit: Vs/rev */
         public static final double ANGLE_kD = 0;
 
-          /** unit: rev/s */
+        /** unit: rev/s */
         public static final double armCruiseVelocity = 120;
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 70; 
+        public static final double armAcceleration = 70;
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
