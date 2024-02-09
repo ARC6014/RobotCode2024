@@ -30,6 +30,7 @@ public class IntakeSetState extends Command {
 
     @Override
     public boolean isFinished() {
-        return mIntakeSubsystem.isAtSetpoint();
+        //return mIntakeSubsystem.isAtSetpoint();
+        return false;
     }
 }

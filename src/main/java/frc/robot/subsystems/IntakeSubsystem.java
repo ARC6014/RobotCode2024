@@ -70,6 +70,8 @@ public class IntakeSubsystem extends SubsystemBase {
         OVERRIDE,
         /** openloop control */
         OPENLOOP,
+        /** testing when feeder is not assembled */
+        FEEDING_SHOOTER,
     }
 
     @Override
@@ -130,6 +132,10 @@ public class IntakeSubsystem extends SubsystemBase {
                 return;
 
             case OVERRIDE:
+                break;
+
+            case FEEDING_SHOOTER:
+                mRunningVelocitySetpoint = IntakeConstants.feederVelocity;
                 break;
 
             case OPENLOOP:

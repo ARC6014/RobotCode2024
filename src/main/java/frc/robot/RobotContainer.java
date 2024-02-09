@@ -175,8 +175,9 @@ public class RobotContainer implements Loggable {
                 mOperator2.R1().onTrue(wristOpenLoop);
 
                 /* INTAKE */
-                mOperator2.circle().toggleOnTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                mOperator2.cross().toggleOnTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                mOperator2.circle().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                mOperator2.cross().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                mOperator2.triangle().whileTrue(new IntakeSetState(mIntake, Running.FEEDING_SHOOTER));
 
         }
 

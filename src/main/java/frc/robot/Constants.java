@@ -241,6 +241,10 @@ public class Constants implements Loggable {
         /** unit: rps */
         public static final double reverseVelocity = -1000 / 60;
 
+        /** unit: rps */
+        public static final double feederVelocity = -500 / 60;
+
+
         // TODO: tolerance
         public static final double velocityEqualityTolerance = 0;
 
