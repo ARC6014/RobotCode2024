@@ -237,9 +237,9 @@ public class Constants implements Loggable {
         public static final int beamBreakSensorDioId = 2;
 
         /** unit: rps */
-        public static final double forwardVelocity = 0;
+        public static final double forwardVelocity = 1000 / 60;
         /** unit: rps */
-        public static final double reverseVelocity = 0;
+        public static final double reverseVelocity = -1000 / 60;
 
         // TODO: tolerance
         public static final double velocityEqualityTolerance = 0;

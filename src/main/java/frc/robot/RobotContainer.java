@@ -88,7 +88,7 @@ public class RobotContainer implements Loggable {
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
-        private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
+        // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
 
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator2.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator2.getRightX());
@@ -149,9 +149,11 @@ public class RobotContainer implements Loggable {
          */
         private void configureButtonBindings() {
 
+                /* DRIVE */
                 // mDriver.cross().onTrue(mDrive.orchestraCommand());
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
+                /* ARM */
                 mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
@@ -160,35 +162,20 @@ public class RobotContainer implements Loggable {
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
                 mOperator.rightBumper().onTrue(armOpenLoop);
 
-                /* INTAKE */
+                /* SHOOTER */
                 mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
                 mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
                 mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
                 mOperator.b().whileTrue(new SFeederCommand(0.8));
 
-                // mOperator.povLeft().onTrue(new IntakeSetState(mIntake, Running.REVERSE));
-
                 /* WRIST */
-                mOperator2.povDown().onTrue(new WristSetState(mWrist, Position.CLOSED));
-                mOperator2.povUp().onTrue(new WristSetState(mWrist, Position.OPEN));
+                mOperator2.povDown().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mOperator2.povUp().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
                 mOperator2.R1().onTrue(wristOpenLoop);
 
-                /* FEEDER */
-                // mOperator.y().onTrue(new SFeederCommand());
-
-                // open loop
-                // new SFeederCommand(mOperator.getLeftX());
-
-                /* SHOOTER */
-                // mOperator.leftBumper().onTrue(new
-                // ShooterCommand().withShooterState(ShooterState.AMP));
-                // mOperator.rightBumper().onTrue(new
-                // ShooterCommand().withShooterState(ShooterState.SPEAKER));
-                // mOperator.leftTrigger().onTrue(new
-                // ShooterCommand().withShooterState(ShooterState.CLOSED));
-
-                // Open loop
-                // new ShooterCommand().withOpenLoop(mOperator.getLeftX());
+                /* INTAKE */
+                mOperator2.circle().toggleOnTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                mOperator2.cross().toggleOnTrue(new IntakeSetState(mIntake, Running.REVERSE));
 
         }
 
