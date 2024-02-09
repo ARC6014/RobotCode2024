@@ -13,6 +13,7 @@ public class ShooterCommand extends Command {
 
   private ShooterSubsystem mShooterSubsystem = ShooterSubsystem.getInstance();
   private double percentOutput;
+  private ShooterState state;
 
   /** Creates a new ShooterComand. */
   public ShooterCommand() {
@@ -21,52 +22,34 @@ public class ShooterCommand extends Command {
   }
 
   public ShooterCommand withOpenLoop(double percentOutput) {
-    mShooterSubsystem.setShooterState(ShooterState.OPEN_LOOP);
+    this.state = ShooterState.OPEN_LOOP;
     this.percentOutput = percentOutput;
     return this;
   }
 
-  public ShooterCommand withShooterState(ShooterState level) {
-    mShooterSubsystem.setShooterState(level);
+  public ShooterCommand withShooterState(ShooterState state) {
+    this.state = state;
     return this;
   }
 
   @Override
   public void initialize() {
+    mShooterSubsystem.setShooterState(state);
+
+    if (state == ShooterState.OPEN_LOOP) {
+      mShooterSubsystem.setShooterOut(percentOutput);
+    }
 
   }
 
   @Override
   public void execute() {
-
-    if (mShooterSubsystem.getShooterState() == ShooterState.OPEN_LOOP) {
-      mShooterSubsystem.setShooterMotorSpeed(percentOutput);
-    }
-
-    switch (mShooterSubsystem.getShooterState()) {
-
-      case OPEN_LOOP:
-        mShooterSubsystem.setShooterMotorSpeed(percentOutput);
-        break;
-
-      case AMP:
-        mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.AMP_SHOOT_RPM);
-        break;
-
-      case SPEAKER:
-        mShooterSubsystem.setShooterMotorsRPM(ShooterConstants.SPEAKER_SHOOT_RPM);
-        break;
-
-      default:
-        mShooterSubsystem.setShooterMotorsRPM(0);
-        break;
-    }
-
   }
 
   @Override
   public void end(boolean interrupted) {
     mShooterSubsystem.setShooterState(ShooterState.CLOSED);
+    mShooterSubsystem.setShooterOut(0);
     mShooterSubsystem.stopShMotors();
   }
 

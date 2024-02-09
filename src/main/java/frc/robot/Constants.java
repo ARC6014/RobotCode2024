@@ -222,7 +222,7 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double ZERO = 0;
         /** unit: degrees */
-        public static final double INTAKE = 9 + 15;
+        public static final double INTAKE = 9 + 15 - 9.5;
         /** unit: degrees */
         public static final double SPEAKER_LONG = 30 + 15;
         /** unit: degrees */
@@ -255,12 +255,12 @@ public class Constants implements Loggable {
 
     public static final class WristConstants {
         public static final int angleMotorId = 11;
-        public static final int boreEncoderDioId = 3;
+        public static final int boreEncoderDioId = 0;
 
-        public static final Gearbox gearbox = new Gearbox(72, 1);
+        public static final Gearbox gearbox = new Gearbox(1, 72);
 
         /** REV Bore Encoder position offset, unit: revolutions */
-        public static final double positionOffset = 0;
+        public static final double positionOffset = Conversions.degreesToRevolutions(28.7);
         /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
         public static final double openPosition = 0;
         /** REV Bore Encoder position, with the horizontal as 0, unit: revolutions */
@@ -305,7 +305,7 @@ public class Constants implements Loggable {
         public static final double kP = 0.000594; // TODO: Config
         public static final double kFF = 0.0002219; // TODO: Config .000085
         public static final double kIz = 0; // TODO: Config
-        public static final double kD = 0.182; // TODO: Config burayı biraz daha artttırcaz 0.202 fazla geldi
+        public static final double kD = 0.132; // TODO: Config burayı biraz daha artttırcaz 0.202 fazla geldi
         public static final double kI = 0; // TODO: Config
 
         /* Neutral Modes */
@@ -320,8 +320,8 @@ public class Constants implements Loggable {
 
         /* RPMs */
         public static final double maxRPM = 5700; // TODO: Config
-        public static final double AMP_SHOOT_RPM = 0; // TODO: Config
-        public static final double SPEAKER_SHOOT_RPM = 0; // TODO: Config
+        public static final double AMP_SHOOT_RPM = 2700.0; // TODO: Config
+        public static final double SPEAKER_SHOOT_RPM = 500.0; // TODO: Config
     }
 
     public static final class TelescopicConstants {

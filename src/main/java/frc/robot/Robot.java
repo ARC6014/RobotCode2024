@@ -98,7 +98,7 @@ public class Robot extends TimedRobot {
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
-   //WristSubsystem.getInstance().resetToAbsolute();
+    // WristSubsystem.getInstance().resetToAbsolute();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
     }
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
-    //WristSubsystem.getInstance().resetToAbsolute();
+    WristSubsystem.getInstance().resetToAbsolute();
   }
 
   /** This function is called periodically during operator control. */
