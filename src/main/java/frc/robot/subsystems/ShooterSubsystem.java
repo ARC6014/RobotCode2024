@@ -46,6 +46,9 @@ public class ShooterSubsystem extends SubsystemBase {
   private FeederState m_feederState;
   private PowerDistribution m_pdh = new PowerDistribution();
 
+  /** voltage to apply with respect to current battery charge */
+  private double m_shooterVoltage = 9.0;
+
   private boolean isTatmin = Constants.IS_TATMIN;
   double shooter_rpm;
   double feeder_out;
@@ -56,6 +59,7 @@ public class ShooterSubsystem extends SubsystemBase {
     CLOSED,
     AMP,
     SPEAKER,
+    SMART_VOLTAGE,
   }
 
   public enum FeederState {
@@ -148,7 +152,10 @@ public class ShooterSubsystem extends SubsystemBase {
       case CLOSED:
         shooter_rpm = 0;
         break;
+      case SMART_VOLTAGE:
+        setShooterMotorSpeed(m_shooterVoltage);
       default:
+      setShooterMotorSpeed(0.0);
         break;
     }
 
@@ -167,9 +174,7 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putString("Shooter State", m_shootState.name());
 
     SmartDashboard.putNumber("Voltage", m_pdh.getVoltage());
-    SmartDashboard.putNumber("Total Energy", m_pdh.getTotalEnergy());
-    SmartDashboard.putNumber("Total Power", m_pdh.getTotalPower());
-
+    SmartDashboard.putNumber("Smart Voltage", getSmartVoltageShooter());
   }
 
   // Setters
@@ -211,6 +216,9 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Getters
+  public double getSmartVoltageShooter() {
+    return m_shooterVoltage / m_pdh.getVoltage();
+  }
   public double getMasterMotorSpeed() {
     return m_master.get();
   }
@@ -235,6 +243,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Sycentric Othering
   public void stopShMotors() {
+    setShooterMotorSpeed(0);
     m_master.stopMotor();
     m_slave.stopMotor();
   }

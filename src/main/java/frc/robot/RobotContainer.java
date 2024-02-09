@@ -167,6 +167,7 @@ public class RobotContainer implements Loggable {
                 mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
                 mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
                 mOperator.b().whileTrue(new SFeederCommand(0.8));
+                mOperator.rightTrigger().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SMART_VOLTAGE));
 
                 /* WRIST */
                 mOperator2.povDown().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
