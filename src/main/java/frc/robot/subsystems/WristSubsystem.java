@@ -131,8 +131,8 @@ public class WristSubsystem extends SubsystemBase {
         // resetToAbsolute();
         // }
 
-        SmartDashboard.putNumber("Wrist Bore Reading", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
-        SmartDashboard.putNumber("Wrist Falcon Reading", Conversions.revolutionsToDegrees(getFalconPosition()));
+        //SmartDashboard.putNumber("Wrist Bore Reading", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
+        //SmartDashboard.putNumber("Wrist Falcon Reading", Conversions.revolutionsToDegrees(getFalconPosition()));
 
         autoCalibration();
     }

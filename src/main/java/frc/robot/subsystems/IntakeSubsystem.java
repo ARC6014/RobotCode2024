@@ -159,6 +159,10 @@ public class IntakeSubsystem extends SubsystemBase {
         mTalonFX.setControl(mRunningOpenLoopControl.withOutput(output));
     }
 
+    public double getSetpoint() {
+        return mRunningVelocitySetpoint;
+    }
+
     public ArrayList<TalonFX> getMotors() {
         var motors = new ArrayList<TalonFX>();
         motors.add(mTalonFX);

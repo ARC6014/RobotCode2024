@@ -169,12 +169,12 @@ public class ShooterSubsystem extends SubsystemBase {
       setShooterTatminMotorsRPM();
     }
 
-    SmartDashboard.putBoolean("Beam Break", m_beamBreaker.get());
-    SmartDashboard.putNumber("Shooter RPM", shooter_rpm);
-    SmartDashboard.putString("Shooter State", m_shootState.name());
-
-    SmartDashboard.putNumber("Voltage", m_pdh.getVoltage());
-    SmartDashboard.putNumber("Smart Voltage", getSmartVoltageShooter());
+    //SmartDashboard.putBoolean("Beam Break", m_beamBreaker.get());
+    //SmartDashboard.putNumber("Shooter RPM", shooter_rpm);
+    //SmartDashboard.putString("Shooter State", m_shootState.name());
+//
+    //SmartDashboard.putNumber("Voltage", m_pdh.getVoltage());
+    //SmartDashboard.putNumber("Smart Voltage", getSmartVoltageShooter());
   }
 
   // Setters
@@ -239,6 +239,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterState getShooterState() {
     return m_shootState;
+  }
+
+  public double getTargetRPM() {
+    return shooter_rpm;
+  }
+
+  public double getPDHVoltage() {
+    return m_pdh.getVoltage();
   }
 
   // Sycentric Othering
