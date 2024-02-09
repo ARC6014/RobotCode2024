@@ -35,7 +35,7 @@ public class WristOpenLoop extends Command {
     if (output > 0.04 || output < -0.04) {
       mWrist.setOpenLoop(output / 5);
     } else {
-      mWrist.setOpenLoop(0);
+      mWrist.hold();;
     }
   }
 

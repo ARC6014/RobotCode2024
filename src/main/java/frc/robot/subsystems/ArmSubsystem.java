@@ -25,11 +25,12 @@ import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 
 public class ArmSubsystem extends SubsystemBase {
+  private static ArmSubsystem mInstance;
+
   /* MOTORS & ENCODER */
   private final TalonFX armMotor = new TalonFX(ArmConstants.motorID, Constants.CANIVORE_CANBUS);
   private final DutyCycleEncoder boreEncoder = new DutyCycleEncoder(ArmConstants.boreChannel);
 
-  private static ArmSubsystem mInstance;
   public Gearbox armGearbox = ArmConstants.gearRatio;
 
   /** Checking elapsed time for absolute calibration */
@@ -115,6 +116,7 @@ public class ArmSubsystem extends SubsystemBase {
     //configs.CurrentLimits.SupplyCurrentLimit = 80;
     //configs.CurrentLimits.SupplyCurrentLimitEnable = true;
     armMotor.getConfigurator().apply(configs);
+    armMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -178,6 +180,9 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** @return true if within angle tolerance */
   public boolean isAtSetpointFalcon() {
+    if (armControlState == ArmControlState.OPEN_LOOP) {
+      return false;
+    }
     return Math.abs(getArmAngleFalcon() - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.angleTolerance;
   }
 
@@ -190,7 +195,7 @@ public class ArmSubsystem extends SubsystemBase {
     return setpoint;
   }
 
-  /** basically "zeros" arm */
+  /** basically "zeroes" arm */
   public double zeroSetpoint() {
     return setpoint = 0;
   }
