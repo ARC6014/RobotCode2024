@@ -4,10 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.music.Orchestra;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,9 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SetIdleModeInvert;
 import frc.robot.commands.arm.ArmOpenLoop;
@@ -31,7 +27,6 @@ import frc.robot.commands.intake.IntakeOpenLoop;
 import frc.robot.commands.intake.IntakeSetState;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
-import frc.robot.commands.leds.Party;
 import frc.robot.commands.shooter.SFeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
@@ -45,7 +40,6 @@ import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.IntakeSubsystem.Running;
-import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.WristSubsystem.Position;
 import frc.team6014.lib.auto.ARCTrajectory;
 import io.github.oblarg.oblog.Loggable;
@@ -62,13 +56,11 @@ import io.github.oblarg.oblog.Loggable;
 public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        // private final TelescopicSubsystem mTelescopic =
-        // TelescopicSubsystem.getInstance();
+        // private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        // public static Orchestra mOrchestra = new Orchestra();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -87,12 +79,8 @@ public class RobotContainer implements Loggable {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-        // private final TelescopicOpenLoop telescopicOpenLoop = new
-        // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
+        // private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
-        // private final ShooterCommand shooterOpenLoop = new
-        // ShooterCommand().withOpenLoop(mOperator.getLeftY());
-
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator2.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator2.getRightX());
 
@@ -103,9 +91,6 @@ public class RobotContainer implements Loggable {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                // mWrist.setDefaultCommand(wristOpenLoop);
-                mIntake.setDefaultCommand(intakeOpenLoop);
-                // mShooter.setDefaultCommand(shooterOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
@@ -124,15 +109,6 @@ public class RobotContainer implements Loggable {
          */
         private void configureNamedCommands() {
 
-                // NamedCommands.registerCommand("prepare & shoot amp",
-                // new SFeederCommand().andThen(new
-                // ShooterCommand().withShooterState(ShooterState.AMP)
-                // .withTimeout(1.2)));
-
-                // NamedCommands.registerCommand("prepare & shoot speaker",
-                // new SFeederCommand().andThen(new
-                // ShooterCommand().withShooterState(ShooterState.SPEAKER)
-                // .withTimeout(1.2)));
                 NamedCommands.registerCommand("Shoot", new FakeShoot().withTimeout(1.0));
                 NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
                 NamedCommands.registerCommand("Field-Oriented Turn (-45)", new FieldOrientedTurn(mDrive, -45));
@@ -153,7 +129,6 @@ public class RobotContainer implements Loggable {
         private void configureButtonBindings() {
 
                 /* DRIVE */
-                // mDriver.cross().onTrue(mDrive.orchestraCommand());
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 /* ARM */
@@ -165,18 +140,14 @@ public class RobotContainer implements Loggable {
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
                 mOperator.rightBumper().onTrue(armOpenLoop);
 
-                /* SHOOTER */
-                // mOperator.x().toggleOnTrue(new
-                // ShooterCommand().withShooterState(ShooterState.AMP));
-                // mOperator.y().toggleOnTrue(new
-                // ShooterCommand().withShooterState(ShooterState.SPEAKER));
-                // mOperator.a().toggleOnTrue(new
-                // ShooterCommand().withShooterState(ShooterState.CLOSED));
+                /* SHOOTER + FEEDER */
                 mDriver.square().whileTrue(new SFeederCommand(0.4578));
                 mDriver.circle().toggleOnTrue(new ShooterCommand()
                                 .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.AMP_VOLTAGE)));
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()
                                 .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_SHORT_VOLTAGE)));
+                mDriver.povUp().toggleOnTrue(new ShooterCommand()
+                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_LONG_VOLTAGE)));
 
                 /* WRIST */
                 mOperator.x().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
@@ -186,9 +157,9 @@ public class RobotContainer implements Loggable {
                 /* INTAKE */
                 mOperator.rightTrigger().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
                 mOperator.leftTrigger().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
-                // mOperator2.y().whileTrue(new IntakeSetState(mIntake,
-                // Running.FEEDING_SHOOTER));
-
+                mOperator.rightStick().onTrue(intakeOpenLoop);
+                
+                /* BREAK-COAST SWITCH */
                 mDriver.L2().onTrue(new SetIdleModeInvert());
 
         }

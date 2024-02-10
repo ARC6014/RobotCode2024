@@ -10,7 +10,6 @@ import java.util.Optional;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -19,31 +18,22 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.RobotContainer;
 import frc.team6014.lib.drivers.SwerveModuleBase;
-import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
 import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
-import edu.wpi.first.util.datalog.DataLog;
-import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
-import edu.wpi.first.util.datalog.DoubleLogEntry;
+
 
 public class DriveSubsystem extends SubsystemBase implements Loggable {
   // Swerve numbering:
@@ -75,14 +65,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   // DriveConstants.snapkI, DriveConstants.snapkD,
   // DriveConstants.rotPIDconstraints);
 
-  private final Timer snapTimer = new Timer();
+  // private final Timer snapTimer = new Timer();
 
   public SwerveDrivePoseEstimator poseEstimator;
 
-  // LOGS
-
-  // private DoubleArrayLogEntry velocityDesiredLog;
-  // private DoubleArrayLogEntry velocityActualLog;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -112,20 +98,15 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             DriveConstants.swerveConstants)
     };
 
-    snapTimer.reset();
-    snapTimer.start();
+    // snapTimer.reset();
+    // snapTimer.start();
 
-    // snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that
-    // the PID controller knows -180 and 180 are
+    // snapPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     zeroHeading();
 
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
 
-    // for (SwerveModuleBase module : mSwerveModules) {
-    // RobotContainer.mOrchestra.addInstrument(module.getDriveMotor());
-    // RobotContainer.mOrchestra.addInstrument(module.getAngleMotor());
-    // }
 
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
@@ -147,17 +128,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             mod.setNeutralMode2Brake(false);
           }
         }));
-    // logInit();
-    // new StartEndCommand(() -> {
-    // for (SwerveModuleBase mod : mSwerveModules) {
-    // mod.setNeutralMode2Brake(true);
-    // }
-    // }, () -> {
-    // Timer.delay(1.5);
-    // for (SwerveModuleBase mod : mSwerveModules) {
-    // mod.setNeutralMode2Brake(false);
-    // }
-    // });
+    
   }
 
   public static DriveSubsystem getInstance() {
@@ -176,37 +147,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    // SmartDashboard.putNumber("Voltage 0 ",
-    // getDriveMotors().get(0).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Voltage 1",
-    // getDriveMotors().get(1).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Voltage 2",
-    // getDriveMotors().get(2).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Voltage 3",
-    // getDriveMotors().get(3).getMotorOutputVoltage());
-
-    // SmartDashboard.putNumber("Bus Voltage 0 ",
-    // getDriveMotors().get(0).getBusVoltage());
-    // SmartDashboard.putNumber("Bus Voltage 1",
-    // getDriveMotors().get(1).getBusVoltage());
-    // SmartDashboard.putNumber("Bus Voltage 2",
-    // getDriveMotors().get(2).getBusVoltage());
-    // SmartDashboard.putNumber("Bus Voltage 3",
-    // getDriveMotors().get(3).getBusVoltage());
-
-    // SmartDashboard.putNumber("Current 0",
-    // getDriveMotors().get(0).getOutputCurrent());
-    // SmartDashboard.putNumber("Current 1",
-    // getDriveMotors().get(1).getOutputCurrent());
-    // SmartDashboard.putNumber("Current 2",
-    // getDriveMotors().get(2).getOutputCurrent());
-    // SmartDashboard.putNumber("Current 3",
-    // getDriveMotors().get(3).getOutputCurrent());
-
-    SmartDashboard.putNumber("Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
 
   }
 
@@ -233,8 +177,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       };
     }
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeed); // normalizes wheel speeds to absolute
-                                                                                  // threshold
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeed); 
 
     /*
      * Sets open loop states
@@ -295,11 +238,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * Setters
    */
   public void resetOdometry(Pose2d pose) {
-    // original code: swervePoseEstimator.resetPosition(getYaw(), getPositions(),
-    // pose);
-    // TODO: may also use the code below
-    // swervePoseEstimator.resetPosition(getRotation2d(), getModulePositions(),
-    // pose);
     mGyro.reset();
     mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
     mOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose);
@@ -428,28 +366,4 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     }
     return motors;
   }
-
-  // public Command orchestraCommand() {
-  // return startEnd(
-  // () -> {
-  // RobotContainer.mOrchestra.loadMusic("RickRollCHRP.chrp");
-
-  // RobotContainer.mOrchestra.play();
-  // },
-  // () -> {
-  // RobotContainer.mOrchestra.stop();
-  // })
-  // .withName("Orchestra");
-  // }
-
-  /*
-   * public double getPitch() {
-   * return mGyro.getPitch().getValue();
-   * }
-   * /*
-   * public double getYaw() {
-   * return mGyro.getYaw().getValue();
-   * }
-   */
-
 }

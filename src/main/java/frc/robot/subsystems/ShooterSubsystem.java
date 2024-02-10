@@ -6,22 +6,12 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
 
-import edu.wpi.first.math.MathShared;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.proto.System;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
-import frc.team6014.lib.math.Conversions;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -36,20 +26,14 @@ public class ShooterSubsystem extends SubsystemBase {
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
 
-  private RelativeEncoder m_masterEncoder;
-  private RelativeEncoder m_slaveEncoder;
-
-  private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
+  private double kMaxOutput, kMinOutput;
 
   private static ShooterSubsystem m_instance;
   private ShooterState m_shootState;
   private FeederState m_feederState;
   private PowerDistribution m_pdh = new PowerDistribution();
 
-  /** voltage to apply with respect to current battery charge */
-  private double m_shooterVoltage = 9.0;
 
-  private boolean isTatmin = Constants.IS_TATMIN;
   double shooter_rpm;
   double feeder_out;
   double shooter_out;
@@ -81,64 +65,39 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
-    m_slaveEncoder = m_slave.getEncoder();
-    m_masterEncoder = m_master.getEncoder();
-
+    
     m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
 
     // PID coefficients
-    kP = ShooterConstants.kP;
-    kI = ShooterConstants.kI;
-    kD = ShooterConstants.kD;
-    kIz = ShooterConstants.kIz;
-    kFF = ShooterConstants.kFF;
     kMaxOutput = ShooterConstants.kMaxOutput;
     kMinOutput = ShooterConstants.kMinOutput;
-    maxRPM = ShooterConstants.maxRPM;
 
-    // set PID coefficients
-    // m_masterPIDController.setP(kP);
-    // m_masterPIDController.setI(kI);
-    // m_masterPIDController.setD(kD);
-    // m_masterPIDController.setIZone(kIz);
-    // m_masterPIDController.setFF(kFF);
     m_masterPIDController.setOutputRange(kMinOutput, kMaxOutput);
-
-    // m_slavePIDController.setP(kP);
-    // m_slavePIDController.setI(kI);
-    // m_slavePIDController.setD(kD);
-    // m_slavePIDController.setIZone(kIz);
-    // m_slavePIDController.setFF(kFF);
     m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);
 
-    // m_slave.follow(m_master, true);
-
-    // m_slave.setInverted(ShooterConstants.slaveInverted);
     // save settings to flash
     m_master.setIdleMode(ShooterConstants.MASTER_MODE);
     m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
+
+    // slave should turn in opposite with the master
     m_slave.follow(m_master, true);
 
     m_master.burnFlash();
     m_slave.burnFlash();
     m_feeder.burnFlash();
 
-    // m_master.setInverted(ShooterConstants.masterInverted);
-    // m_slave.setInverted(ShooterConstants.slaveInverted);
-
   }
 
   @Override
   public void periodic() {
 
-    if (!isTatmin) {
       if (getSensorState()) {
         m_feederState = FeederState.STOP_WAIT_A_SEC;
         setFeederMotorSpeed(0);
       } else {
         setFeederMotorSpeed(feeder_out);
       }
-    }
+    
 
     switch (m_shootState) {
       case AMP:
@@ -163,16 +122,6 @@ public class ShooterSubsystem extends SubsystemBase {
       setFeederaMotorSpeed(0);
     }
 
-    if (m_shootState != ShooterState.OPEN_LOOP) {
-      setShooterTatminMotorsRPM();
-    }
-
-    // SmartDashboard.putBoolean("Beam Break", m_beamBreaker.get());
-    // SmartDashboard.putNumber("Shooter RPM", shooter_rpm);
-    // SmartDashboard.putString("Shooter State", m_shootState.name());
-    //
-    // SmartDashboard.putNumber("Voltage", m_pdh.getVoltage());
-    // SmartDashboard.putNumber("Smart Voltage", getSmartVoltageShooter());
   }
 
   // Setters
@@ -207,14 +156,14 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slavePIDController.setReference(rpm, CANSparkMax.ControlType.kVelocity);
   }
 
-  private void setShooterTatminMotorsRPM() {
-    m_masterPIDController.setReference(shooter_rpm, CANSparkMax.ControlType.kVelocity);
-
-    SmartDashboard.putNumber("Master Encoder RPM", m_masterEncoder.getVelocity());
+  // Getters
+  /** optimal percent output for shooter */
+  public double getSmartVoltageShooter(double targetVoltage) {
+    return targetVoltage / m_pdh.getVoltage();
   }
 
-  // Getters
-  public double getSmartVoltageShooter(double targetVoltage) {
+  /** optimal percent output for feeder */
+  public double getSmartVoltageFeeder(double targetVoltage) {
     return targetVoltage / m_pdh.getVoltage();
   }
 
@@ -226,8 +175,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_feeder.get();
   }
 
-  /** returns beam break reading */
-
+  /** beam break reading */
   public boolean getSensorState() {
     return m_beamBreaker.get();
   }
@@ -240,15 +188,18 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_shootState;
   }
 
-  public double getTargetRPM() {
-    return shooter_rpm;
+  public double getShooterPercentTarget() {
+    return shooter_out;
+  }
+
+  public double getFeederPercentTarget() {
+    return feeder_out;
   }
 
   public double getPDHVoltage() {
     return m_pdh.getVoltage();
   }
 
-  // Sycentric Othering
   public void stopShMotors() {
     setShooterMotorSpeed(0);
     m_master.stopMotor();

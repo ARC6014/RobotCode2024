@@ -6,21 +6,16 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.commands.arm.ArmStateSet;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 
@@ -56,9 +51,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** unit: rotations */
   private double lastDemandedRotation;
-
-  // private final MotionMagicTorqueCurrentFOC motionMagic = new
-  // MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
   /** unit: rotations */
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
@@ -111,33 +103,12 @@ public class ArmSubsystem extends SubsystemBase {
 
     configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration;
     configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity;
-    // configs.CurrentLimits.StatorCurrentLimit = 300;
-    // configs.CurrentLimits.StatorCurrentLimitEnable = true;
-    // configs.CurrentLimits.SupplyCurrentLimit = 80;
-    // configs.CurrentLimits.SupplyCurrentLimitEnable = true;
     armMotor.getConfigurator().apply(configs);
     armMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // SmartDashboard.putNumber("Arm Bore Degrees",
-    // Conversions.revolutionsToDegrees(getArmAngleBore()));
-    // SmartDashboard.putNumber("Arm Falcon Degrees",
-    // Conversions.revolutionsToDegrees(getArmAngleFalcon()));
-    // SmartDashboard.putBoolean("Arm At Setpoint", isAtSetpointFalcon());
-    // SmartDashboard.putString("Arm State", armControlState.toString());
-    // SmartDashboard.putBoolean("MotMag Working",
-    // armMotor.getMotionMagicIsRunning().getValue() ==
-    // MotionMagicIsRunningValue.Enabled);
-    // SmartDashboard.putNumber("Last Demanded Rot",
-    // Conversions.revolutionsToDegrees(lastDemandedRotation));
-    // SmartDashboard.putNumber("Motor Current",
-    // armMotor.getStatorCurrent().getValueAsDouble());
-    // SmartDashboard.putNumber("Arm Voltage",
-    // armMotor.getMotorVoltage().getValueAsDouble());
-
     switch (armControlState) {
       case OPEN_LOOP:
         setMotorOutput();

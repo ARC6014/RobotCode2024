@@ -209,6 +209,10 @@ public class WristSubsystem extends SubsystemBase {
                 - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.positionEqualityTolerance;
     }
 
+    public boolean isAtZero() {
+        return getFalconPosition() < WristConstants.positionEqualityTolerance;
+    }
+
     public boolean isBoreAtSetpoint() {
         if (mPosition == Position.OPENLOOP) {
             return false;

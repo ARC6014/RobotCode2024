@@ -207,13 +207,12 @@ public class Constants implements Loggable {
         public static final double kP = 1.2;
         public static final double kD = 0.0;
         public static final double kI = 0;
-        public static final double kG = 0; // TODO: Config
+        public static final double kG = 0; 
         public static final double kS = 0.14;
-        public static final double kV = 0; // TODO: Config
+        public static final double kV = 0; 
 
         /** unit: rotations */
-        public static final double positionOffset = Conversions.degreesToRevolutions(13.34); // TODO: Config starting
-                                                                                             // position offset of bore
+        public static final double positionOffset = Conversions.degreesToRevolutions(13.34);
 
         /** unit: rotations */
         public static final double angleTolerance = Conversions.degreesToRevolutions(1);
@@ -242,9 +241,8 @@ public class Constants implements Loggable {
         public static final double reverseVelocity = (-2600 / 60) * 1.7;
 
         /** unit: rps */
-        public static final double feederVelocity = -1000 / 60;
+        public static final double feederVelocity = -3000 / 60;
 
-        // TODO: tolerance, rps
         public static final double velocityEqualityTolerance = 0 / 60;
 
         /** unit: V/(rev/s) */
@@ -253,9 +251,7 @@ public class Constants implements Loggable {
         public static final double RUN_kI = 0;
         /** unit: Vs/(rev/s) */
         public static final double RUN_kD = 0.821;
-
-        public static final double RUN_kS = 0.3; // 0.3
-
+        public static final double RUN_kS = 0.3; 
         public static final double RUN_kV = 0;
 
     }
@@ -296,8 +292,7 @@ public class Constants implements Loggable {
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
-        // TODO: kG
-        public static final double kG = 0;
+    
 
     }
 
@@ -309,34 +304,37 @@ public class Constants implements Loggable {
         public static final int FEEDER_MOTOR_ID = 32;
         public static final int BEAM_BREAK_ID = 4; // TODO: Config
 
-        public static final double kMinOutput = -1; // TODO: Config
-        public static final double kMaxOutput = 1; // TODO: Config
+        public static final double kMinOutput = -1; 
+        public static final double kMaxOutput = 1; 
 
         /* PID & FF */
-        public static final double kP = 0.000594; // TODO: Config
-        public static final double kFF = 0.0002219; // TODO: Config .000085
-        public static final double kIz = 0; // TODO: Config
-        public static final double kD = 0.132; // TODO: Config burayı biraz daha artttırcaz 0.202 fazla geldi
-        public static final double kI = 0; // TODO: Config
+        public static final double kP = 0.000594; 
+        public static final double kFF = 0.0002219; 
+        public static final double kIz = 0; 
+        public static final double kD = 0.132; 
+        public static final double kI = 0; 
 
         /* Neutral Modes */
+        /* NOT USED */
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
         public static final IdleMode MASTER_MODE = IdleMode.kBrake;
 
         /* Inverts */
-        // TODO: inverts
+        /* NOT USED */
         public static final boolean masterInverted = false;
         public static final boolean slaveInverted = false;
         public static final boolean feederInverted = false;
 
         /* VOLTAGE */
-        public static final double AMP_VOLTAGE = 3; // TODO: Config
-        public static final double SPEAKER_SHORT_VOLTAGE = 9.7; // TODO: Config
+        public static final double AMP_VOLTAGE = 3; 
+        public static final double SPEAKER_SHORT_VOLTAGE = 9.7;
+        public static final double SPEAKER_LONG_VOLTAGE = 10.5;  
 
         /* RPMs */
-        public static final double maxRPM = 5700; // TODO: Config
-        public static final double AMP_SHOOT_RPM = 2700.0; // TODO: Config
-        public static final double SPEAKER_SHOOT_RPM = 500.0; // TODO: Config
+        /* NOT USED */
+        public static final double maxRPM = 5700; 
+        public static final double AMP_SHOOT_RPM = 2700.0; 
+        public static final double SPEAKER_SHOOT_RPM = 500.0; 
     }
 
     public static final class TelescopicConstants {
