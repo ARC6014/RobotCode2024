@@ -237,23 +237,26 @@ public class Constants implements Loggable {
         public static final int beamBreakSensorDioId = 2;
 
         /** unit: rps */
-        public static final double forwardVelocity = 1000 / 60;
+        public static final double forwardVelocity = 2600 / 60;
         /** unit: rps */
-        public static final double reverseVelocity = -1000 / 60;
+        public static final double reverseVelocity = -2600 / 60;
 
         /** unit: rps */
-        public static final double feederVelocity = -500 / 60;
+        public static final double feederVelocity = -1000 / 60;
 
-
-        // TODO: tolerance
-        public static final double velocityEqualityTolerance = 0;
+        // TODO: tolerance, rps
+        public static final double velocityEqualityTolerance = 0 / 60;
 
         /** unit: V/(rev/s) */
-        public static final double RUN_kP = 0;
+        public static final double RUN_kP = 3.1502;
         /** unit: V/((rev/s) * s) */
         public static final double RUN_kI = 0;
         /** unit: Vs/(rev/s) */
-        public static final double RUN_kD = 0;
+        public static final double RUN_kD = 0.821;
+
+        public static final double RUN_kS = 0.3; // 0.3
+
+        public static final double RUN_kV = 0;
 
     }
 
@@ -264,9 +267,9 @@ public class Constants implements Loggable {
         public static final Gearbox gearbox = new Gearbox(1, 72);
 
         /** REV Bore Encoder position offset, unit: revolutions */
-        public static final double positionOffset = Conversions.degreesToRevolutions(0);
+        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2);
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
-        public static final double openPosition = 0;
+        public static final double openPosition = 170;
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
         public static final double closedPosition = 0;
         /** unit: degrees */
@@ -276,7 +279,7 @@ public class Constants implements Loggable {
         public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(0.5);
 
         /** unit: V/rev */
-        public static final double ANGLE_kP = 0;
+        public static final double ANGLE_kP = 0.1;
         /** unit: V/(rev * s) */
         public static final double ANGLE_kI = 0;
         /** unit: Vs/rev */

@@ -131,8 +131,10 @@ public class WristSubsystem extends SubsystemBase {
         // resetToAbsolute();
         // }
 
-        //SmartDashboard.putNumber("Wrist Bore Reading", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
-        //SmartDashboard.putNumber("Wrist Falcon Reading", Conversions.revolutionsToDegrees(getFalconPosition()));
+        // SmartDashboard.putNumber("Wrist Bore Reading",
+        // Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
+        // SmartDashboard.putNumber("Wrist Falcon Reading",
+        // Conversions.revolutionsToDegrees(getFalconPosition()));
 
         autoCalibration();
     }
@@ -149,7 +151,8 @@ public class WristSubsystem extends SubsystemBase {
      * unit: revolutions
      */
     public double getBoreEncoderPosition() {
-        return mBoreEncoder.getAbsolutePosition() - mBoreEncoder.getPositionOffset();
+        double boreAngle = mBoreEncoder.getAbsolutePosition() - mBoreEncoder.getPositionOffset();
+        return boreAngle > 0 ? boreAngle : boreAngle + Conversions.degreesToRevolutions(360);
     }
 
     // TODO: Add max/min angles for limit
@@ -157,6 +160,10 @@ public class WristSubsystem extends SubsystemBase {
         mPositionSetpoint = target;
         mTalonFX.setControl(motionMagicVoltage.withPosition(
                 mGearbox.drivenToDriving(Conversions.degreesToRevolutions(mPositionSetpoint))));
+    }
+
+    public void setNeutralMode(NeutralModeValue mode) {
+        mTalonFX.setNeutralMode(mode);
     }
 
     /** resets Falcon reading to absolute Bore reading */
@@ -233,6 +240,10 @@ public class WristSubsystem extends SubsystemBase {
         var motors = new ArrayList<TalonFX>();
         motors.add(mTalonFX);
         return motors;
+    }
+
+    public TalonFX getMotor() {
+        return mTalonFX;
     }
 
 }

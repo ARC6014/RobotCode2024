@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.SetIdleModeInvert;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.arm.ArmStateSet;
 import frc.robot.commands.auto.DoNothing;
@@ -88,7 +89,8 @@ public class RobotContainer implements Loggable {
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
-        // private final ShooterCommand shooterOpenLoop = new ShooterCommand().withOpenLoop(mOperator.getLeftY());
+        // private final ShooterCommand shooterOpenLoop = new
+        // ShooterCommand().withOpenLoop(mOperator.getLeftY());
 
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator2.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator2.getRightX());
@@ -166,8 +168,9 @@ public class RobotContainer implements Loggable {
                 mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
                 mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
                 mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
-                mOperator.b().whileTrue(new SFeederCommand(0.8));
-                mOperator.rightTrigger().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SMART_VOLTAGE));
+                mOperator.b().whileTrue(new SFeederCommand(0.4578));
+                mOperator.rightTrigger()
+                                .toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SMART_VOLTAGE));
 
                 /* WRIST */
                 mOperator2.povDown().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
@@ -178,6 +181,8 @@ public class RobotContainer implements Loggable {
                 mOperator2.circle().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
                 mOperator2.cross().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
                 mOperator2.triangle().whileTrue(new IntakeSetState(mIntake, Running.FEEDING_SHOOTER));
+
+                mOperator2.L1().onTrue(new SetIdleModeInvert());
 
         }
 

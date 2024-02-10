@@ -24,7 +24,8 @@ public class OperatorTab extends ShuffleboardTabBase {
         /* WRIST+INTAKE SUBSYSTEMS */
         private WristSubsystem mWrist = WristSubsystem.getInstance();
         private IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        private GenericEntry wristBoreAngle, wristFalconAngle, wristState, wristAtSetpoint, intakeState, intakeSetpoint;
+        private GenericEntry wristBoreAngle, wristFalconAngle, wristState, wristAtSetpoint, intakeState, intakeSetpoint,
+                        intakeActualVelocity, intakeVoltage, wristMMRunning;
 
         /* SHOOTER SUBSYSTEM */
         private ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
@@ -134,7 +135,7 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withPosition(1, 2)
                                 .withSize(1, 1)
                                 .getEntry();
-                
+
                 intakeSetpoint = mTab
                                 .add("I-Setpoint", 0)
                                 .withPosition(2, 2)
@@ -142,7 +143,7 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .getEntry();
 
                 shooterBeamBreak = mTab
-                                .add("A-At Setpoint", true)
+                                .add("S-BeamBreak", true)
                                 .withPosition(3, 2)
                                 .withWidget(BuiltInWidgets.kBooleanBox)
                                 .withSize(1, 1)
@@ -153,9 +154,9 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withPosition(4, 2)
                                 .withSize(1, 1)
                                 .getEntry();
-                        
+
                 shooterActualRPM = mTab
-                                .add("S-RPM", 0)
+                                .add("S-RPM Actual", 0)
                                 .withPosition(0, 3)
                                 .withSize(1, 1)
                                 .getEntry();
@@ -177,7 +178,23 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withPosition(3, 3)
                                 .withSize(1, 1)
                                 .getEntry();
-                
+                intakeVoltage = mTab
+                                .add("I-Voltage", 0)
+                                .withPosition(4, 3)
+                                .withSize(1, 1)
+                                .getEntry();
+
+                intakeActualVelocity = mTab
+                                .add("I-Actual Vel", 0)
+                                .withPosition(0, 4)
+                                .withSize(1, 1)
+                                .getEntry();
+                wristMMRunning = mTab
+                                .add("W-MMagic Working", false)
+                                .withPosition(1, 4)
+                                .withSize(1, 1)
+                                .withWidget(BuiltInWidgets.kBooleanBox)
+                                .getEntry();
 
         }
 
@@ -201,10 +218,14 @@ public class OperatorTab extends ShuffleboardTabBase {
                 wristFalconAngle.setDouble(truncate(Conversions.revolutionsToDegrees(mWrist.getFalconPosition())));
                 wristState.setString(mWrist.getState().toString());
                 wristAtSetpoint.setBoolean(mWrist.isAtSetpoint());
+                wristMMRunning.setBoolean(
+                                mWrist.getMotor().getMotionMagicIsRunning()
+                                                .getValue() == MotionMagicIsRunningValue.Enabled);
 
                 intakeState.setString(mIntake.getState().toString());
                 intakeSetpoint.setDouble(truncate(mIntake.getSetpoint()));
-
+                intakeActualVelocity.setDouble(truncate(mIntake.getVelocity()));
+                intakeVoltage.setDouble(truncate(mIntake.getVoltage()));
 
                 /* SHOOTER */
                 shooterBeamBreak.setBoolean(mShooter.getSensorState());
@@ -213,9 +234,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                 shooterState.setString(mShooter.getShooterState().toString());
                 pdhVoltage.setDouble(truncate(mShooter.getPDHVoltage()));
                 smartVoltage.setDouble(truncate(mShooter.getSmartVoltageShooter()));
-
-
-
 
                 /* LEDS */
                 // currentAnimation.setString(mLed.getCurrentAnimation().toString());
