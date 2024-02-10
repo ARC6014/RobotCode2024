@@ -59,7 +59,6 @@ public class ShooterSubsystem extends SubsystemBase {
     CLOSED,
     AMP,
     SPEAKER,
-    SMART_VOLTAGE,
   }
 
   public enum FeederState {
@@ -98,33 +97,34 @@ public class ShooterSubsystem extends SubsystemBase {
     maxRPM = ShooterConstants.maxRPM;
 
     // set PID coefficients
-    m_masterPIDController.setP(kP);
-    m_masterPIDController.setI(kI);
-    m_masterPIDController.setD(kD);
-    m_masterPIDController.setIZone(kIz);
-    m_masterPIDController.setFF(kFF);
+    // m_masterPIDController.setP(kP);
+    // m_masterPIDController.setI(kI);
+    // m_masterPIDController.setD(kD);
+    // m_masterPIDController.setIZone(kIz);
+    // m_masterPIDController.setFF(kFF);
     m_masterPIDController.setOutputRange(kMinOutput, kMaxOutput);
 
-    m_slavePIDController.setP(kP);
-    m_slavePIDController.setI(kI);
-    m_slavePIDController.setD(kD);
-    m_slavePIDController.setIZone(kIz);
-    m_slavePIDController.setFF(kFF);
+    // m_slavePIDController.setP(kP);
+    // m_slavePIDController.setI(kI);
+    // m_slavePIDController.setD(kD);
+    // m_slavePIDController.setIZone(kIz);
+    // m_slavePIDController.setFF(kFF);
     m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);
 
-    m_master.setInverted(ShooterConstants.masterInverted);
-    m_slave.setInverted(ShooterConstants.slaveInverted);
-
-    m_slave.follow(m_master, true);
+    // m_slave.follow(m_master, true);
 
     // m_slave.setInverted(ShooterConstants.slaveInverted);
     // save settings to flash
     m_master.setIdleMode(ShooterConstants.MASTER_MODE);
     m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
+    m_slave.follow(m_master, true);
 
     m_master.burnFlash();
     m_slave.burnFlash();
     m_feeder.burnFlash();
+
+    // m_master.setInverted(ShooterConstants.masterInverted);
+    // m_slave.setInverted(ShooterConstants.slaveInverted);
 
   }
 
@@ -152,10 +152,8 @@ public class ShooterSubsystem extends SubsystemBase {
       case CLOSED:
         shooter_rpm = 0;
         break;
-      case SMART_VOLTAGE:
-        setShooterMotorSpeed(m_shooterVoltage);
       default:
-      setShooterMotorSpeed(0.0);
+        setShooterMotorSpeed(0.0);
         break;
     }
 
@@ -169,12 +167,12 @@ public class ShooterSubsystem extends SubsystemBase {
       setShooterTatminMotorsRPM();
     }
 
-    //SmartDashboard.putBoolean("Beam Break", m_beamBreaker.get());
-    //SmartDashboard.putNumber("Shooter RPM", shooter_rpm);
-    //SmartDashboard.putString("Shooter State", m_shootState.name());
-//
-    //SmartDashboard.putNumber("Voltage", m_pdh.getVoltage());
-    //SmartDashboard.putNumber("Smart Voltage", getSmartVoltageShooter());
+    // SmartDashboard.putBoolean("Beam Break", m_beamBreaker.get());
+    // SmartDashboard.putNumber("Shooter RPM", shooter_rpm);
+    // SmartDashboard.putString("Shooter State", m_shootState.name());
+    //
+    // SmartDashboard.putNumber("Voltage", m_pdh.getVoltage());
+    // SmartDashboard.putNumber("Smart Voltage", getSmartVoltageShooter());
   }
 
   // Setters
@@ -216,9 +214,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Getters
-  public double getSmartVoltageShooter() {
-    return m_shooterVoltage / m_pdh.getVoltage();
+  public double getSmartVoltageShooter(double targetVoltage) {
+    return targetVoltage / m_pdh.getVoltage();
   }
+
   public double getMasterMotorSpeed() {
     return m_master.get();
   }

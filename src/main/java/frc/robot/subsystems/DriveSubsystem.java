@@ -56,9 +56,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   private final Command brakeModeCommand;
 
-  @Log
-  private int a;
-
   public SwerveModuleBase[] mSwerveModules; // collection of modules
   private SwerveModuleState[] states; // collection of modules' states
   private ChassisSpeeds desiredChassisSpeeds; // speeds relative to the robot chassis
@@ -69,7 +66,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private double[] velocityCurrent = new double[4];
   private double[] angleDesired = new double[4];
 
-  @Log.Gyro
   WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
 
   private boolean isLocked = false;
@@ -85,12 +81,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   // LOGS
 
-  private DoubleArrayLogEntry velocityDesiredLog;
-  private DoubleArrayLogEntry velocityActualLog;
+  // private DoubleArrayLogEntry velocityDesiredLog;
+  // private DoubleArrayLogEntry velocityActualLog;
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
-    a = 0;
     mSwerveModules = new SwerveModuleBase[] {
         new SwerveModuleBase(0, "FL", SwerveModuleConstants.generateModuleConstants(
             Constants.SwerveModuleFrontLeft.driveMotorID, Constants.SwerveModuleFrontLeft.angleMotorID,
@@ -128,8 +123,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
 
     // for (SwerveModuleBase module : mSwerveModules) {
-    //   RobotContainer.mOrchestra.addInstrument(module.getDriveMotor());
-    //   RobotContainer.mOrchestra.addInstrument(module.getAngleMotor());
+    // RobotContainer.mOrchestra.addInstrument(module.getDriveMotor());
+    // RobotContainer.mOrchestra.addInstrument(module.getAngleMotor());
     // }
 
     poseEstimator = new SwerveDrivePoseEstimator(
@@ -152,7 +147,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             mod.setNeutralMode2Brake(false);
           }
         }));
-    logInit();
+    // logInit();
     // new StartEndCommand(() -> {
     // for (SwerveModuleBase mod : mSwerveModules) {
     // mod.setNeutralMode2Brake(true);
@@ -181,42 +176,38 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    // SmartDashboard.putNumber("Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 0 ",
+    // getDriveMotors().get(0).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 1",
+    // getDriveMotors().get(1).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 2",
+    // getDriveMotors().get(2).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Voltage 3",
+    // getDriveMotors().get(3).getMotorOutputVoltage());
 
-    // SmartDashboard.putNumber("Bus Voltage 0 ", getDriveMotors().get(0).getBusVoltage());
-    // SmartDashboard.putNumber("Bus Voltage 1", getDriveMotors().get(1).getBusVoltage());
-    // SmartDashboard.putNumber("Bus Voltage 2", getDriveMotors().get(2).getBusVoltage());
-    // SmartDashboard.putNumber("Bus Voltage 3", getDriveMotors().get(3).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 0 ",
+    // getDriveMotors().get(0).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 1",
+    // getDriveMotors().get(1).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 2",
+    // getDriveMotors().get(2).getBusVoltage());
+    // SmartDashboard.putNumber("Bus Voltage 3",
+    // getDriveMotors().get(3).getBusVoltage());
 
-    // SmartDashboard.putNumber("Current 0", getDriveMotors().get(0).getOutputCurrent());
-    // SmartDashboard.putNumber("Current 1", getDriveMotors().get(1).getOutputCurrent());
-    // SmartDashboard.putNumber("Current 2", getDriveMotors().get(2).getOutputCurrent());
-    // SmartDashboard.putNumber("Current 3", getDriveMotors().get(3).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 0",
+    // getDriveMotors().get(0).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 1",
+    // getDriveMotors().get(1).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 2",
+    // getDriveMotors().get(2).getOutputCurrent());
+    // SmartDashboard.putNumber("Current 3",
+    // getDriveMotors().get(3).getOutputCurrent());
 
     SmartDashboard.putNumber("Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
     SmartDashboard.putNumber("Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
     SmartDashboard.putNumber("Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
     SmartDashboard.putNumber("Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
-    log();
 
-  }
-
-  public void logInit() {
-    DataLog log = DataLogManager.getLog();
-    velocityDesiredLog = new DoubleArrayLogEntry(log, "/DriveSubsystem/velocityDesired");
-    velocityActualLog = new DoubleArrayLogEntry(log, "/DriveSubsystem/velocityActual");
-  }
-
-  public void log() {
-    if (velocityDesired != null) {
-      velocityDesiredLog.append(velocityDesired);
-    }
-    if (velocityCurrent != null) {
-      velocityActualLog.append(velocityCurrent);
-    }
   }
 
   /*
@@ -255,7 +246,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       angleDesired[i] = states[i].angle.getDegrees();
     }
 
-    log();
+    // log();
   }
 
   /*
@@ -439,35 +430,17 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   // public Command orchestraCommand() {
-  //   return startEnd(
-  //       () -> {
-  //         RobotContainer.mOrchestra.loadMusic("RickRollCHRP.chrp");
+  // return startEnd(
+  // () -> {
+  // RobotContainer.mOrchestra.loadMusic("RickRollCHRP.chrp");
 
-  //         RobotContainer.mOrchestra.play();
-  //       },
-  //       () -> {
-  //         RobotContainer.mOrchestra.stop();
-  //       })
-  //       .withName("Orchestra");
+  // RobotContainer.mOrchestra.play();
+  // },
+  // () -> {
+  // RobotContainer.mOrchestra.stop();
+  // })
+  // .withName("Orchestra");
   // }
-
-  @Config
-  public void setDrivePID(double p, double i, double d) {
-    for (SwerveModuleBase module : mSwerveModules) {
-      module.getDriveMotor().config_kP(0, p);
-      module.getDriveMotor().config_kI(0, i);
-      module.getDriveMotor().config_kD(0, d);
-    }
-  }
-
-  @Config
-  public void setAnglePID(double p, double i, double d) {
-    for (SwerveModuleBase module : mSwerveModules) {
-      module.getAngleMotor().config_kP(0, p);
-      module.getAngleMotor().config_kI(0, i);
-      module.getAngleMotor().config_kD(0, d);
-    }
-  }
 
   /*
    * public double getPitch() {

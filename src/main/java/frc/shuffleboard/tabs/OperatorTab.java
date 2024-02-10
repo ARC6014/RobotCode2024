@@ -29,7 +29,7 @@ public class OperatorTab extends ShuffleboardTabBase {
 
         /* SHOOTER SUBSYSTEM */
         private ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        private GenericEntry shooterBeamBreak, shooterTarget, shooterActualRPM, shooterState, pdhVoltage, smartVoltage;
+        private GenericEntry shooterBeamBreak, shooterTarget, shooterActualRPM, shooterState, pdhVoltage;
         /* LEDS */
         // private CANdleLed mLed = CANdleLed.getInstance();
         private GenericEntry currentAnimation;
@@ -173,11 +173,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withSize(1, 1)
                                 .getEntry();
 
-                smartVoltage = mTab
-                                .add("S-Smart Voltage", 0)
-                                .withPosition(3, 3)
-                                .withSize(1, 1)
-                                .getEntry();
                 intakeVoltage = mTab
                                 .add("I-Voltage", 0)
                                 .withPosition(4, 3)
@@ -233,7 +228,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                 shooterActualRPM.setDouble(truncate(mShooter.getMasterMotorSpeed()));
                 shooterState.setString(mShooter.getShooterState().toString());
                 pdhVoltage.setDouble(truncate(mShooter.getPDHVoltage()));
-                smartVoltage.setDouble(truncate(mShooter.getSmartVoltageShooter()));
 
                 /* LEDS */
                 // currentAnimation.setString(mLed.getCurrentAnimation().toString());

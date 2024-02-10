@@ -48,6 +48,7 @@ public class WristSubsystem extends SubsystemBase {
     private final Timer m_timer = new Timer();
     /** Last time when we resetted to absolute */
     private double lastAbsoluteTime;
+    private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
     TalonFXConfiguration configs;
 
     public WristSubsystem() {
@@ -72,7 +73,7 @@ public class WristSubsystem extends SubsystemBase {
         configs.Slot0.kD = WristConstants.ANGLE_kD;
         configs.Slot0.kS = WristConstants.ANGLE_kS;
         configs.Slot0.kV = WristConstants.ANGLE_kV;
-        configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        configs.MotorOutput.NeutralMode = kNeutralMode;
 
         configs.Voltage.PeakForwardVoltage = 12;
         configs.Voltage.PeakReverseVoltage = -12;
@@ -107,6 +108,30 @@ public class WristSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        if (isBoreAtSetpoint()) {
+            mTalonFX.stopMotor();
+            resetToAbsolute();
+
+            switch (mPosition) {
+                case OPENLOOP:
+                    mTalonFX.setControl(mAngleOpenLoopControl);
+                    break;
+                case OPEN:
+                    setWristAngleMotionMagic(WristConstants.openPosition);
+                    break;
+                case CLOSED:
+                    setWristAngleMotionMagic(WristConstants.closedPosition);
+                    break;
+                case HOLD:
+                    mTalonFX.setControl(new NeutralOut());
+                    break;
+                default:
+                    setOpenLoop(0.0);
+                    break;
+            }
+            return;
+        }
+
         switch (mPosition) {
             case OPENLOOP:
                 mTalonFX.setControl(mAngleOpenLoopControl);
@@ -136,7 +161,7 @@ public class WristSubsystem extends SubsystemBase {
         // Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
         // SmartDashboard.putNumber("Wrist Falcon Reading",
         // Conversions.revolutionsToDegrees(getFalconPosition()));
-        SmartDashboard.putString("Ne", configs.MotorOutput.NeutralMode.toString());
+        SmartDashboard.putString("Ne", kNeutralMode.toString());
         autoCalibration();
     }
 
@@ -163,10 +188,9 @@ public class WristSubsystem extends SubsystemBase {
                 mGearbox.drivenToDriving(Conversions.degreesToRevolutions(mPositionSetpoint))));
     }
 
-    public void setNeutralMode(NeutralModeValue mode) {
-        configs.MotorOutput.NeutralMode = mode;
-        mTalonFX.setNeutralMode(mode);
-
+    public void setNeutralMode() {
+        this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+        mTalonFX.setNeutralMode(this.kNeutralMode);
     }
 
     /** resets Falcon reading to absolute Bore reading */
@@ -182,6 +206,14 @@ public class WristSubsystem extends SubsystemBase {
             return false;
         }
         return Math.abs(getFalconPosition()
+                - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.positionEqualityTolerance;
+    }
+
+    public boolean isBoreAtSetpoint() {
+        if (mPosition == Position.OPENLOOP) {
+            return false;
+        }
+        return Math.abs(getBoreEncoderPosition()
                 - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.positionEqualityTolerance;
     }
 

@@ -12,6 +12,7 @@ import frc.robot.subsystems.WristSubsystem;
 
 public class SetIdleModeInvert extends Command {
 
+  private boolean isFinished = false;
   private final IntakeSubsystem m_intakeSubsystem = IntakeSubsystem.getInstance();
   private final WristSubsystem m_wristSubssytem = WristSubsystem.getInstance();
 
@@ -20,8 +21,10 @@ public class SetIdleModeInvert extends Command {
 
   @Override
   public void initialize() {
-    m_intakeSubsystem.setNeutralMode(NeutralModeValue.Coast);
-    m_wristSubssytem.setNeutralMode(NeutralModeValue.Coast);
+    m_intakeSubsystem.setNeutralMode();
+    m_wristSubssytem.setNeutralMode();
+    isFinished = true;
+
   }
 
   @Override
@@ -36,6 +39,6 @@ public class SetIdleModeInvert extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return isFinished;
   }
 }

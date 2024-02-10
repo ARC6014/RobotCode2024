@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SetIdleModeInvert;
@@ -72,7 +73,7 @@ public class RobotContainer implements Loggable {
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
-        private final CommandPS4Controller mOperator2 = new CommandPS4Controller(2);
+        private final CommandXboxController mOperator2 = new CommandXboxController(2);
 
         /* AUTO */
         private final ARCTrajectory trajectories = new ARCTrajectory();
@@ -165,24 +166,30 @@ public class RobotContainer implements Loggable {
                 mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* SHOOTER */
-                mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
-                mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
-                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
-                mOperator.b().whileTrue(new SFeederCommand(0.4578));
-                mOperator.rightTrigger()
-                                .toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SMART_VOLTAGE));
+                // mOperator.x().toggleOnTrue(new
+                // ShooterCommand().withShooterState(ShooterState.AMP));
+                // mOperator.y().toggleOnTrue(new
+                // ShooterCommand().withShooterState(ShooterState.SPEAKER));
+                // mOperator.a().toggleOnTrue(new
+                // ShooterCommand().withShooterState(ShooterState.CLOSED));
+                mDriver.square().whileTrue(new SFeederCommand(0.4578));
+                mDriver.circle().toggleOnTrue(new ShooterCommand()
+                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.AMP_VOLTAGE)));
+                mDriver.triangle().toggleOnTrue(new ShooterCommand()
+                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_SHORT_VOLTAGE)));
 
                 /* WRIST */
-                mOperator2.povDown().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
-                mOperator2.povUp().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-                mOperator2.R1().onTrue(wristOpenLoop);
+                mOperator.x().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mOperator.b().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
+                mOperator.a().onTrue(wristOpenLoop);
 
                 /* INTAKE */
-                mOperator2.circle().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                mOperator2.cross().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
-                mOperator2.triangle().whileTrue(new IntakeSetState(mIntake, Running.FEEDING_SHOOTER));
+                mOperator.rightTrigger().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                mOperator.leftTrigger().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                // mOperator2.y().whileTrue(new IntakeSetState(mIntake,
+                // Running.FEEDING_SHOOTER));
 
-                mOperator2.L1().onTrue(new SetIdleModeInvert());
+                mDriver.L2().onTrue(new SetIdleModeInvert());
 
         }
 

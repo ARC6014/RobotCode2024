@@ -237,9 +237,9 @@ public class Constants implements Loggable {
         public static final int beamBreakSensorDioId = 2;
 
         /** unit: rps */
-        public static final double forwardVelocity = 2600 / 60;
+        public static final double forwardVelocity = (2600 / 60) * 1.7;
         /** unit: rps */
-        public static final double reverseVelocity = -2600 / 60;
+        public static final double reverseVelocity = (-2600 / 60) * 1.7;
 
         /** unit: rps */
         public static final double feederVelocity = -1000 / 60;
@@ -267,9 +267,9 @@ public class Constants implements Loggable {
         public static final Gearbox gearbox = new Gearbox(1, 72);
 
         /** REV Bore Encoder position offset, unit: revolutions */
-        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 -5);
+        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 - 5);
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
-        public static final double openPosition = 169.6;
+        public static final double openPosition = 167;
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
         public static final double closedPosition = 3.2;
         /** unit: degrees */
@@ -279,7 +279,7 @@ public class Constants implements Loggable {
         public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(1.0);
 
         /** unit: V/rev */
-        public static final double ANGLE_kP = 0.1;
+        public static final double ANGLE_kP = 0.2;
         /** unit: V/(rev * s) */
         public static final double ANGLE_kI = 0;
         /** unit: Vs/rev */
@@ -292,7 +292,7 @@ public class Constants implements Loggable {
         /** unit: rev/s */
         public static final double wristCruiseVelocity = 100;
         /** unit: rev/s^2 */
-        public static final double wristAcceleration = 150;
+        public static final double wristAcceleration = 80;
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
@@ -325,9 +325,13 @@ public class Constants implements Loggable {
 
         /* Inverts */
         // TODO: inverts
-        public static final boolean masterInverted = true;
+        public static final boolean masterInverted = false;
         public static final boolean slaveInverted = false;
         public static final boolean feederInverted = false;
+
+        /* VOLTAGE */
+        public static final double AMP_VOLTAGE = 3; // TODO: Config
+        public static final double SPEAKER_SHORT_VOLTAGE = 9.7; // TODO: Config
 
         /* RPMs */
         public static final double maxRPM = 5700; // TODO: Config

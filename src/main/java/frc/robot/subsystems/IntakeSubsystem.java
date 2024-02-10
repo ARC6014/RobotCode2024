@@ -35,6 +35,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private TalonFXConfiguration motorConfig;
 
+    private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
+
     public IntakeSubsystem() {
         mTalonFX = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
 
@@ -151,9 +153,9 @@ public class IntakeSubsystem extends SubsystemBase {
         mRunning = run;
     }
 
-    public void setNeutralMode(NeutralModeValue mode) {
-
-        mTalonFX.setNeutralMode(mode);
+    public void setNeutralMode() {
+        this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+        mTalonFX.setNeutralMode(this.kNeutralMode);
     }
 
     public void setOverride(double velocity) {
