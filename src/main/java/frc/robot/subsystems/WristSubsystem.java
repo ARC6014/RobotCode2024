@@ -72,6 +72,7 @@ public class WristSubsystem extends SubsystemBase {
         configs.Slot0.kD = WristConstants.ANGLE_kD;
         configs.Slot0.kS = WristConstants.ANGLE_kS;
         configs.Slot0.kV = WristConstants.ANGLE_kV;
+        configs.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         configs.Voltage.PeakForwardVoltage = 12;
         configs.Voltage.PeakReverseVoltage = -12;
@@ -82,7 +83,6 @@ public class WristSubsystem extends SubsystemBase {
         configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.wristCruiseVelocity;
 
         mTalonFX.getConfigurator().apply(configs);
-        mTalonFX.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public static WristSubsystem getInstance() {
@@ -125,7 +125,6 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
-
         // // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
         // if (getBoreEncoderPosition() < WristConstants.stopPosition) {
         // setOpenLoop(0);
@@ -137,8 +136,7 @@ public class WristSubsystem extends SubsystemBase {
         // Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
         // SmartDashboard.putNumber("Wrist Falcon Reading",
         // Conversions.revolutionsToDegrees(getFalconPosition()));
-        SmartDashboard.putString("Neutral Mode)", configs.MotorOutput.NeutralMode.toString());
-
+        SmartDashboard.putString("Ne", configs.MotorOutput.NeutralMode.toString());
         autoCalibration();
     }
 
@@ -166,7 +164,9 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void setNeutralMode(NeutralModeValue mode) {
+        configs.MotorOutput.NeutralMode = mode;
         mTalonFX.setNeutralMode(mode);
+
     }
 
     /** resets Falcon reading to absolute Bore reading */
