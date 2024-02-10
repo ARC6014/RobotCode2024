@@ -33,6 +33,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private double mRunningOpenLoopOutput;
     private DutyCycleOut mRunningOpenLoopControl;
 
+    private TalonFXConfiguration motorConfig;
+
     public IntakeSubsystem() {
         mTalonFX = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
 
@@ -40,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         mRunning = Running.NEUTRAL;
 
-        var motorConfig = new TalonFXConfiguration();
+        motorConfig = new TalonFXConfiguration();
         motorConfig.Voltage.PeakForwardVoltage = 12;
         motorConfig.Voltage.PeakForwardVoltage = -12;
         motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
@@ -49,6 +51,7 @@ public class IntakeSubsystem extends SubsystemBase {
         motorConfig.Slot0.kD = IntakeConstants.RUN_kD;
         motorConfig.Slot0.kS = IntakeConstants.RUN_kS;
         motorConfig.Slot0.kV = IntakeConstants.RUN_kV;
+        motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         mTalonFX.getConfigurator().apply(motorConfig);
 
@@ -57,8 +60,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         mRunningOpenLoopOutput = 0;
         mRunningOpenLoopControl = new DutyCycleOut(0);
-
-        mTalonFX.setNeutralMode(NeutralModeValue.Brake);
     }
 
     public static IntakeSubsystem getInstance() {
@@ -120,6 +121,8 @@ public class IntakeSubsystem extends SubsystemBase {
             mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
             mTalonFX.setControl(mRunningVelocityControl);
         }
+
+        SmartDashboard.putString("Neutral Mode)", motorConfig.MotorOutput.NeutralMode.toString());
     }
 
     /* SETPOINT CHECKS */
