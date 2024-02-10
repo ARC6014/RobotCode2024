@@ -269,7 +269,7 @@ public class Constants implements Loggable {
         /** REV Bore Encoder position offset, unit: revolutions */
         public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2);
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
-        public static final double openPosition = 170;
+        public static final double openPosition = 169.6;
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
         public static final double closedPosition = 0;
         /** unit: degrees */
