@@ -19,8 +19,6 @@ import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Config;
-import io.github.oblarg.oblog.annotations.Log;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -37,7 +35,7 @@ import io.github.oblarg.oblog.annotations.Log;
 public class Constants implements Loggable {
     public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    @Log
+    
     public static int Pigeon2CanID = 60;
 
     public static final double wheelBaseLength = 0.56665;
@@ -46,7 +44,6 @@ public class Constants implements Loggable {
     public static final double drivebaseRadius = Math.hypot(wheelBaseWidth / 2.0, wheelBaseLength / 2.0);
     public static final double maxModuleSpeed = 4.0;
 
-    // TODO: Tune PID
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
             new PIDConstants(1.0, 0, 0),
             new PIDConstants(5, 0, 0),
@@ -108,7 +105,6 @@ public class Constants implements Loggable {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        @Config
         public static final double drivekP = 0.30;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
@@ -152,7 +148,6 @@ public class Constants implements Loggable {
                 drivePeakCurrentLimit, drivePeakCurrentDuration, driveEnableCurrentLimit, openLoopRamp, closedLoopRamp);
     }
 
-    // TODO: Configure each module's angle offset in calibration
     public static final class SwerveModuleFrontLeft {
         public static final int angleMotorID = 50;
         public static final int driveMotorID = 51;

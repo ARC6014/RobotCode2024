@@ -2,12 +2,10 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -16,9 +14,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.WristConstants;
-import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
@@ -67,7 +62,7 @@ public class WristSubsystem extends SubsystemBase {
         mTalonFX.getConfigurator().apply(new TalonFXConfiguration());
         configs = new TalonFXConfiguration();
 
-        // TODO: fix PID constants
+
         configs.Slot0.kP = WristConstants.ANGLE_kP;
         configs.Slot0.kI = WristConstants.ANGLE_kI;
         configs.Slot0.kD = WristConstants.ANGLE_kD;
@@ -181,7 +176,6 @@ public class WristSubsystem extends SubsystemBase {
         return boreAngle > 0 ? boreAngle : boreAngle + Conversions.degreesToRevolutions(360);
     }
 
-    // TODO: Add max/min angles for limit
     public void setWristAngleMotionMagic(double target) {
         mPositionSetpoint = target;
         mTalonFX.setControl(motionMagicVoltage.withPosition(

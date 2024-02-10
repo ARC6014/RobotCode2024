@@ -189,7 +189,6 @@ public class ArmSubsystem extends SubsystemBase {
     return boreEncoder.getAbsolutePosition() - boreEncoder.getPositionOffset();
   }
 
-  // TODO: add max/min angles here!
   public void setArmAngleMotionMagic(double target) {
     setpoint = target;
     armMotor.setControl(motionMagicVoltage.withPosition(

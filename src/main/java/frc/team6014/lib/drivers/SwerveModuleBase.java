@@ -47,7 +47,7 @@ public class SwerveModuleBase implements Loggable {
 
     private SimpleMotorFeedforward mDriveFeedforward;
 
-    private boolean isDriveMotorInverted = false; // TODO: Check all
+    private boolean isDriveMotorInverted = false; 
     private boolean isAngleMotorInverted = true;
     private boolean isRotEncoderInverted = false;
 
