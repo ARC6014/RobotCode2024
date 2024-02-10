@@ -102,7 +102,7 @@ public class RobotContainer implements Loggable {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-                mWrist.setDefaultCommand(wristOpenLoop);
+                // mWrist.setDefaultCommand(wristOpenLoop);
                 mIntake.setDefaultCommand(intakeOpenLoop);
                 // mShooter.setDefaultCommand(shooterOpenLoop);
 

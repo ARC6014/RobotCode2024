@@ -121,8 +121,6 @@ public class IntakeSubsystem extends SubsystemBase {
             mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
             mTalonFX.setControl(mRunningVelocityControl);
         }
-
-        SmartDashboard.putString("Neutral Mode)", motorConfig.MotorOutput.NeutralMode.toString());
     }
 
     /* SETPOINT CHECKS */
@@ -153,6 +151,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void setNeutralMode(NeutralModeValue mode) {
         mTalonFX.setNeutralMode(mode);
+        motorConfig.MotorOutput.NeutralMode = mode;
     }
 
     public void setOverride(double velocity) {
