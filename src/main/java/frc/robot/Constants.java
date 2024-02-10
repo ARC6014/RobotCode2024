@@ -267,16 +267,16 @@ public class Constants implements Loggable {
         public static final Gearbox gearbox = new Gearbox(1, 72);
 
         /** REV Bore Encoder position offset, unit: revolutions */
-        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2);
+        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 -5);
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
-        public static final double openPosition = 170;
+        public static final double openPosition = 169.6;
         /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
-        public static final double closedPosition = 0;
+        public static final double closedPosition = 3.2;
         /** unit: degrees */
         public static final double stopPosition = 0;
 
         /** unit: revolutions */
-        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(0.5);
+        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(1.0);
 
         /** unit: V/rev */
         public static final double ANGLE_kP = 0.1;
@@ -290,9 +290,9 @@ public class Constants implements Loggable {
         public static final double ANGLE_kV = 0;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 120;
+        public static final double wristCruiseVelocity = 100;
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 70;
+        public static final double wristAcceleration = 150;
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;

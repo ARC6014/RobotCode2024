@@ -48,6 +48,7 @@ public class WristSubsystem extends SubsystemBase {
     private final Timer m_timer = new Timer();
     /** Last time when we resetted to absolute */
     private double lastAbsoluteTime;
+    TalonFXConfiguration configs;
 
     public WristSubsystem() {
         motorConfig();
@@ -63,7 +64,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public void motorConfig() {
         mTalonFX.getConfigurator().apply(new TalonFXConfiguration());
-        TalonFXConfiguration configs = new TalonFXConfiguration();
+        configs = new TalonFXConfiguration();
 
         // TODO: fix PID constants
         configs.Slot0.kP = WristConstants.ANGLE_kP;
@@ -77,8 +78,8 @@ public class WristSubsystem extends SubsystemBase {
         configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
         configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
 
-        configs.MotionMagic.MotionMagicAcceleration = WristConstants.armAcceleration;
-        configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.armCruiseVelocity;
+        configs.MotionMagic.MotionMagicAcceleration = WristConstants.wristAcceleration;
+        configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.wristCruiseVelocity;
 
         mTalonFX.getConfigurator().apply(configs);
         mTalonFX.setNeutralMode(NeutralModeValue.Brake);
@@ -124,6 +125,7 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
+
         // // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
         // if (getBoreEncoderPosition() < WristConstants.stopPosition) {
         // setOpenLoop(0);
@@ -135,6 +137,7 @@ public class WristSubsystem extends SubsystemBase {
         // Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
         // SmartDashboard.putNumber("Wrist Falcon Reading",
         // Conversions.revolutionsToDegrees(getFalconPosition()));
+        SmartDashboard.putString("Neutral Mode)", configs.MotorOutput.NeutralMode.toString());
 
         autoCalibration();
     }
@@ -228,7 +231,7 @@ public class WristSubsystem extends SubsystemBase {
     public void autoCalibration() {
         boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
         boolean angleCondition = Math.abs(getBoreEncoderPosition() - getFalconPosition()) >= Conversions
-                .degreesToRevolutions(0.5);
+                .degreesToRevolutions(1.0);
         boolean speedCondition = Math.abs(mTalonFX.getRotorVelocity().getValueAsDouble()) < 0.005;
         if ((timerCondition || angleCondition) && speedCondition) {
             resetToAbsolute();
