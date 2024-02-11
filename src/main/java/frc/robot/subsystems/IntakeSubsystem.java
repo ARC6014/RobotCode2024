@@ -75,8 +75,9 @@ public class IntakeSubsystem extends SubsystemBase {
         FORWARD,
         /** outtake */
         REVERSE,
-        /** neutral/idle (brake) */
+        /** neutral */
         NEUTRAL,
+        S_DOWN,
         /** custom setpoint/position */
         OVERRIDE,
         /** openloop control */
@@ -102,9 +103,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
             case NEUTRAL:
                 mRunningVelocitySetpoint = 0;
+                break;
+            case S_DOWN:
                 mTalonFX.stopMotor();
                 break;
-
             case OVERRIDE:
                 break;
 
@@ -116,14 +118,13 @@ public class IntakeSubsystem extends SubsystemBase {
                 break;
         }
 
-        if (mRunning == Running.OPENLOOP)
+        if (mRunning == Running.OPENLOOP || mRunning == Running.S_DOWN)
             mTalonFX.setControl(mRunningOpenLoopControl);
         else {
             mRunningVelocityControl.Velocity = mRunningVelocitySetpoint;
             mTalonFX.setControl(mRunningVelocityControl);
-        }
 
-        SmartDashboard.putString("Neutral Mode", motorConfig.MotorOutput.NeutralMode.toString());
+        }
     }
 
     /* SETPOINT CHECKS */

@@ -35,7 +35,8 @@ import io.github.oblarg.oblog.Loggable;
 public class Constants implements Loggable {
     public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    
+    public static final boolean isTuning = true;
+
     public static int Pigeon2CanID = 60;
 
     public static final double wheelBaseLength = 0.56665;
@@ -202,9 +203,9 @@ public class Constants implements Loggable {
         public static final double kP = 1.2;
         public static final double kD = 0.0;
         public static final double kI = 0;
-        public static final double kG = 0; 
+        public static final double kG = 0;
         public static final double kS = 0.14;
-        public static final double kV = 0; 
+        public static final double kV = 0;
 
         /** unit: rotations */
         public static final double positionOffset = Conversions.degreesToRevolutions(13.34);
@@ -216,11 +217,11 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double ZERO = 0;
         /** unit: degrees */
-        public static final double INTAKE = 9 + 15 - 9.5;
+        public static final double INTAKE = 9 + 15 - 9.5 - 5;
         /** unit: degrees */
         public static final double SPEAKER_LONG = 30 + 15;
         /** unit: degrees */
-        public static final double SPEAKER_SHORT = 11 + 15;
+        public static final double SPEAKER_SHORT = 39; // 22.5 31.5 36
         /** unit: degrees */
         public static final double AMP = 90 + 15;
     }
@@ -231,7 +232,7 @@ public class Constants implements Loggable {
         public static final int beamBreakSensorDioId = 2;
 
         /** unit: rps */
-        public static final double forwardVelocity = (2600 / 60) * 1.7;
+        public static final double forwardVelocity = (2600 / 60) * 1.7; // 2600 / 60) *
         /** unit: rps */
         public static final double reverseVelocity = (-2600 / 60) * 1.7;
 
@@ -246,7 +247,7 @@ public class Constants implements Loggable {
         public static final double RUN_kI = 0;
         /** unit: Vs/(rev/s) */
         public static final double RUN_kD = 0.821;
-        public static final double RUN_kS = 0.3; 
+        public static final double RUN_kS = 0.3;
         public static final double RUN_kV = 0;
 
     }
@@ -287,7 +288,6 @@ public class Constants implements Loggable {
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
-    
 
     }
 
@@ -299,15 +299,15 @@ public class Constants implements Loggable {
         public static final int FEEDER_MOTOR_ID = 32;
         public static final int BEAM_BREAK_ID = 4; // TODO: Config
 
-        public static final double kMinOutput = -1; 
-        public static final double kMaxOutput = 1; 
+        public static final double kMinOutput = -1;
+        public static final double kMaxOutput = 1;
 
         /* PID & FF */
-        public static final double kP = 0.000594; 
-        public static final double kFF = 0.0002219; 
-        public static final double kIz = 0; 
-        public static final double kD = 0.132; 
-        public static final double kI = 0; 
+        public static final double kP = 0.000594;
+        public static final double kFF = 0.0002219;
+        public static final double kIz = 0;
+        public static final double kD = 0.132;
+        public static final double kI = 0;
 
         /* Neutral Modes */
         /* NOT USED */
@@ -321,15 +321,16 @@ public class Constants implements Loggable {
         public static final boolean feederInverted = false;
 
         /* VOLTAGE */
-        public static final double AMP_VOLTAGE = 3; 
+        public static final double AMP_VOLTAGE = 3;
         public static final double SPEAKER_SHORT_VOLTAGE = 9.7;
-        public static final double SPEAKER_LONG_VOLTAGE = 10.5;  
+        public static final double SPEAKER_LONG_VOLTAGE = 10.5;
 
         /* RPMs */
         /* NOT USED */
-        public static final double maxRPM = 5700; 
-        public static final double AMP_SHOOT_RPM = 2700.0; 
-        public static final double SPEAKER_SHOOT_RPM = 500.0; 
+        public static final double maxRPM = 5700;
+        public static final double AMP_SHOOT_RPM = 2700.0;
+        public static final double SPEAKER_SHOOT_RPM = 500.0;
+        public static final double FEEDER_OUT = 0.8;
     }
 
     public static final class TelescopicConstants {

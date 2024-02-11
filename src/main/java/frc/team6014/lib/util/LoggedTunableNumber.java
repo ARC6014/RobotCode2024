@@ -39,6 +39,7 @@ public class LoggedTunableNumber {
 
     public LoggedTunableNumber(String dashboardKey, double defaultValue) {
         this.key = tableKey + "/" + dashboardKey;
+        this.tuningMode = Constants.isTuning;
         setDefault(defaultValue);
     }
 

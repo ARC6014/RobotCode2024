@@ -43,8 +43,8 @@ public class WristSubsystem extends SubsystemBase {
     private final Timer m_timer = new Timer();
     /** Last time when we resetted to absolute */
     private double lastAbsoluteTime;
-    private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
     TalonFXConfiguration configs;
+    private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
     public WristSubsystem() {
         motorConfig();
@@ -62,7 +62,6 @@ public class WristSubsystem extends SubsystemBase {
         mTalonFX.getConfigurator().apply(new TalonFXConfiguration());
         configs = new TalonFXConfiguration();
 
-
         configs.Slot0.kP = WristConstants.ANGLE_kP;
         configs.Slot0.kI = WristConstants.ANGLE_kI;
         configs.Slot0.kD = WristConstants.ANGLE_kD;
@@ -79,13 +78,6 @@ public class WristSubsystem extends SubsystemBase {
         configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.wristCruiseVelocity;
 
         mTalonFX.getConfigurator().apply(configs);
-    }
-
-    public static WristSubsystem getInstance() {
-        if (mInstance == null) {
-            mInstance = new WristSubsystem();
-        }
-        return mInstance;
     }
 
     public enum Position {
@@ -152,11 +144,7 @@ public class WristSubsystem extends SubsystemBase {
         // resetToAbsolute();
         // }
 
-        // SmartDashboard.putNumber("Wrist Bore Reading",
-        // Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
-        // SmartDashboard.putNumber("Wrist Falcon Reading",
-        // Conversions.revolutionsToDegrees(getFalconPosition()));
-        SmartDashboard.putString("Ne", kNeutralMode.toString());
+        SmartDashboard.putString("I-W Idle Mode", kNeutralMode.toString());
         autoCalibration();
     }
 
@@ -215,17 +203,17 @@ public class WristSubsystem extends SubsystemBase {
                 - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.positionEqualityTolerance;
     }
 
+    /** @return setpoint unit: degrees */
+    public double getSetpoint() {
+        return mPositionSetpoint;
+    }
+
     public Position getState() {
         return mPosition;
     }
 
     public void setState(Position pos) {
         mPosition = pos;
-    }
-
-    /** @return setpoint unit: degrees */
-    public double getSetpoint() {
-        return mPositionSetpoint;
     }
 
     /** basically "zeroes" wrist */
@@ -277,6 +265,13 @@ public class WristSubsystem extends SubsystemBase {
 
     public TalonFX getMotor() {
         return mTalonFX;
+    }
+
+    public static WristSubsystem getInstance() {
+        if (mInstance == null) {
+            mInstance = new WristSubsystem();
+        }
+        return mInstance;
     }
 
 }

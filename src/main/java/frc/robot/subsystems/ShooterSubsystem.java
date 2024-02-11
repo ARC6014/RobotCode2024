@@ -21,7 +21,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  // private DigitalInput m_beamBreaker = new
+  // DigitalInput(ShooterConstants.BEAM_BREAK_ID);
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -32,7 +33,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private ShooterState m_shootState;
   private FeederState m_feederState;
   private PowerDistribution m_pdh = new PowerDistribution();
-
 
   double shooter_rpm;
   double feeder_out;
@@ -63,14 +63,15 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.restoreFactoryDefaults();
     m_feeder.restoreFactoryDefaults();
 
-    m_master.setSmartCurrentLimit(50);
-    m_slave.setSmartCurrentLimit(50);
+    m_master.setSmartCurrentLimit(35);
+    m_slave.setSmartCurrentLimit(35);
+    m_feeder.setSmartCurrentLimit(25);
     m_master.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
     m_slave.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
 
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
-    
+
     m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
 
     // PID coefficients
@@ -96,13 +97,9 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-      if (getSensorState()) {
-        m_feederState = FeederState.STOP_WAIT_A_SEC;
-        setFeederMotorSpeed(0);
-      } else {
-        setFeederMotorSpeed(feeder_out);
-      }
-    
+    if (getSensorState()) {
+      m_feederState = FeederState.STOP_WAIT_A_SEC;
+    }
 
     switch (m_shootState) {
       case AMP:
@@ -182,7 +179,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** beam break reading */
   public boolean getSensorState() {
-    return m_beamBreaker.get();
+    // m_beamBreaker.get();
+    return false;
   }
 
   public FeederState getFeederState() {

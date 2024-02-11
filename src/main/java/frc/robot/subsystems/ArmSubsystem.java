@@ -18,8 +18,13 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
+import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class ArmSubsystem extends SubsystemBase {
+
+  private static final LoggedTunableNumber tunableaAngle = new LoggedTunableNumber("ARM/tunableAngle", 39,
+      Constants.isTuning);
+
   private static ArmSubsystem mInstance;
 
   /* MOTORS & ENCODER */
@@ -114,7 +119,7 @@ public class ArmSubsystem extends SubsystemBase {
         setMotorOutput();
         break;
       case SPEAKER_SHORT:
-        setArmAngleMotionMagic(ArmConstants.SPEAKER_SHORT);
+        setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
         break;
       case SPEAKER_LONG:
         setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);

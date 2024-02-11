@@ -5,13 +5,17 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
+import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class SFeederCommand extends Command {
 
   private ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
   private double percentOutput;
+  private static final LoggedTunableNumber tunableFeederSpeed = new LoggedTunableNumber("feeder/speed",
+      ShooterConstants.FEEDER_OUT);
 
   /** Creates a new ShooterComand. */
   public SFeederCommand(double percentOutput) {
@@ -22,7 +26,7 @@ public class SFeederCommand extends Command {
   @Override
   public void initialize() {
     shooterSubsystem.setFeederState(FeederState.LET_HIM_COOK);
-    shooterSubsystem.setFeederMotorSpeed(percentOutput);
+    shooterSubsystem.setFeederMotorSpeed(tunableFeederSpeed.get());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,6 +47,6 @@ public class SFeederCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return shooterSubsystem.getFeederState() == ShooterSubsystem.FeederState.STOP_WAIT_A_SEC;
+    return false;
   }
 }
