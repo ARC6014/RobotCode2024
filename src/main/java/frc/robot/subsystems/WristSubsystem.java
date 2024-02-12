@@ -95,7 +95,7 @@ public class WristSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        if (isBoreAtSetpoint()) {
+        if (isBoreAtSetpoint() && !isAtSetpoint()) {
             mTalonFX.stopMotor();
             resetToAbsolute();
 

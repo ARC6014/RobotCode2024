@@ -28,7 +28,7 @@ public class OperatorTab extends ShuffleboardTabBase {
 
         /* SHOOTER SUBSYSTEM */
         private ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
-        private GenericEntry shooterBeamBreak, shooterTargetPercent, shooterActualPercent, shooterState, pdhVoltage, feederTargetPercent, feederActualPercent, feederState;
+        private GenericEntry shooterBeamBreak, shooterActualPercent, shooterState, feederActualPercent, feederState;
         /* LEDS */
         // private CANdleLed mLed = CANdleLed.getInstance();
         private GenericEntry currentAnimation;
@@ -146,50 +146,33 @@ public class OperatorTab extends ShuffleboardTabBase {
                 
                 shooterBeamBreak = mTab
                                 .add("S-BeamBreak", true)
-                                .withPosition(0, 3)
+                                .withPosition(0, 2)
                                 .withWidget(BuiltInWidgets.kBooleanBox)
                                 .withSize(1, 1)
                                 .getEntry();
 
-                shooterTargetPercent = mTab
-                                .add("S-PercentTarget", 0)
-                                .withPosition(1, 3)
-                                .withSize(2, 1)
-                                .getEntry();
-
                 shooterActualPercent = mTab
                                 .add("S-ActualPercent", 0)
-                                .withPosition(2, 3)
+                                .withPosition(1, 2)
                                 .withSize(1, 1)
                                 .getEntry();
 
                 shooterState = mTab
                                 .add("ShooterState", "NaS")
-                                .withPosition(3, 3)
+                                .withPosition(2, 2)
                                 .withSize(1, 1)
                                 .getEntry();
 
-                pdhVoltage = mTab
-                                .add("PDH (V)", 0)
-                                .withPosition(4, 3)
-                                .withSize(1, 1)
-                                .getEntry();
-
-                feederTargetPercent = mTab
-                                .add("F-PercentTarget", 0)
-                                .withPosition(5, 3)
-                                .withSize(2, 1)
-                                .getEntry();
 
                 feederActualPercent = mTab
                                 .add("F-ActualPercent", 0)
-                                .withPosition(6, 3)
+                                .withPosition(3, 2)
                                 .withSize(1, 1)
                                 .getEntry();
 
                 feederState = mTab
                                 .add("FeederState", "NaS")
-                                .withPosition(7, 3)
+                                .withPosition(4, 2)
                                 .withSize(1, 1)
                                 .getEntry();
 
@@ -233,13 +216,8 @@ public class OperatorTab extends ShuffleboardTabBase {
 
                 /* SHOOTER + FEEDER */
                 shooterBeamBreak.setBoolean(mShooter.getSensorState());
-                shooterTargetPercent.setDouble(truncate(mShooter.getSmartVoltageShooter(mShooter.getShooterPercentTarget())));
                 shooterActualPercent.setDouble(truncate(mShooter.getMasterMotorSpeed()));
                 shooterState.setString(mShooter.getShooterState().toString());
-                pdhVoltage.setDouble(truncate(mShooter.getPDHVoltage()));
-
-
-                feederTargetPercent.setDouble(truncate(mShooter.getSmartVoltageFeeder(mShooter.getFeederPercentTarget())));
                 feederActualPercent.setDouble(truncate(mShooter.getFeederMotorSpeed()));
                 feederState.setString(mShooter.getFeederState().toString());
                 

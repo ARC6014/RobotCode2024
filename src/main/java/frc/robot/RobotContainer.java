@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -66,6 +67,8 @@ public class RobotContainer implements Loggable {
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
+        private PowerDistribution mPDH = new PowerDistribution();
+
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
@@ -122,6 +125,8 @@ public class RobotContainer implements Loggable {
 
         }
 
+        
+
         /**
          * Use this method to define your button->command mappings. Buttons can be
          * created by
@@ -136,13 +141,13 @@ public class RobotContainer implements Loggable {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 /* SHOOTER + FEEDER */
-                mDriver.square().toggleOnTrue(new SFeederCommand(ShooterConstants.FEEDER_OUT));
+                mDriver.square().whileTrue(new SFeederCommand(ShooterConstants.FEEDER_OUT));
                 mDriver.circle().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.AMP_VOLTAGE)));
+                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.AMP_VOLTAGE, mPDH.getVoltage())));
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_SHORT_VOLTAGE)));
+                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_SHORT_VOLTAGE, mPDH.getVoltage())));
                 mDriver.povUp().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_LONG_VOLTAGE)));
+                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_LONG_VOLTAGE, mPDH.getVoltage())));
 
                 /* ARM */
                 mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
@@ -157,7 +162,7 @@ public class RobotContainer implements Loggable {
                 mOperator.x().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mOperator.b().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
                 mOperator.a().onTrue(wristOpenLoop);
-                mOperator.y().toggleOnTrue(new IntakeSetState(mIntake, Running.S_DOWN));
+                // mOperator.y().toggleOnTrue(new IntakeSetState(mIntake, Running.S_DOWN));
 
 
                 /* INTAKE */
@@ -165,8 +170,9 @@ public class RobotContainer implements Loggable {
                 // mOperator.leftTrigger().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
                 mOperator.rightStick().onTrue(intakeOpenLoop);
 
-                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.forwardPercent)));
-                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.reversePercent)));
+                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.forwardPercent, mPDH.getVoltage())));
+                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.reversePercent, mPDH.getVoltage())));
+                mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.feedPercent, mPDH.getVoltage())));
 
                 /* BREAK-COAST SWITCH */
                 mDriver.L2().onTrue(new SetIdleModeInvert());

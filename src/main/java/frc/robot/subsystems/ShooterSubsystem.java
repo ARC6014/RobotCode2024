@@ -11,6 +11,7 @@ import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -21,8 +22,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  // private DigitalInput m_beamBreaker = new
-  // DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -32,7 +32,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem m_instance;
   private ShooterState m_shootState;
   private FeederState m_feederState;
-  private PowerDistribution m_pdh = new PowerDistribution();
 
   double shooter_rpm;
   double feeder_out;
@@ -94,10 +93,19 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
+  public Trigger getBeambreakTrigger() {
+    return new Trigger(() -> m_beamBreaker.get());
+  }
+
+  public boolean isShooterStopped() {
+    double rpm = m_master.getEncoder().getVelocity();
+    return rpm < 10;
+  }
+
   @Override
   public void periodic() {
 
-    if (getSensorState()) {
+    if (!getSensorState() && isShooterStopped()) {
       m_feederState = FeederState.STOP_WAIT_A_SEC;
     }
 
@@ -160,13 +168,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Getters
   /** optimal percent output for shooter */
-  public double getSmartVoltageShooter(double targetVoltage) {
-    return targetVoltage / m_pdh.getVoltage();
+  public double getSmartVoltageShooter(double targetVoltage, double pdhVoltage) {
+    return targetVoltage / pdhVoltage;
   }
 
   /** optimal percent output for feeder */
-  public double getSmartVoltageFeeder(double targetVoltage) {
-    return targetVoltage / m_pdh.getVoltage();
+  public double getSmartVoltageFeeder(double targetVoltage, double pdhVoltage) {
+    return targetVoltage / pdhVoltage;
   }
 
   public double getMasterMotorSpeed() {
@@ -177,10 +185,9 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_feeder.get();
   }
 
-  /** beam break reading */
+  /** returns true for no object */
   public boolean getSensorState() {
-    // m_beamBreaker.get();
-    return false;
+    return m_beamBreaker.get();
   }
 
   public FeederState getFeederState() {
@@ -199,9 +206,6 @@ public class ShooterSubsystem extends SubsystemBase {
     return feeder_out;
   }
 
-  public double getPDHVoltage() {
-    return m_pdh.getVoltage();
-  }
 
   public void stopShMotors() {
     setShooterMotorSpeed(0);

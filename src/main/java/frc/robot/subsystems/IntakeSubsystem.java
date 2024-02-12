@@ -34,7 +34,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private DutyCycleOut mRunningOpenLoopControl;
 
     private TalonFXConfiguration motorConfig;
-    private PowerDistribution m_pdh = new PowerDistribution();
 
     private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
@@ -43,12 +42,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // mBeamBreakSensor = new DigitalInput(IntakeConstants.beamBreakSensorDioId);
 
-        mRunning = Running.NEUTRAL;
+        mRunning = Running.S_DOWN;
 
         motorConfig = new TalonFXConfiguration();
         motorConfig.Voltage.PeakForwardVoltage = 12;
         motorConfig.Voltage.PeakForwardVoltage = -12;
         motorConfig.ClosedLoopRamps.VoltageClosedLoopRampPeriod = 0.5;
+        motorConfig.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.3;
         motorConfig.Slot0.kP = IntakeConstants.RUN_kP;
         motorConfig.Slot0.kI = IntakeConstants.RUN_kI;
         motorConfig.Slot0.kD = IntakeConstants.RUN_kD;
@@ -188,8 +188,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // Getters
   /** optimal percent output for intake */
-  public double getSmartVoltageIntake(double targetVoltage) {
-    return targetVoltage / m_pdh.getVoltage();
+  public double getSmartVoltageIntake(double targetVoltage, double pdhVoltage) {
+    return targetVoltage / pdhVoltage;
   }
 
     public ArrayList<TalonFX> getMotors() {

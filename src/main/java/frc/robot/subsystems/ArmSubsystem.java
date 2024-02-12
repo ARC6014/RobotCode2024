@@ -123,37 +123,37 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if(isAtSetpointBore()) {
+    if(isAtSetpointBore() && !isAtSetpointFalcon()) {
       armMotor.stopMotor();
       resetToAbsolute();
 
       switch (armControlState) {
-      case OPEN_LOOP:
-        setMotorOutput();
-        break;
-      case SPEAKER_SHORT:
-        setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
-        break;
-      case SPEAKER_LONG:
-        setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
-        break;
-      case AMP:
-        setArmAngleMotionMagic(ArmConstants.AMP);
-        break;
-      case INTAKE:
-        setArmAngleMotionMagic(ArmConstants.INTAKE);
-        break;
-      case HOLD:
-        armMotor.setControl(new NeutralOut());
-        break;
-      case ZERO:
-        setArmAngleMotionMagic(ArmConstants.ZERO);
-        break;
-      default:
-        setArmPercentOutput(0.0);
-        break;
-    }
-
+        case OPEN_LOOP:
+          setMotorOutput();
+          break;
+        case SPEAKER_SHORT:
+          setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+          break;
+        case SPEAKER_LONG:
+          setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
+          break;
+        case AMP:
+          setArmAngleMotionMagic(ArmConstants.AMP);
+          break;
+        case INTAKE:
+          setArmAngleMotionMagic(ArmConstants.INTAKE);
+          break;
+        case HOLD:
+          armMotor.setControl(new NeutralOut());
+          break;
+        case ZERO:
+          setArmAngleMotionMagic(ArmConstants.ZERO);
+          break;
+        default:
+          setArmPercentOutput(0.0);
+          break;
+      }
+      return;
     }
     switch (armControlState) {
       case OPEN_LOOP:
