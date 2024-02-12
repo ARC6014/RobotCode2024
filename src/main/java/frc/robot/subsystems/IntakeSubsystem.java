@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -33,6 +34,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private DutyCycleOut mRunningOpenLoopControl;
 
     private TalonFXConfiguration motorConfig;
+    private PowerDistribution m_pdh = new PowerDistribution();
 
     private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
@@ -77,6 +79,7 @@ public class IntakeSubsystem extends SubsystemBase {
         REVERSE,
         /** neutral */
         NEUTRAL,
+        /** stop motor */
         S_DOWN,
         /** custom setpoint/position */
         OVERRIDE,
@@ -104,15 +107,18 @@ public class IntakeSubsystem extends SubsystemBase {
             case NEUTRAL:
                 mRunningVelocitySetpoint = 0;
                 break;
+
             case S_DOWN:
                 mTalonFX.stopMotor();
                 break;
+
             case OVERRIDE:
                 break;
 
             case FEEDING_SHOOTER:
                 mRunningVelocitySetpoint = IntakeConstants.feederVelocity;
                 break;
+
             default:
                 mRunningVelocitySetpoint = 0;
                 break;
@@ -129,6 +135,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     /* SETPOINT CHECKS */
 
+    // isn't used since we don't want the intake to stop when we reach des velocity
     public boolean isAtSetpoint() {
         if (mRunning == Running.OPENLOOP) {
             return false;
@@ -153,6 +160,7 @@ public class IntakeSubsystem extends SubsystemBase {
         mRunning = run;
     }
 
+    /** toggles neutral mode of motor */
     public void setNeutralMode() {
         this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
         mTalonFX.setNeutralMode(this.kNeutralMode);
@@ -177,6 +185,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public double getVoltage() {
         return mTalonFX.getMotorVoltage().getValueAsDouble();
     }
+
+    // Getters
+  /** optimal percent output for intake */
+  public double getSmartVoltageIntake(double targetVoltage) {
+    return targetVoltage / m_pdh.getVoltage();
+  }
 
     public ArrayList<TalonFX> getMotors() {
         var motors = new ArrayList<TalonFX>();

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.LoggedTunableNumber;
@@ -61,12 +62,19 @@ public class ArmSubsystem extends SubsystemBase {
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
   public enum ArmControlState {
+    /** open-loop control */
     OPEN_LOOP,
+    /** intaking position */
     INTAKE,
+    /** near speaker shooting position */
     SPEAKER_SHORT,
+    /** far from speaker shooting position */
     SPEAKER_LONG,
+    /** amp shooting position */
     AMP,
+    /** neutral - in brake */
     HOLD,
+    /** zero position with respect to hard stop */
     ZERO,
   }
 
@@ -108,12 +116,45 @@ public class ArmSubsystem extends SubsystemBase {
 
     configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration;
     configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity;
+
     armMotor.getConfigurator().apply(configs);
     armMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
   public void periodic() {
+    if(isAtSetpointBore()) {
+      armMotor.stopMotor();
+      resetToAbsolute();
+
+      switch (armControlState) {
+      case OPEN_LOOP:
+        setMotorOutput();
+        break;
+      case SPEAKER_SHORT:
+        setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+        break;
+      case SPEAKER_LONG:
+        setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
+        break;
+      case AMP:
+        setArmAngleMotionMagic(ArmConstants.AMP);
+        break;
+      case INTAKE:
+        setArmAngleMotionMagic(ArmConstants.INTAKE);
+        break;
+      case HOLD:
+        armMotor.setControl(new NeutralOut());
+        break;
+      case ZERO:
+        setArmAngleMotionMagic(ArmConstants.ZERO);
+        break;
+      default:
+        setArmPercentOutput(0.0);
+        break;
+    }
+
+    }
     switch (armControlState) {
       case OPEN_LOOP:
         setMotorOutput();
@@ -162,7 +203,7 @@ public class ArmSubsystem extends SubsystemBase {
     lastAbsoluteTime = m_timer.get();
   }
 
-  /** @return true if within angle tolerance */
+  /** @return true if within angle tolerance - FALCON */
   public boolean isAtSetpointFalcon() {
     if (armControlState == ArmControlState.OPEN_LOOP) {
       return false;
@@ -170,8 +211,18 @@ public class ArmSubsystem extends SubsystemBase {
     return Math.abs(getArmAngleFalcon() - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.angleTolerance;
   }
 
+  /** @return true if 0 is within angle tolerance - FALCON */
   public boolean isAtZeroFalcon() {
     return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValue()) < ArmConstants.angleTolerance;
+  }
+
+  /** @return true if within angle tolerance - BORE */
+  public boolean isAtSetpointBore() {
+        if (armControlState == ArmControlState.OPEN_LOOP) {
+            return false;
+        }
+        return Math.abs(getArmAngleBore()
+                - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.angleTolerance;
   }
 
   /** @return setpoint unit: degrees */

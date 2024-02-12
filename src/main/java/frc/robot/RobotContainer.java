@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SetIdleModeInvert;
@@ -24,6 +25,7 @@ import frc.robot.commands.auto.DoNothing;
 import frc.robot.commands.auto.FakeIntake;
 import frc.robot.commands.auto.FakeShoot;
 import frc.robot.commands.intake.IntakeOpenLoop;
+import frc.robot.commands.intake.IntakeSetOpenLoop;
 import frc.robot.commands.intake.IntakeSetState;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
@@ -156,10 +158,15 @@ public class RobotContainer implements Loggable {
                 mOperator.b().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
                 mOperator.a().onTrue(wristOpenLoop);
                 mOperator.y().toggleOnTrue(new IntakeSetState(mIntake, Running.S_DOWN));
+
+
                 /* INTAKE */
-                mOperator.rightTrigger().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                mOperator.leftTrigger().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
+                // mOperator.rightTrigger().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
+                // mOperator.leftTrigger().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
                 mOperator.rightStick().onTrue(intakeOpenLoop);
+
+                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.forwardPercent)));
+                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.reversePercent)));
 
                 /* BREAK-COAST SWITCH */
                 mDriver.L2().onTrue(new SetIdleModeInvert());
