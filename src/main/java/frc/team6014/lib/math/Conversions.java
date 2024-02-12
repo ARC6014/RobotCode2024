@@ -141,4 +141,9 @@ public class Conversions {
     public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
     }
+
+    /** returns optimal percent output for respective battery voltage */
+    public static double getSmartVoltage(double targetVoltage, double pdhVoltage) {
+        return targetVoltage / pdhVoltage;
+    }
 }

@@ -243,7 +243,7 @@ public class Constants implements Loggable {
         public static final double reversePercent = -9;
 
         /** unit: percent */
-        public static final double feedPercent = -5.5;
+        public static final double feedPercent = -8;
 
 
         /** unit: rps */
@@ -270,15 +270,15 @@ public class Constants implements Loggable {
 
         /** REV Bore Encoder position offset, unit: revolutions */
         public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 - 5);
-        /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
+        /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
         public static final double openPosition = 167;
-        /** REV Bore Encoder position, with the horizontal as 0, unit: degrees */
+        /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
         public static final double closedPosition = 3.2;
         /** unit: degrees */
         public static final double stopPosition = 0;
 
         /** unit: revolutions */
-        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(1.0);
+        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(1.5);
 
         /** unit: V/rev */
         public static final double ANGLE_kP = 0.2;
@@ -332,15 +332,17 @@ public class Constants implements Loggable {
 
         /* VOLTAGE */
         public static final double AMP_VOLTAGE = 3;
-        public static final double SPEAKER_SHORT_VOLTAGE = 9.7;
-        public static final double SPEAKER_LONG_VOLTAGE = 10.5;
+        public static final double SPEAKER_SHORT_VOLTAGE = 10.5; // TODO: Tune
+        public static final double SPEAKER_LONG_VOLTAGE = 12; // TODO: Tune
 
         /* RPMs */
         /* NOT USED */
         public static final double maxRPM = 5700;
         public static final double AMP_SHOOT_RPM = 2700.0;
         public static final double SPEAKER_SHOOT_RPM = 500.0;
-        public static final double FEEDER_OUT = 0.8;
+        
+        public static final double FEEDER_OUT = 9;
+        public static final double FEEDER_REVERSE = -9;
     }
 
     public static final class TelescopicConstants {

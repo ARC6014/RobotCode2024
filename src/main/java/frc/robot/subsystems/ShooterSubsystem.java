@@ -22,7 +22,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  // private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -93,9 +93,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   }
 
-  public Trigger getBeambreakTrigger() {
-    return new Trigger(() -> m_beamBreaker.get());
-  }
 
   public boolean isShooterStopped() {
     double rpm = m_master.getEncoder().getVelocity();
@@ -105,9 +102,10 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
+    /* *
     if (!getSensorState() && isShooterStopped()) {
       m_feederState = FeederState.STOP_WAIT_A_SEC;
-    }
+    } */
 
     switch (m_shootState) {
       case AMP:
@@ -167,15 +165,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Getters
-  /** optimal percent output for shooter */
-  public double getSmartVoltageShooter(double targetVoltage, double pdhVoltage) {
-    return targetVoltage / pdhVoltage;
-  }
-
-  /** optimal percent output for feeder */
-  public double getSmartVoltageFeeder(double targetVoltage, double pdhVoltage) {
-    return targetVoltage / pdhVoltage;
-  }
 
   public double getMasterMotorSpeed() {
     return m_master.get();
@@ -187,7 +176,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** returns true for no object */
   public boolean getSensorState() {
-    return m_beamBreaker.get();
+    //return m_beamBreaker.get();
+    return false;
   }
 
   public FeederState getFeederState() {

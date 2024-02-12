@@ -186,12 +186,6 @@ public class IntakeSubsystem extends SubsystemBase {
         return mTalonFX.getMotorVoltage().getValueAsDouble();
     }
 
-    // Getters
-  /** optimal percent output for intake */
-  public double getSmartVoltageIntake(double targetVoltage, double pdhVoltage) {
-    return targetVoltage / pdhVoltage;
-  }
-
     public ArrayList<TalonFX> getMotors() {
         var motors = new ArrayList<TalonFX>();
         motors.add(mTalonFX);

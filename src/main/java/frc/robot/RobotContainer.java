@@ -27,10 +27,11 @@ import frc.robot.commands.auto.FakeIntake;
 import frc.robot.commands.auto.FakeShoot;
 import frc.robot.commands.intake.IntakeOpenLoop;
 import frc.robot.commands.intake.IntakeSetOpenLoop;
-import frc.robot.commands.intake.IntakeSetState;
+import frc.robot.commands.intake.IntakeSetStatePID;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
-import frc.robot.commands.shooter.SFeederCommand;
+import frc.robot.commands.shooter.SFeederForward;
+import frc.robot.commands.shooter.SFeederReverse;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.swerve.FieldOrientedTurn;
@@ -45,6 +46,7 @@ import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.WristSubsystem.Position;
 import frc.team6014.lib.auto.ARCTrajectory;
+import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.LoggedTunableNumber;
 import io.github.oblarg.oblog.Loggable;
 
@@ -141,17 +143,17 @@ public class RobotContainer implements Loggable {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 /* SHOOTER + FEEDER */
-                mDriver.square().whileTrue(new SFeederCommand(ShooterConstants.FEEDER_OUT));
-                mDriver.circle().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.AMP_VOLTAGE, mPDH.getVoltage())));
+                mDriver.square().whileTrue(new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
+                mDriver.circle().whileTrue(new SFeederReverse(ShooterConstants.FEEDER_REVERSE));
+                //mDriver.circle().toggleOnTrue(new ShooterCommand()
+                //                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.AMP_VOLTAGE, mPDH.getVoltage())));
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_SHORT_VOLTAGE, mPDH.getVoltage())));
-                mDriver.povUp().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(mShooter.getSmartVoltageShooter(ShooterConstants.SPEAKER_LONG_VOLTAGE, mPDH.getVoltage())));
+                                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE, mPDH.getVoltage())));
+                //mDriver.povUp().toggleOnTrue(new ShooterCommand()
+                                //.withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_LONG_VOLTAGE, mPDH.getVoltage())));
 
                 /* ARM */
-                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.ZERO));
+                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
@@ -162,17 +164,13 @@ public class RobotContainer implements Loggable {
                 mOperator.x().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mOperator.b().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
                 mOperator.a().onTrue(wristOpenLoop);
-                // mOperator.y().toggleOnTrue(new IntakeSetState(mIntake, Running.S_DOWN));
-
 
                 /* INTAKE */
-                // mOperator.rightTrigger().whileTrue(new IntakeSetState(mIntake, Running.FORWARD));
-                // mOperator.leftTrigger().whileTrue(new IntakeSetState(mIntake, Running.REVERSE));
                 mOperator.rightStick().onTrue(intakeOpenLoop);
 
-                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.forwardPercent, mPDH.getVoltage())));
-                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.reversePercent, mPDH.getVoltage())));
-                mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake, mIntake.getSmartVoltageIntake(IntakeConstants.feedPercent, mPDH.getVoltage())));
+                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, Conversions.getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
+                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, Conversions.getSmartVoltage(IntakeConstants.reversePercent, mPDH.getVoltage())));
+                mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake, Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage())));
 
                 /* BREAK-COAST SWITCH */
                 mDriver.L2().onTrue(new SetIdleModeInvert());

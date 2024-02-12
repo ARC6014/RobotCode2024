@@ -10,7 +10,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
 import frc.team6014.lib.util.LoggedTunableNumber;
 
-public class SFeederCommand extends Command {
+public class SFeederForward extends Command {
 
   private ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
   private double percentOutput;
@@ -18,7 +18,7 @@ public class SFeederCommand extends Command {
       ShooterConstants.FEEDER_OUT);
 
   /** Creates a new ShooterComand. */
-  public SFeederCommand(double percentOutput) {
+  public SFeederForward(double percentOutput) {
     this.percentOutput = percentOutput;
   }
 

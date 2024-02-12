@@ -137,14 +137,7 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
-        // // STOP ANGLE MOTOR IF WE ARE GOING INTO THE DRIVEBASE
-        // if (getBoreEncoderPosition() < WristConstants.stopPosition) {
-        // setOpenLoop(0);
-        // mTalonFX.stopMotor();
-        // resetToAbsolute();
-        // }
-
-        SmartDashboard.putString("I-W Idle Mode", kNeutralMode.toString());
+        // SmartDashboard.putString("I-W Idle Mode", kNeutralMode.toString());
         autoCalibration();
     }
 
@@ -243,7 +236,7 @@ public class WristSubsystem extends SubsystemBase {
      * Resets to absolute if:
      * time has elapsed 10 seconds since previous calibration
      * OR
-     * current Falcon rotation is 0.5 degrees off from the Bore reading
+     * current Falcon rotation is 1 degrees off from the Bore reading
      * AND
      * the mechanism isn't moving
      */
@@ -256,12 +249,6 @@ public class WristSubsystem extends SubsystemBase {
             resetToAbsolute();
             lastAbsoluteTime = m_timer.get();
         }
-    }
-
-    public ArrayList<TalonFX> getMotors() {
-        var motors = new ArrayList<TalonFX>();
-        motors.add(mTalonFX);
-        return motors;
     }
 
     public TalonFX getMotor() {

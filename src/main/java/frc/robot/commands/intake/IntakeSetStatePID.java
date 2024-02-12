@@ -5,11 +5,11 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
-public class IntakeSetState extends Command {
+public class IntakeSetStatePID extends Command {
     private IntakeSubsystem mIntakeSubsystem;
     private IntakeSubsystem.Running mState;
 
-    public IntakeSetState(IntakeSubsystem intakeSubsystem, IntakeSubsystem.Running state) {
+    public IntakeSetStatePID(IntakeSubsystem intakeSubsystem, IntakeSubsystem.Running state) {
         mIntakeSubsystem = intakeSubsystem;
         mState = state;
         addRequirements(mIntakeSubsystem);
