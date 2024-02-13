@@ -79,7 +79,7 @@ public class RobotContainer implements Loggable {
         /* CONTROLLERS */
 
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
-        private final Joystick mOperator = new Joystick(1);
+        private final CommandXboxController mOperator = new CommandXboxController(1);
 
         
 
