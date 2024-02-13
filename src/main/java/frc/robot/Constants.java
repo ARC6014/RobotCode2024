@@ -371,7 +371,7 @@ public class Constants implements Loggable {
 
     public class LLConstants {
         public static String name = "limelight";
-        public static double height = 0;
-        public static double Pitch = 0; // vertical angle
-    }
+        public static double[] camPose_RobotField = {0, 0, 0, 0, 0, 0};// x, y, z, roll, pitch, yaw
+      }
+
 }
