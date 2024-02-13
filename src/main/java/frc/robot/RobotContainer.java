@@ -79,7 +79,7 @@ public class RobotContainer implements Loggable {
         /* CONTROLLERS */
 
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
-        private final Joystick mOperator = new Joystick(1);
+        private final CommandXboxController mOperator = new CommandXboxController(1);
 
         
 
@@ -151,8 +151,9 @@ public class RobotContainer implements Loggable {
 
                 mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
-                new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
-                new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
+                // TODO: reassign Limelight buttons to Xbox controller
+                //new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
+                //new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
 
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
