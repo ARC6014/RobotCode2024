@@ -118,9 +118,9 @@ public class Constants implements Loggable {
         public static final double anglekD = 0.0;
 
         // snap PID is not used currently
-        public static final double snapkP = 2.5;
+        public static final double snapkP = 0.1;
         public static final double snapkI = 0.0;
-        public static final double snapkD = 0.01;
+        public static final double snapkD = 0.0;
 
         /** will be used for FieldOrientedTurn */
         public static final double kRotControllerP = 0.15; // prev: 0.13

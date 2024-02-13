@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -31,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.team6014.lib.drivers.SwerveModuleBase;
+import frc.team6014.lib.util.LoggedTunableNumber;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
 import io.github.oblarg.oblog.Loggable;
 
@@ -60,12 +63,20 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   private boolean isLocked = false;
 
-  // private ProfiledPIDController snapPIDController = new
-  // ProfiledPIDController(DriveConstants.snapkP,
-  // DriveConstants.snapkI, DriveConstants.snapkD,
-  // DriveConstants.rotPIDconstraints);
+  private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP, DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
+  private static final LoggedTunableNumber kSnapP = new LoggedTunableNumber("Snap/kP", DriveConstants.snapkP);
+  private static final LoggedTunableNumber kSnapI = new LoggedTunableNumber("Snap/kI", DriveConstants.snapkI);
+  private static final LoggedTunableNumber kSnapD = new LoggedTunableNumber("Snap/kD", DriveConstants.snapkD);
 
-  // private final Timer snapTimer = new Timer();
+  private final Timer snapTimer = new Timer();
+
+  /* Snap PID calculations */
+  private double snapAngle = 0.0;
+  private double lastRotTime = 0.0;
+  private double timeSinceDrive = 0.0;
+  private double timeSinceRot = 0.0;
+  private double lastDriveTime = 0.0;
+
 
   public SwerveDrivePoseEstimator poseEstimator;
 
@@ -98,10 +109,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             DriveConstants.swerveConstants)
     };
 
-    // snapTimer.reset();
-    // snapTimer.start();
+    snapTimer.reset();
+    snapTimer.start();
 
-    // snapPIDController.enableContinuousInput(-Math.PI, Math.PI);
+    snapPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     zeroHeading();
 
@@ -141,16 +152,18 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
     updateOdometry();
     poseEstimator.update(
         getRotation2d(),
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
+    snapPIDController.setPID(kSnapP.get(), kSnapI.get(), kSnapD.get());
+    // SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
 
   }
 
@@ -160,6 +173,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   public void swerveDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
+    /* Automatically correcting the heading based on pid */
+    rot = calculateSnapValue(xSpeed, ySpeed, rot);
     // if robot is field centric, construct ChassisSpeeds from field relative speeds
     // if not, construct ChassisSpeeds from robot relative speeds
     desiredChassisSpeeds = fieldRelative
@@ -259,7 +274,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   public void resetSnapPID() {
-    // snapPIDController.reset(getRotation2d().getRadians());
+    snapPIDController.reset(getRotation2d().getRadians());
   }
 
   public void zeroHeading() {
@@ -358,6 +373,32 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     }
     return alliance.get() == Alliance.Red;
   }
+
+  private double calculateSnapValue(double xSpeed, double ySpeed, double rot) {
+
+   double output = rot;
+
+   if (Math.abs(rot) >= 0.05) {
+       lastRotTime = snapTimer.get();
+   }
+
+   if (Math.abs(xSpeed) >= 0.05 || Math.abs(ySpeed) >= 0.05) {
+       lastDriveTime = snapTimer.get();
+   }
+
+   timeSinceRot = snapTimer.get() - lastRotTime;
+   timeSinceDrive = snapTimer.get() - lastDriveTime;
+
+   if (timeSinceRot < 0.5) {
+      System.out.println("rot*************");
+       snapAngle = getRotation2d().getRadians();
+   } else if (Math.abs(rot) < 0.05 && timeSinceDrive < 0.2) {
+        System.out.println("kot*************");
+       output = snapPIDController.calculate(getRotation2d().getRadians(), snapAngle);
+   }
+    System.out.print("rot : " + rot + " output : " + output);
+   return output;
+}
 
   public ArrayList<WPI_TalonFX> getDriveMotors() {
     ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();

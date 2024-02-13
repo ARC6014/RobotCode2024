@@ -144,7 +144,7 @@ public class RobotContainer implements Loggable {
 
                 /* SHOOTER + FEEDER */
                 mDriver.square().whileTrue(new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
-                mDriver.circle().whileTrue(new SFeederReverse(ShooterConstants.FEEDER_REVERSE));
+                mDriver.circle().whileTrue(new SFeederReverse(Conversions.getSmartVoltage(ShooterConstants.FEEDER_REVERSE, mPDH.getVoltage())));
                 //mDriver.circle().toggleOnTrue(new ShooterCommand()
                 //                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.AMP_VOLTAGE, mPDH.getVoltage())));
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()

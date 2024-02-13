@@ -15,7 +15,7 @@ public class SFeederReverse extends Command {
   private ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
   private double percentOutput;
   private static final LoggedTunableNumber tunableFeederSpeed = new LoggedTunableNumber("feeder/speedneg",
-      ShooterConstants.FEEDER_OUT);
+      ShooterConstants.FEEDER_REVERSE);
 
   /** Creates a new ShooterComand. */
   public SFeederReverse(double percentOutput) {
