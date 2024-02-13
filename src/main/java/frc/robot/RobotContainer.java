@@ -148,11 +148,10 @@ public class RobotContainer implements Loggable {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
-
-                mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
-                mDriver.cross().onTrue(new ResetGyro(mDrive));
-                new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
-                new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
+                
+                // mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
+                // new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
+                // new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
 
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));

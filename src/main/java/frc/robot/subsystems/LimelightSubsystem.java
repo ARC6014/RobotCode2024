@@ -57,13 +57,6 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Tag ID", mId);
   }
 
-  public static LimelightSubsystem getInstance() {
-    if (mLL == null) {
-      mLL = new LimelightSubsystem();
-    }
-    return mLL;
-  }
-
   private void updateValues(){
     tLL = NetworkTableInstance.getDefault().getTable(Constants.LLConstants.name);
     tBotPose_field = tLL.getEntry("botpose");
@@ -124,4 +117,12 @@ public class LimelightSubsystem extends SubsystemBase {
   public double getID(){
     return mId;
   }
+
+  public static LimelightSubsystem getInstance() {
+    if (mLL == null) {
+      mLL = new LimelightSubsystem();
+    }
+    return mLL;
+  }
+  
 }
