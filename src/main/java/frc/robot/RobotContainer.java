@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -16,6 +17,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.commands.AllignWithLL;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.ResetGyro;
@@ -62,6 +66,7 @@ import io.github.oblarg.oblog.Loggable;
 public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
+
         // private final TelescopicSubsystem mTelescopic =
         // TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
@@ -72,8 +77,11 @@ public class RobotContainer implements Loggable {
         private PowerDistribution mPDH = new PowerDistribution();
 
         /* CONTROLLERS */
+
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
+
+        
 
         /* AUTO */
         private final ARCTrajectory trajectories = new ARCTrajectory();
@@ -87,6 +95,7 @@ public class RobotContainer implements Loggable {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
+
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
@@ -99,6 +108,7 @@ public class RobotContainer implements Loggable {
         public RobotContainer() {
                 /* Open loop commands */
                 mDrive.setDefaultCommand(driveByJoystick);
+
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
@@ -138,6 +148,10 @@ public class RobotContainer implements Loggable {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
+                
+                // mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
+                // new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
+                // new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
 
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
