@@ -52,7 +52,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("LL X", mCamPose3d_target.getX());
     SmartDashboard.putNumber("LL Y", mCamPose3d_target.getY());
-    SmartDashboard.putNumber("LL Z", mCamPose3d_target.getZ());
+    SmartDashboard.putNumber("LL Z", (mCamPose3d_target.getZ()* (1.00/1.05) ));
     SmartDashboard.putNumber("LL Theta", Units.radiansToDegrees(mCamPose3d_target.getRotation().getZ()));
     SmartDashboard.putNumber("Tag ID", mId);
   }

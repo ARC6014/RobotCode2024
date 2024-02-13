@@ -10,6 +10,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -17,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.commands.ResetGyro;
@@ -46,7 +48,9 @@ public class RobotContainer {
         
 
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
-        private final CommandXboxController mOperator = new CommandXboxController(1);
+        private final Joystick mOperator = new Joystick(1);
+
+        
 
         // auto
         private final ARCTrajectory trajectories = new ARCTrajectory();
@@ -103,6 +107,8 @@ public class RobotContainer {
         private void configureButtonBindings() {
                 mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
+                new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
+                new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
         }
 
         

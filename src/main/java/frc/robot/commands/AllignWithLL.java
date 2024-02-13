@@ -5,10 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.Constants.DriveConstants;
+import java.lang.System;
 
 
 public class AllignWithLL extends Command {
@@ -56,6 +58,11 @@ public class AllignWithLL extends Command {
     }
 
     mDrive.swerveDrive(xSpeed, 0, tethaSpeed, true); //not sure if it should be fieldRelative or not
+
+    SmartDashboard.putNumber("xSpeed", xSpeed);
+    SmartDashboard.putNumber("tethaSpeed", tethaSpeed);
+    SmartDashboard.putBoolean("İs Aligned", x_pid.atGoal() && m_thetaController.atGoal());
+
   }
 
   // Called once the command ends or is interrupted.
