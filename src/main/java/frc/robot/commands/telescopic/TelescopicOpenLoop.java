@@ -10,14 +10,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 
-public class TelescopicDeneme extends Command {
-
-
-  private final TelescopicSubsystem telescopic = TelescopicSubsystem.getInstance();
-  private final DoubleSupplier joystick;
+public class TelescopicOpenLoop extends Command {
+  private TelescopicSubsystem telescopic = TelescopicSubsystem.getInstance();
+  private DoubleSupplier joystick;
 
   /** Creates a new TelescopicDeneme. */
-  public TelescopicDeneme(DoubleSupplier output) {
+  public TelescopicOpenLoop(TelescopicSubsystem telescopic, DoubleSupplier output) {
+    this.telescopic = telescopic;
     joystick = output;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(telescopic);
@@ -34,7 +33,7 @@ public class TelescopicDeneme extends Command {
       telescopic.openLoop((joystick.getAsDouble())/5);
     }
     else {
-      telescopic.setTelescopicState(TelescopicState.ZERO);
+      telescopic.setTelescopicState(TelescopicState.HOLD);
     }
 
   }

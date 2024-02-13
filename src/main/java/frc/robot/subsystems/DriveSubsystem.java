@@ -10,7 +10,6 @@ import java.util.Optional;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,17 +20,22 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.team6014.lib.drivers.SwerveModuleBase;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
+import io.github.oblarg.oblog.Loggable;
 
-public class DriveSubsystem extends SubsystemBase {
+
+public class DriveSubsystem extends SubsystemBase implements Loggable {
   // Swerve numbering:
   // 0 1
   // 2 3
@@ -39,7 +43,8 @@ public class DriveSubsystem extends SubsystemBase {
   private static DriveSubsystem mInstance;
 
   private final Trigger brakeModeTrigger;
-  private final StartEndCommand brakeModeCommand;
+
+  private final Command brakeModeCommand;
 
   public SwerveModuleBase[] mSwerveModules; // collection of modules
   private SwerveModuleState[] states; // collection of modules' states
@@ -48,18 +53,22 @@ public class DriveSubsystem extends SubsystemBase {
   public SwerveDriveOdometry mOdometry;
 
   private double[] velocityDesired = new double[4];
+  private double[] velocityCurrent = new double[4];
   private double[] angleDesired = new double[4];
 
   WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
 
   private boolean isLocked = false;
 
-  private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
-      DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
+  // private ProfiledPIDController snapPIDController = new
+  // ProfiledPIDController(DriveConstants.snapkP,
+  // DriveConstants.snapkI, DriveConstants.snapkD,
+  // DriveConstants.rotPIDconstraints);
 
-  private final Timer snapTimer = new Timer();
+  // private final Timer snapTimer = new Timer();
 
   public SwerveDrivePoseEstimator poseEstimator;
+
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -89,14 +98,15 @@ public class DriveSubsystem extends SubsystemBase {
             DriveConstants.swerveConstants)
     };
 
-    snapTimer.reset();
-    snapTimer.start();
+    // snapTimer.reset();
+    // snapTimer.start();
 
-    snapPIDController.enableContinuousInput(-Math.PI, Math.PI); // ensure that the PID controller knows -180 and 180 are
+    // snapPIDController.enableContinuousInput(-Math.PI, Math.PI);
 
     zeroHeading();
 
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
+
 
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
@@ -105,16 +115,20 @@ public class DriveSubsystem extends SubsystemBase {
         new Pose2d());
 
     brakeModeTrigger = new Trigger(RobotState::isEnabled);
-    brakeModeCommand = new StartEndCommand(() -> {
-      for (SwerveModuleBase mod : mSwerveModules) {
-        mod.setNeutralMode2Brake(true);
-      }
-    }, () -> {
-      Timer.delay(1.5);
-      for (SwerveModuleBase mod : mSwerveModules) {
-        mod.setNeutralMode2Brake(false);
-      }
-    });
+
+    brakeModeCommand = new SequentialCommandGroup(
+        new InstantCommand(() -> {
+          for (SwerveModuleBase mod : mSwerveModules) {
+            mod.setNeutralMode2Brake(true);
+          }
+        }),
+        new WaitCommand(1.5),
+        new InstantCommand(() -> {
+          for (SwerveModuleBase mod : mSwerveModules) {
+            mod.setNeutralMode2Brake(false);
+          }
+        }));
+    
   }
 
   public static DriveSubsystem getInstance() {
@@ -132,6 +146,11 @@ public class DriveSubsystem extends SubsystemBase {
         getRotation2d(),
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
+
+    SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
 
   }
 
@@ -158,8 +177,7 @@ public class DriveSubsystem extends SubsystemBase {
       };
     }
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeed); // normalizes wheel speeds to absolute
-                                                                                  // threshold
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeed); 
 
     /*
      * Sets open loop states
@@ -167,9 +185,11 @@ public class DriveSubsystem extends SubsystemBase {
     for (int i = 0; i < 4; i++) {
       mSwerveModules[i].setDesiredState(states[i], true);
       velocityDesired[i] = states[i].speedMetersPerSecond;
+      velocityCurrent[i] = mSwerveModules[i].getVelocityMPS();
       angleDesired[i] = states[i].angle.getDegrees();
     }
 
+    // log();
   }
 
   /*
@@ -218,11 +238,6 @@ public class DriveSubsystem extends SubsystemBase {
    * Setters
    */
   public void resetOdometry(Pose2d pose) {
-    // original code: swervePoseEstimator.resetPosition(getYaw(), getPositions(),
-    // pose);
-    // TODO: may also use the code below
-    // swervePoseEstimator.resetPosition(getRotation2d(), getModulePositions(),
-    // pose);
     mGyro.reset();
     mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
     mOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose);
@@ -244,7 +259,7 @@ public class DriveSubsystem extends SubsystemBase {
   }
 
   public void resetSnapPID() {
-    snapPIDController.reset(getRotation2d().getRadians());
+    // snapPIDController.reset(getRotation2d().getRadians());
   }
 
   public void zeroHeading() {
@@ -291,9 +306,9 @@ public class DriveSubsystem extends SubsystemBase {
   // Returns gyro angle relative to alliance station
   public Rotation2d getDriverCentricRotation2d() {
     return DriverStation.getAlliance().get() == Alliance.Red
-        ? Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle() + 180, 360.0))
+        ? Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle(), 360.0))
             .times(DriveConstants.invertGyro ? -1 : 1)
-        : Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle(), 360.0))
+        : Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle() + 180, 360.0))
             .times(DriveConstants.invertGyro ? -1 : 1);
   }
 
@@ -351,15 +366,4 @@ public class DriveSubsystem extends SubsystemBase {
     }
     return motors;
   }
-
-  /*
-   * public double getPitch() {
-   * return mGyro.getPitch().getValue();
-   * }
-   * /*
-   * public double getYaw() {
-   * return mGyro.getYaw().getValue();
-   * }
-   */
-
 }

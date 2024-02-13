@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.0,
+      "x": 15.54,
       "y": 7.0
     },
-    "rotation": 0
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DriveForwardNoRotate"
+            "pathName": "flipped-Name-R"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "flipped-Name-C"
           }
         }
       ]

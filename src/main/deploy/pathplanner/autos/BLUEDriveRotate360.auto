@@ -5,7 +5,7 @@
       "x": 1.0,
       "y": 7.0
     },
-    "rotation": 0
+    "rotation": 0.0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DriveForwardNoRotate"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Turn"
+            "pathName": "360  DriveForwardAndRotate"
           }
         }
       ]
