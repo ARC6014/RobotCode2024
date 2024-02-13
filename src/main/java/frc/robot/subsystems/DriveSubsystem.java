@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -56,7 +58,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private double[] velocityCurrent = new double[4];
   private double[] angleDesired = new double[4];
 
-  WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
+  Pigeon2 mGyro = new Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
 
   private boolean isLocked = false;
 
@@ -147,10 +149,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
-    SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
+    SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorVoltage().getValueAsDouble());
 
   }
 
@@ -359,8 +361,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     return alliance.get() == Alliance.Red;
   }
 
-  public ArrayList<WPI_TalonFX> getDriveMotors() {
-    ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
+  public ArrayList<TalonFX> getDriveMotors() {
+    ArrayList<TalonFX> motors = new ArrayList<TalonFX>();
     for (SwerveModuleBase module : mSwerveModules) {
       motors.add(module.getDriveMotor());
     }
