@@ -105,28 +105,28 @@ public class RobotContainer implements Loggable {
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
-        private final ParallelCommandGroup openWristStartIntake = 
-        new ParallelCommandGroup(
-                        new WristSetState(mWrist, Position.OPEN), 
+        private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
+                        new WristSetState(mWrist, Position.OPEN),
                         new IntakeSetOpenLoop(mIntake, Conversions
                                         .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
-        private final ParallelCommandGroup closeWristStopIntakeArmIntake = 
-        new ParallelCommandGroup(
-                new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1), 
+        private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
+                        new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
                         new WristSetState(mWrist, Position.CLOSED),
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
-                new PrintCommand("Ilk Paralel bitti"));
-                
+                        new PrintCommand("Ilk Paralel bitti"));
 
-        private final ParallelCommandGroup startStopFeeder = 
-        new ParallelCommandGroup(
+        private final ParallelCommandGroup startStopFeeder = new ParallelCommandGroup(
                 new PrintCommand("Ikinci paralel"),
-                new IntakeSetOpenLoop(mIntake, Conversions
-                                        .getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage())).withTimeout(0.3),
+                new IntakeSetOpenLoop(mIntake,Conversions.getSmartVoltage(IntakeConstants.feedPercent,mPDH.getVoltage())).withTimeout(0.3),
                 new PrintCommand("Done Intake Open Loop"),
-                new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())).withTimeout(0.1),
-                new PrintCommand("Bitti amk"));
-                         
+                new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT,mPDH.getVoltage())).withTimeout(0.1));
+
+        private final SequentialCommandGroup setArmFeedAndShoot = new SequentialCommandGroup(
+                        new ParallelCommandGroup(
+                                new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
+                                new ShooterCommand().withOpenLoop(Conversions
+                                        .getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE, mPDH.getVoltage()))),
+                        new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -216,12 +216,17 @@ public class RobotContainer implements Loggable {
                                 Conversions.getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
                 mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
                                 Conversions.getSmartVoltage(IntakeConstants.reversePercent, mPDH.getVoltage())));
-                //mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake,
-                //                Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage())));
+                // mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake,
+                // Conversions.getSmartVoltage(IntakeConstants.feedPercent,
+                // mPDH.getVoltage())));
 
                 mOperator.rightBumper().onTrue(openWristStartIntake);
-                mOperator.leftBumper().onTrue(closeWristStopIntakeArmIntake.andThen(new WaitCommand(2)).andThen(startStopFeeder));
-                /* BREAK-COAST SWITCH */
+                mOperator.leftBumper().onTrue(
+                                closeWristStopIntakeArmIntake.andThen(new WaitCommand(2)).andThen(startStopFeeder));
+                mOperator.y().onTrue(setArmFeedAndShoot);
+
+
+                /* BREAK-COAST SWITCH for Intake&Wrist */
                 mDriver.L2().onTrue(new SetIdleModeInvert());
 
         }
