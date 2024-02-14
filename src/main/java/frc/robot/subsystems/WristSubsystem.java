@@ -14,9 +14,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
+import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class WristSubsystem extends SubsystemBase {
     private static WristSubsystem mInstance;
@@ -26,6 +28,11 @@ public class WristSubsystem extends SubsystemBase {
     private final DutyCycleEncoder mBoreEncoder = new DutyCycleEncoder(WristConstants.boreEncoderDioId);
 
     private Gearbox mGearbox = WristConstants.gearbox;
+
+    private static final LoggedTunableNumber kWristP = new LoggedTunableNumber("Wrist/kP", WristConstants.ANGLE_kP);
+    private static final LoggedTunableNumber kWristI = new LoggedTunableNumber("Wrist/kI", WristConstants.ANGLE_kI);
+    private static final LoggedTunableNumber kWristD = new LoggedTunableNumber("Wrist/kD", WristConstants.ANGLE_kD);
+
 
     /** WRIST ANGLE POSITION */
     private Position mPosition;
@@ -138,6 +145,13 @@ public class WristSubsystem extends SubsystemBase {
         }
 
         // SmartDashboard.putString("I-W Idle Mode", kNeutralMode.toString());
+        configs.Slot0.withKP(kWristP.get());
+        configs.Slot0.withKI(kWristI.get());
+        configs.Slot0.withKD(kWristD.get());
+
+        SmartDashboard.putNumber("Wrist Angle Falcon", Conversions.revolutionsToDegrees(getFalconPosition()));
+        SmartDashboard.putNumber("Wrist Angle Bore", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
+        
         autoCalibration();
     }
 
@@ -243,7 +257,7 @@ public class WristSubsystem extends SubsystemBase {
     public void autoCalibration() {
         boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
         boolean angleCondition = Math.abs(getBoreEncoderPosition() - getFalconPosition()) >= Conversions
-                .degreesToRevolutions(1.0);
+                .degreesToRevolutions(2);
         boolean speedCondition = Math.abs(mTalonFX.getRotorVelocity().getValueAsDouble()) < 0.005;
         if ((timerCondition || angleCondition) && speedCondition) {
             resetToAbsolute();

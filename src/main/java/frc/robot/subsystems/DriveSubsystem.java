@@ -390,13 +390,13 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    timeSinceDrive = snapTimer.get() - lastDriveTime;
 
    if (timeSinceRot < 0.5) {
-      System.out.println("rot*************");
+      //System.out.println("rot*************");
        snapAngle = getRotation2d().getRadians();
    } else if (Math.abs(rot) < 0.05 && timeSinceDrive < 0.2) {
-        System.out.println("kot*************");
+        //System.out.println("kot*************");
        output = snapPIDController.calculate(getRotation2d().getRadians(), snapAngle);
    }
-    System.out.print("rot : " + rot + " output : " + output);
+    //System.out.print("rot : " + rot + " output : " + output);
    return output;
 }
 

@@ -243,7 +243,7 @@ public class Constants implements Loggable {
         public static final double reversePercent = -9;
 
         /** unit: percent */
-        public static final double feedPercent = -8;
+        public static final double feedPercent = -5;
 
 
         /** unit: rps */
@@ -278,10 +278,10 @@ public class Constants implements Loggable {
         public static final double stopPosition = 0;
 
         /** unit: revolutions */
-        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(1.5);
+        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(4);
 
         /** unit: V/rev */
-        public static final double ANGLE_kP = 0.2;
+        public static final double ANGLE_kP = 0.25;
         /** unit: V/(rev * s) */
         public static final double ANGLE_kI = 0;
         /** unit: Vs/rev */
@@ -292,9 +292,9 @@ public class Constants implements Loggable {
         public static final double ANGLE_kV = 0;
 
         /** unit: rev/s */
-        public static final double wristCruiseVelocity = 100;
+        public static final double wristCruiseVelocity = 100; // 90
         /** unit: rev/s^2 */
-        public static final double wristAcceleration = 80;
+        public static final double wristAcceleration = 80; // 150
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
@@ -331,9 +331,9 @@ public class Constants implements Loggable {
         public static final boolean feederInverted = false;
 
         /* VOLTAGE */
-        public static final double AMP_VOLTAGE = 3;
+        public static final double AMP_VOLTAGE = 5;
         public static final double SPEAKER_SHORT_VOLTAGE = 10.5; // TODO: Tune
-        public static final double SPEAKER_LONG_VOLTAGE = 12; // TODO: Tune
+        public static final double SPEAKER_LONG_VOLTAGE = 10.5; // TODO: Tune
 
         /* RPMs */
         /* NOT USED */
@@ -341,8 +341,8 @@ public class Constants implements Loggable {
         public static final double AMP_SHOOT_RPM = 2700.0;
         public static final double SPEAKER_SHOOT_RPM = 500.0;
         
-        public static final double FEEDER_OUT = 9;
-        public static final double FEEDER_REVERSE = -9;
+        public static final double FEEDER_OUT = 6.31;
+        public static final double FEEDER_REVERSE = -6.31;
     }
 
     public static final class TelescopicConstants {

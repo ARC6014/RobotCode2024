@@ -15,6 +15,12 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -81,8 +87,6 @@ public class RobotContainer implements Loggable {
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
 
-        
-
         /* AUTO */
         private final ARCTrajectory trajectories = new ARCTrajectory();
         private SendableChooser<Command> autoChooser;
@@ -95,12 +99,34 @@ public class RobotContainer implements Loggable {
                         () -> mDriver.L1().getAsBoolean(),
                         () -> mDriver.R1().getAsBoolean());
 
-
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
+
+        private final ParallelCommandGroup openWristStartIntake = 
+        new ParallelCommandGroup(
+                        new WristSetState(mWrist, Position.OPEN), 
+                        new IntakeSetOpenLoop(mIntake, Conversions
+                                        .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
+        private final ParallelCommandGroup closeWristStopIntakeArmIntake = 
+        new ParallelCommandGroup(
+                new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1), 
+                        new WristSetState(mWrist, Position.CLOSED),
+                        new ArmStateSet(mArm, ArmControlState.INTAKE),
+                new PrintCommand("Ilk Paralel bitti"));
+                
+
+        private final ParallelCommandGroup startStopFeeder = 
+        new ParallelCommandGroup(
+                new PrintCommand("Ikinci paralel"),
+                new IntakeSetOpenLoop(mIntake, Conversions
+                                        .getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage())).withTimeout(0.3),
+                new PrintCommand("Done Intake Open Loop"),
+                new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())).withTimeout(0.1),
+                new PrintCommand("Bitti amk"));
+                         
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -137,8 +163,6 @@ public class RobotContainer implements Loggable {
 
         }
 
-        
-
         /**
          * Use this method to define your button->command mappings. Buttons can be
          * created by
@@ -148,7 +172,7 @@ public class RobotContainer implements Loggable {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
-                
+
                 // mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 // new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
                 // new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
@@ -157,22 +181,28 @@ public class RobotContainer implements Loggable {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 /* SHOOTER + FEEDER */
-                mDriver.square().whileTrue(new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
-                mDriver.circle().whileTrue(new SFeederReverse(Conversions.getSmartVoltage(ShooterConstants.FEEDER_REVERSE, mPDH.getVoltage())));
-                //mDriver.circle().toggleOnTrue(new ShooterCommand()
-                //                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.AMP_VOLTAGE, mPDH.getVoltage())));
+                mDriver.square().whileTrue(new SFeederForward(
+                                Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
+                mDriver.circle().whileTrue(new SFeederReverse(
+                                Conversions.getSmartVoltage(ShooterConstants.FEEDER_REVERSE, mPDH.getVoltage())));
+                // mDriver.circle().toggleOnTrue(new ShooterCommand()
+                // .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.AMP_VOLTAGE,
+                // mPDH.getVoltage())));
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE, mPDH.getVoltage())));
-                //mDriver.povUp().toggleOnTrue(new ShooterCommand()
-                                //.withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_LONG_VOLTAGE, mPDH.getVoltage())));
+                                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
+                                                mPDH.getVoltage())));
+                // mDriver.povUp().toggleOnTrue(new ShooterCommand()
+                // .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_LONG_VOLTAGE,
+                // mPDH.getVoltage())));
 
                 /* ARM */
-                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                // ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
-                mOperator.rightBumper().onTrue(armOpenLoop);
+                // mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* WRIST */
                 mOperator.x().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
@@ -182,10 +212,15 @@ public class RobotContainer implements Loggable {
                 /* INTAKE */
                 mOperator.rightStick().onTrue(intakeOpenLoop);
 
-                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, Conversions.getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
-                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake, Conversions.getSmartVoltage(IntakeConstants.reversePercent, mPDH.getVoltage())));
-                mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake, Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage())));
+                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
+                                Conversions.getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
+                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
+                                Conversions.getSmartVoltage(IntakeConstants.reversePercent, mPDH.getVoltage())));
+                //mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake,
+                //                Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage())));
 
+                mOperator.rightBumper().onTrue(openWristStartIntake);
+                mOperator.leftBumper().onTrue(closeWristStopIntakeArmIntake.andThen(new WaitCommand(2)).andThen(startStopFeeder));
                 /* BREAK-COAST SWITCH */
                 mDriver.L2().onTrue(new SetIdleModeInvert());
 

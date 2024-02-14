@@ -62,8 +62,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.restoreFactoryDefaults();
     m_feeder.restoreFactoryDefaults();
 
-    m_master.setSmartCurrentLimit(50);
-    m_slave.setSmartCurrentLimit(50);
+    m_master.setSmartCurrentLimit(35);
+    m_slave.setSmartCurrentLimit(35);
     // m_feeder.setSmartCurrentLimit(25);
     m_master.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
     m_slave.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter

@@ -144,6 +144,11 @@ public class Conversions {
 
     /** returns optimal percent output for respective battery voltage */
     public static double getSmartVoltage(double targetVoltage, double pdhVoltage) {
-        return targetVoltage / pdhVoltage;
+        if(targetVoltage / pdhVoltage > 1) {
+            return 1;
+        } else {
+            return targetVoltage / pdhVoltage;
+        }
+        
     }
 }
