@@ -102,7 +102,7 @@ public class SwerveModuleBase implements Loggable {
 
         configAll(); // Configs all the motors and encoders
 
-        mRotEncoder6.getConfigurator().setPosition(constants.CANCoderAngleOffset);
+        mRotEncoder6.getConfigurator().apply(new MagnetSensorConfigs().withMagnetOffset(constants.CANCoderAngleOffset));
 
         resetToAbsolute();
 
@@ -154,41 +154,34 @@ public class SwerveModuleBase implements Loggable {
      * Configs
      */
 
+    // V5 to V6: there is no need to reset to factory defaults as the Configuration object
+    // sets to factory defaults unless edited
+
     private void configRotEncoder() {
-        mRotEncoder6.getConfigurator().apply(new CANcoderConfiguration()); // set factory defaults
-        mRotEncoder6 = CTREConfigs.swerveCancoderConfig(mRotEncoder6);
-        mRotEncoder6.getConfigurator().apply(
-            new MagnetSensorConfigs()
-                .withSensorDirection(isRotEncoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive)
-        );
+        CANcoderConfiguration config = CTREConfigs.swerveCANCoderConfig();
+        config.MagnetSensor
+            .withSensorDirection(isRotEncoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive);
+        mRotEncoder6.getConfigurator().apply(config);
     }
 
     private void configAngleMotor() {
-        mAngleMotor6.getConfigurator().apply(
-            new TalonFXConfiguration()
-                .withFeedback(
-                    new FeedbackConfigs()
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                    )
-                .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(isAngleMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-                )
-        );
-        mAngleMotor6 = CTREConfigs.swerveAngleFXConfig(mAngleMotor6);
+        mAngleMotor6.setNeutralMode(DriveConstants.angleMotorNeutralMode == NeutralMode.Coast ? NeutralModeValue.Coast : NeutralModeValue.Brake);
+        TalonFXConfiguration config = CTREConfigs.swerveAngleConfig();
+        config.Feedback
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+        config.MotorOutput
+            .withInverted(isAngleMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        mAngleMotor6.getConfigurator().apply(config);
     }
 
     private void configDriveMotor() {
-        mDriveMotor6.getConfigurator().apply(
-            new TalonFXConfiguration()
-                .withFeedback(
-                    new FeedbackConfigs()
-                        .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor)
-                    )
-                .withMotorOutput(new MotorOutputConfigs()
-                    .withInverted(isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive)
-                )
-        );
-        mDriveMotor6 = CTREConfigs.swerveAngleFXConfig(mDriveMotor6);
+        mDriveMotor6.setNeutralMode(DriveConstants.driveMotorNeutralMode == NeutralMode.Coast ? NeutralModeValue.Coast : NeutralModeValue.Brake);
+        TalonFXConfiguration config = CTREConfigs.swerveAngleConfig();
+        config.Feedback
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
+        config.MotorOutput
+            .withInverted(isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        mAngleMotor6.getConfigurator().apply(config);
     }
 
     public void configAll() {
