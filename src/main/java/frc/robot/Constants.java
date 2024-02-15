@@ -196,9 +196,9 @@ public class Constants implements Loggable {
         public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 150;
+        public static final double armCruiseVelocity = 200; // 150
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 120;
+        public static final double armAcceleration = 170; // 120
 
         public static final double kP = 1.2;
         public static final double kD = 0.0;
@@ -292,9 +292,9 @@ public class Constants implements Loggable {
         public static final double ANGLE_kV = 0;
 
         /** unit: rev/s */
-        public static final double wristCruiseVelocity = 100; // 90
+        public static final double wristCruiseVelocity = 150; // 100
         /** unit: rev/s^2 */
-        public static final double wristAcceleration = 80; // 150
+        public static final double wristAcceleration = 300; // 80
 
         // TODO: voltage cutoff
         public static final double maxVoltageCutoff = 0;
@@ -342,6 +342,8 @@ public class Constants implements Loggable {
         public static final double SPEAKER_SHOOT_RPM = 500.0;
         
         public static final double FEEDER_OUT = 6.31;
+        public static final double FEEDER_FROM_INTAKE = 4;
+
         public static final double FEEDER_REVERSE = -6.31;
     }
 

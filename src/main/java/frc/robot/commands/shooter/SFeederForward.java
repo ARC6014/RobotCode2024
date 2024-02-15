@@ -25,6 +25,7 @@ public class SFeederForward extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("We are inside feeder");
     shooterSubsystem.setFeederState(FeederState.LET_HIM_COOK);
     shooterSubsystem.setFeederMotorSpeed(tunableFeederSpeed.get());
   }

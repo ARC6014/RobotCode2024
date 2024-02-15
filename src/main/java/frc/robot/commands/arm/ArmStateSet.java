@@ -37,7 +37,6 @@ public class ArmStateSet extends Command {
 
   @Override
   public boolean isFinished() {
-    System.out.println("Arm bitii");
     return mArm.isAtSetpointFalcon();
   }
 }

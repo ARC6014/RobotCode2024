@@ -14,73 +14,88 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "ShootSpeakerShort"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BLSpeakerToNote"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Field-Oriented Turn (45)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "BLNote2Note"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLSpeakerToNote"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReadyIntaking"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 4.0
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
+            "name": "ShootSpeakerLong"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLNote2Note"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReadyIntaking"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Shoot"
+            "name": "ShootSpeakerLong"
           }
         },
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "BLNote2Note2"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "BLNote2Note2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReadyIntaking"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Field-Oriented Turn (-45)"
+            "name": "ShootSpeakerLong"
           }
         }
       ]

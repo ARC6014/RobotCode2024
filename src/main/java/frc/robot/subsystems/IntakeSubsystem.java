@@ -91,8 +91,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // if (mBeamBreakSensor.get()) {
-        // setState(Running.NEUTRAL);
+        // if (!mBeamBreakSensor.get()) {
+        // setState(Running.S_DOWN);
         // }
 
         switch (mRunning) {

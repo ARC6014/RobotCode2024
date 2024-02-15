@@ -10,6 +10,7 @@ import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ShooterConstants;
@@ -62,14 +63,15 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.restoreFactoryDefaults();
     m_feeder.restoreFactoryDefaults();
 
-    m_master.setSmartCurrentLimit(35);
-    m_slave.setSmartCurrentLimit(35);
+    m_master.setSmartCurrentLimit(65);
+    m_slave.setSmartCurrentLimit(65);
     // m_feeder.setSmartCurrentLimit(25);
     m_master.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
     m_slave.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
 
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
+
 
     m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
 
@@ -129,6 +131,12 @@ public class ShooterSubsystem extends SubsystemBase {
     } else {
       setFeederaMotorSpeed(0);
     }
+
+    SmartDashboard.putNumber("SH-Master RPM", m_master.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
+    SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
+
 
   }
 
