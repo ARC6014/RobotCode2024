@@ -176,7 +176,6 @@ public class RobotContainer implements Loggable {
                 mDrive.setDefaultCommand(driveByJoystick);
 
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
-
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
                 LiveWindow.setEnabled(false);
@@ -222,7 +221,6 @@ public class RobotContainer implements Loggable {
          */
         private void configureButtonBindings() {
 
-                // mDriver.circle().onTrue(new AllignWithLL(1)); // ID should change
                 // new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
                 // new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
 
@@ -234,19 +232,13 @@ public class RobotContainer implements Loggable {
                                 Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
                 mDriver.circle().whileTrue(new SFeederReverse(
                                 Conversions.getSmartVoltage(ShooterConstants.FEEDER_REVERSE, mPDH.getVoltage())));
-                // mDriver.circle().toggleOnTrue(new ShooterCommand()
-                // .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.AMP_VOLTAGE,
-                // mPDH.getVoltage())));
+                
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()
                                 .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
                                                 mPDH.getVoltage())));
-                // mDriver.povUp().toggleOnTrue(new ShooterCommand()
-                // .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_LONG_VOLTAGE,
-                // mPDH.getVoltage())));
-
+                
                 /* ARM */
-                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                // ArmControlState.ZERO));
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
@@ -260,14 +252,10 @@ public class RobotContainer implements Loggable {
 
                 /* INTAKE */
                 // mOperator.rightStick().onTrue(intakeOpenLoop);
-
                 mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
                                 Conversions.getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
                 mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
                                 Conversions.getSmartVoltage(IntakeConstants.reversePercent, mPDH.getVoltage())));
-                // mOperator.y().whileTrue(new IntakeSetOpenLoop(mIntake,
-                // Conversions.getSmartVoltage(IntakeConstants.feedPercent,
-                // mPDH.getVoltage())));
 
                 mOperator.rightBumper().onTrue(openWristStartIntake);
                 mOperator.leftBumper().onTrue(
@@ -276,9 +264,6 @@ public class RobotContainer implements Loggable {
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
-
-                /* BREAK-COAST SWITCH for Intake&Wrist */
-                // mDriver.L2().onTrue(new SetIdleModeInvert());
 
         }
 
