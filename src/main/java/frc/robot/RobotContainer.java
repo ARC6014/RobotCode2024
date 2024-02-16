@@ -124,7 +124,7 @@ public class RobotContainer implements Loggable {
                                         mPDH.getVoltage()))
                                         .withTimeout(0.1));
 
-        private final SequentialCommandGroup setArmFeedAndShootSpeakerShort = new SequentialCommandGroup(
+        private final ParallelCommandGroup setArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new ParallelCommandGroup(
                                         new SequentialCommandGroup(
@@ -137,7 +137,7 @@ public class RobotContainer implements Loggable {
                                         new ShooterCommand().withOpenLoop(Conversions
                                                         .getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
                                                                         mPDH.getVoltage()))
-                                                        .withTimeout(3)));
+                                                        .withTimeout(2)));
 
         private final SequentialCommandGroup setArmFeedAndShootAmp = new SequentialCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.AMP),
