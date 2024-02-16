@@ -139,6 +139,7 @@ public class RobotContainer implements Loggable {
                                                                         mPDH.getVoltage()))
                                                         .withTimeout(2)));
 
+        // TODO: set rest of the commands to parallel if the above works
         private final SequentialCommandGroup setArmFeedAndShootAmp = new SequentialCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.AMP),
                         new ParallelCommandGroup(
