@@ -59,6 +59,7 @@ import frc.team6014.lib.auto.ARCTrajectory;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.LoggedTunableNumber;
 import io.github.oblarg.oblog.Loggable;
+import frc.team6014.lib.util.FeedForwardCharacterization;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -187,6 +188,7 @@ public class RobotContainer implements Loggable {
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
                 SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
+
         }
 
         /*
@@ -201,13 +203,11 @@ public class RobotContainer implements Loggable {
                                 new FieldOrientedTurn(mDrive, 45).withTimeout(1));
                 NamedCommands.registerCommand("DoNothing", new DoNothing());
 
-
                 NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
                 NamedCommands.registerCommand("CloseAndFeed", closeWristStopIntakeArmIntake);
                 NamedCommands.registerCommand("ShootSpeakerLong", setArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", setArmFeedAndShootSpeakerShort);
                 NamedCommands.registerCommand("ShootAmp", setArmFeedAndShootAmp);
-
 
         }
 
@@ -232,13 +232,14 @@ public class RobotContainer implements Loggable {
                                 Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
                 mDriver.circle().whileTrue(new SFeederReverse(
                                 Conversions.getSmartVoltage(ShooterConstants.FEEDER_REVERSE, mPDH.getVoltage())));
-                
+
                 mDriver.triangle().toggleOnTrue(new ShooterCommand()
                                 .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
                                                 mPDH.getVoltage())));
-                
+
                 /* ARM */
-                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.ZERO));
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                // ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
@@ -265,6 +266,10 @@ public class RobotContainer implements Loggable {
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
 
+                // FeedForwardCharacterization example, use this with any subsystem that you
+                // want to characterize
+                // mDriver.L1().onTrue(new FeedForwardCharacterization(mDrive,
+                // _drive::runCharacterizationVolts, _drive::getCharacterizationVelocity));
         }
 
         /**

@@ -238,13 +238,12 @@ public class Constants implements Loggable {
 
         /** unit: percent */
         public static final double forwardPercent = 9;
-        
+
         /** unit: percent */
         public static final double reversePercent = -9;
 
         /** unit: percent */
         public static final double feedPercent = -5;
-
 
         /** unit: rps */
         public static final double feederVelocity = -3000 / 60;
@@ -340,7 +339,7 @@ public class Constants implements Loggable {
         public static final double maxRPM = 5700;
         public static final double AMP_SHOOT_RPM = 2700.0;
         public static final double SPEAKER_SHOOT_RPM = 500.0;
-        
+
         public static final double FEEDER_OUT = 6.31;
         public static final double FEEDER_FROM_INTAKE = 4;
 
@@ -373,7 +372,12 @@ public class Constants implements Loggable {
 
     public class LLConstants {
         public static String name = "limelight";
-        public static double[] camPose_RobotField = {0, 0, 0, 0, 0, 0};// x, y, z, roll, pitch, yaw
-      }
+        public static double[] camPose_RobotField = { 0, 0, 0, 0, 0, 0 };// x, y, z, roll, pitch, yaw
+    }
+
+    public static class Characterization {
+        public static final double START_DELAY_SECS = 2.0;
+        public static final double RAMP_VOLTS_PER_SEC = 0.1;
+    }
 
 }
