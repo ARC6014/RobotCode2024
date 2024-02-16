@@ -32,12 +32,6 @@
                 "data": {
                   "name": "ReadyIntaking"
                 }
-              },
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 4.0
-                }
               }
             ]
           }
