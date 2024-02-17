@@ -39,7 +39,31 @@
         {
           "type": "named",
           "data": {
+            "name": "CloseIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Field-Oriented Turn (20)"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootSpeakerLong"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterToIntaking"
           }
         },
         {
@@ -64,7 +88,31 @@
         {
           "type": "named",
           "data": {
+            "name": "CloseIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootSpeakerLong"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterToIntaking"
           }
         },
         {
@@ -89,7 +137,37 @@
         {
           "type": "named",
           "data": {
+            "name": "CloseIntake"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Field-Oriented Turn (-20)"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "ShootSpeakerLong"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShooterToIntaking"
           }
         }
       ]

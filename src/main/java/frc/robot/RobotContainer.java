@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -93,12 +94,7 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        private final DriveByJoystick driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
-                        () -> mDriver.getLeftX(),
-                        () -> -mDriver.getRightX(),
-                        () -> mDriver.R2().getAsBoolean(),
-                        () -> mDriver.L1().getAsBoolean(),
-                        () -> mDriver.R1().getAsBoolean());
+        private DriveByJoystick driveByJoystick;
 
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
@@ -109,7 +105,8 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
                         new WristSetState(mWrist, Position.OPEN),
                         new IntakeSetOpenLoop(mIntake, Conversions
-                                        .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
+                                        .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage()))
+                                        .withTimeout(2));
         private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
                         new WristSetState(mWrist, Position.CLOSED),
@@ -119,7 +116,6 @@ public class RobotContainer implements Loggable {
                         new IntakeSetOpenLoop(mIntake,
                                         Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage()))
                                         .withTimeout(0.1),
-                        new PrintCommand("Done Intake Open Loop"),
                         new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_FROM_INTAKE,
                                         mPDH.getVoltage()))
                                         .withTimeout(0.1));
@@ -128,19 +124,19 @@ public class RobotContainer implements Loggable {
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new ParallelCommandGroup(
                                         new SequentialCommandGroup(
-                                                        new WaitCommand(1),
+                                                        new WaitCommand(0.5),
                                                         new SFeederForward(
                                                                         Conversions.getSmartVoltage(
                                                                                         ShooterConstants.FEEDER_OUT,
                                                                                         mPDH.getVoltage()))
-                                                                        .withTimeout(1.5)),
+                                                                        .withTimeout(0.2)),
                                         new ShooterCommand().withOpenLoop(Conversions
                                                         .getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
                                                                         mPDH.getVoltage()))
-                                                        .withTimeout(2)));
+                                                        .withTimeout(1)));
 
         // TODO: set rest of the commands to parallel if the above works
-        private final SequentialCommandGroup setArmFeedAndShootAmp = new SequentialCommandGroup(
+        private final ParallelCommandGroup setArmFeedAndShootAmp = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.AMP),
                         new ParallelCommandGroup(
                                         new SequentialCommandGroup(
@@ -155,7 +151,7 @@ public class RobotContainer implements Loggable {
                                                                         mPDH.getVoltage()))
                                                         .withTimeout(3)));
 
-        private final SequentialCommandGroup setArmFeedAndShootSpeakerLong = new SequentialCommandGroup(
+        private final ParallelCommandGroup setArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG),
                         new ParallelCommandGroup(
                                         new SequentialCommandGroup(
@@ -168,13 +164,28 @@ public class RobotContainer implements Loggable {
                                         new ShooterCommand().withOpenLoop(Conversions
                                                         .getSmartVoltage(ShooterConstants.SPEAKER_LONG_VOLTAGE,
                                                                         mPDH.getVoltage()))
-                                                        .withTimeout(3)));
+                                                        .withTimeout(2)));
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
         public RobotContainer() {
                 /* Open loop commands */
+                if (DriverStation.getAlliance().get() == Alliance.Blue) {
+                        driveByJoystick = new DriveByJoystick(() -> -mDriver.getLeftY(),
+                                        () -> -mDriver.getLeftX(),
+                                        () -> -mDriver.getRightX(),
+                                        () -> mDriver.R2().getAsBoolean(),
+                                        () -> mDriver.L1().getAsBoolean(),
+                                        () -> mDriver.R1().getAsBoolean());
+                } else if (DriverStation.getAlliance().get() == Alliance.Red) {
+                        driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
+                                        () -> mDriver.getLeftX(),
+                                        () -> -mDriver.getRightX(),
+                                        () -> mDriver.R2().getAsBoolean(),
+                                        () -> mDriver.L1().getAsBoolean(),
+                                        () -> mDriver.R1().getAsBoolean());
+                }
                 mDrive.setDefaultCommand(driveByJoystick);
 
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
@@ -199,16 +210,19 @@ public class RobotContainer implements Loggable {
 
                 NamedCommands.registerCommand("Shoot", new FakeShoot().withTimeout(1.0));
                 NamedCommands.registerCommand("Intake", new FakeIntake().withTimeout(0.5));
-                NamedCommands.registerCommand("Field-Oriented Turn (-45)", new FieldOrientedTurn(mDrive, -45));
-                NamedCommands.registerCommand("Field-Oriented Turn (45)",
-                                new FieldOrientedTurn(mDrive, 45).withTimeout(1));
+                NamedCommands.registerCommand("Field-Oriented Turn (-20)", new FieldOrientedTurn(mDrive, -20));
+                NamedCommands.registerCommand("Field-Oriented Turn (20)",
+                                new FieldOrientedTurn(mDrive, 20));
                 NamedCommands.registerCommand("DoNothing", new DoNothing());
 
                 NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
-                NamedCommands.registerCommand("CloseAndFeed", closeWristStopIntakeArmIntake);
+                NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
+                NamedCommands.registerCommand("Feed", startStopFeeder);
                 NamedCommands.registerCommand("ShootSpeakerLong", setArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", setArmFeedAndShootSpeakerShort);
                 NamedCommands.registerCommand("ShootAmp", setArmFeedAndShootAmp);
+
+                NamedCommands.registerCommand("ShooterToIntaking", new ArmStateSet(mArm, ArmControlState.INTAKE));
 
         }
 

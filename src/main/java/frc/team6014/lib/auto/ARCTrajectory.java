@@ -22,10 +22,9 @@ public class ARCTrajectory {
 
 
     private void configurePathPlanner() {
-        AutoBuilder.configureHolonomic(swerve::getPoseMeters, swerve::resetOdometry, swerve::getChassisSpeed,
+        AutoBuilder.configureHolonomic(swerve::getPoseMeters, swerve::resetOdometryRelativeToAlliance, swerve::getChassisSpeed,
                 swerve::setClosedLoopStates, Constants.holonomicPoseConfig, () -> {
-                var alliance = DriverStation.getAlliance();
-                if (alliance.get() == DriverStation.Alliance.Red) {
+                if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
                     return true;
                 }
                 return false;

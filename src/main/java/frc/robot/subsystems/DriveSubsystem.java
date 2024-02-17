@@ -42,6 +42,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   // Swerve numbering:
   // 0 1
   // 2 3
+ 
 
   private static DriveSubsystem mInstance;
 
@@ -253,10 +254,25 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * Setters
    */
   public void resetOdometry(Pose2d pose) {
-    mGyro.reset();
+    // mGyro.reset();
     mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
-    mOdometry.resetPosition(mGyro.getRotation2d(), getModulePositions(), pose);
+    mOdometry.resetPosition(getRotation2d(), getModulePositions(), pose);
   }
+
+  public void resetOdometryRelativeToAlliance(Pose2d pose) {
+    // mGyro.reset();
+    mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
+    var rotation = getRotation2d();
+    if(DriverStation.getAlliance().get() == Alliance.Blue) {
+      rotation = rotation.minus(Rotation2d.fromDegrees(180));
+    }
+    else if(DriverStation.getAlliance().get() == Alliance.Red) {
+      rotation = rotation.plus(Rotation2d.fromDegrees(180));
+    }
+    mOdometry.resetPosition(rotation, getModulePositions(), pose);
+  }
+
+
 
   public void resetOdometry(Rotation2d angle) {
     Pose2d pose = new Pose2d(getPoseMeters().getTranslation(), angle);
@@ -279,7 +295,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   public void zeroHeading() {
     mGyro.reset();
-    // mGyro.setYaw(0);
+    mGyro.setYaw(0);
   }
 
   public void stop() {
@@ -392,7 +408,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    if (timeSinceRot < 0.5) {
       //System.out.println("rot*************");
        snapAngle = getRotation2d().getRadians();
-   } else if (Math.abs(rot) < 0.05 && timeSinceDrive < 0.2) {
+       // time since drive was 0.2
+   } else if (Math.abs(rot) < 0.05 && timeSinceDrive < 0.1) {
         //System.out.println("kot*************");
        output = snapPIDController.calculate(getRotation2d().getRadians(), snapAngle);
    }

@@ -340,7 +340,7 @@ public class Constants implements Loggable {
         public static final double AMP_SHOOT_RPM = 2700.0;
         public static final double SPEAKER_SHOOT_RPM = 500.0;
 
-        public static final double FEEDER_OUT = 6.31;
+        public static final double FEEDER_OUT = 9;
         public static final double FEEDER_FROM_INTAKE = 4;
 
         public static final double FEEDER_REVERSE = -6.31;
