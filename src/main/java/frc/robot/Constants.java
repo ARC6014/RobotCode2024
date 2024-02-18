@@ -109,8 +109,8 @@ public class Constants implements Loggable {
         public static final double drivekP = 0.30;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
-        public static final double drivekS = 0.23; // prev: 0.016
-        public static final double drivekV = 0.19;
+        public static final double drivekS = 0.00; // prev: 0.016
+        public static final double drivekV = 0.00;
         public static final double drivekA = 0;
 
         public static final double anglekP = 0.27;
@@ -376,8 +376,8 @@ public class Constants implements Loggable {
     }
 
     public static class Characterization {
-        public static final double START_DELAY_SECS = 2.0;
-        public static final double RAMP_VOLTS_PER_SEC = 0.1;
+        public static final double START_DELAY_SECS = .5;
+        public static final double RAMP_VOLTS_PER_SEC = 0.5;
     }
 
 }

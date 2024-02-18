@@ -37,12 +37,10 @@ import frc.team6014.lib.util.LoggedTunableNumber;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
 import io.github.oblarg.oblog.Loggable;
 
-
 public class DriveSubsystem extends SubsystemBase implements Loggable {
   // Swerve numbering:
   // 0 1
   // 2 3
- 
 
   private static DriveSubsystem mInstance;
 
@@ -64,7 +62,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   private boolean isLocked = false;
 
-  private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP, DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
+  private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
+      DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
   private static final LoggedTunableNumber kSnapP = new LoggedTunableNumber("Snap/kP", DriveConstants.snapkP);
   private static final LoggedTunableNumber kSnapI = new LoggedTunableNumber("Snap/kI", DriveConstants.snapkI);
   private static final LoggedTunableNumber kSnapD = new LoggedTunableNumber("Snap/kD", DriveConstants.snapkD);
@@ -78,9 +77,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private double timeSinceRot = 0.0;
   private double lastDriveTime = 0.0;
 
-
   public SwerveDrivePoseEstimator poseEstimator;
-
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem() {
@@ -119,7 +116,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
 
-
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
         getRotation2d(),
@@ -140,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             mod.setNeutralMode2Brake(false);
           }
         }));
-    
+
   }
 
   public static DriveSubsystem getInstance() {
@@ -161,10 +157,14 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
     snapPIDController.setPID(kSnapP.get(), kSnapI.get(), kSnapD.get());
-    // SmartDashboard.putNumber("Swerve Voltage 0 ", getDriveMotors().get(0).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Swerve Voltage 1", getDriveMotors().get(1).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Swerve Voltage 2", getDriveMotors().get(2).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Swerve Voltage 3", getDriveMotors().get(3).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 0 ",
+    // getDriveMotors().get(0).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 1",
+    // getDriveMotors().get(1).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 2",
+    // getDriveMotors().get(2).getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Swerve Voltage 3",
+    // getDriveMotors().get(3).getMotorOutputVoltage());
 
   }
 
@@ -175,7 +175,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   public void swerveDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
     /* Automatically correcting the heading based on pid */
-    rot = calculateSnapValue(xSpeed, ySpeed, rot);
+    // rot = calculateSnapValue(xSpeed, ySpeed, rot);
     // if robot is field centric, construct ChassisSpeeds from field relative speeds
     // if not, construct ChassisSpeeds from robot relative speeds
     desiredChassisSpeeds = fieldRelative
@@ -193,7 +193,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       };
     }
 
-    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeed); 
+    SwerveDriveKinematics.desaturateWheelSpeeds(states, DriveConstants.maxSpeed);
 
     /*
      * Sets open loop states
@@ -208,51 +208,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     // log();
   }
 
-  /*
-   * Will be used in Auto by PPSwerveControllerCommand
-   */
+  // /*
+  // * ------------ RESET § LOCK
+  // */
 
-  public synchronized void setClosedLoopStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.maxSpeed);
-    if (isLocked) {
-      states = new SwerveModuleState[] {
-          new SwerveModuleState(0.1, Rotation2d.fromDegrees(45)),
-          new SwerveModuleState(0.1, Rotation2d.fromDegrees(315)),
-          new SwerveModuleState(0.1, Rotation2d.fromDegrees(135)),
-          new SwerveModuleState(0.1, Rotation2d.fromDegrees(225))
-      };
-    }
-    mSwerveModules[0].setDesiredState(desiredStates[0], false);
-    mSwerveModules[1].setDesiredState(desiredStates[1], false);
-    mSwerveModules[2].setDesiredState(desiredStates[2], false);
-    mSwerveModules[3].setDesiredState(desiredStates[3], false);
-
-  }
-
-  /*
-   * @param speeds The desired ChassisSpeeds
-   * 
-   * Outputs commands to the robot's drive motors given robot-relative
-   * ChassisSpeeds
-   * 
-   * Namely, driveRobotRelative or drive
-   * 
-   */
-  public void setClosedLoopStates(ChassisSpeeds speeds) {
-    SwerveModuleState[] desiredStates = Constants.kinematics.toSwerveModuleStates(speeds);
-    setClosedLoopStates(desiredStates);
-  }
-
-  // basically zero everything
-  public void calibrate() {
-    for (SwerveModuleBase mod : mSwerveModules) {
-      mod.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true);
-    }
-  }
-
-  /*
-   * Setters
-   */
   public void resetOdometry(Pose2d pose) {
     // mGyro.reset();
     mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
@@ -263,16 +222,13 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     // mGyro.reset();
     mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
     var rotation = getRotation2d();
-    if(DriverStation.getAlliance().get() == Alliance.Blue) {
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
       rotation = rotation.minus(Rotation2d.fromDegrees(180));
-    }
-    else if(DriverStation.getAlliance().get() == Alliance.Red) {
+    } else if (DriverStation.getAlliance().get() == Alliance.Red) {
       rotation = rotation.plus(Rotation2d.fromDegrees(180));
     }
     mOdometry.resetPosition(rotation, getModulePositions(), pose);
   }
-
-
 
   public void resetOdometry(Rotation2d angle) {
     Pose2d pose = new Pose2d(getPoseMeters().getTranslation(), angle);
@@ -315,6 +271,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     isLocked = should;
   }
 
+  // /*
+  // * ----------- SETTERS
+  // */
+
   public void updateOdometry() {
     mOdometry.update(
         getRotation2d(),
@@ -326,8 +286,43 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   /*
-   * Getters
+   * Will be used in Auto by PPSwerveControllerCommand
    */
+
+  public synchronized void setClosedLoopStates(SwerveModuleState[] desiredStates) {
+    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, DriveConstants.maxSpeed);
+    if (isLocked) {
+      states = new SwerveModuleState[] {
+          new SwerveModuleState(0.1, Rotation2d.fromDegrees(45)),
+          new SwerveModuleState(0.1, Rotation2d.fromDegrees(315)),
+          new SwerveModuleState(0.1, Rotation2d.fromDegrees(135)),
+          new SwerveModuleState(0.1, Rotation2d.fromDegrees(225))
+      };
+    }
+    mSwerveModules[0].setDesiredState(desiredStates[0], false);
+    mSwerveModules[1].setDesiredState(desiredStates[1], false);
+    mSwerveModules[2].setDesiredState(desiredStates[2], false);
+    mSwerveModules[3].setDesiredState(desiredStates[3], false);
+
+  }
+
+  /*
+   * @param speeds The desired ChassisSpeeds
+   * 
+   * Outputs commands to the robot's drive motors given robot-relative
+   * ChassisSpeeds
+   * 
+   * Namely, driveRobotRelative or drive
+   * 
+   */
+  public void setClosedLoopStates(ChassisSpeeds speeds) {
+    SwerveModuleState[] desiredStates = Constants.kinematics.toSwerveModuleStates(speeds);
+    setClosedLoopStates(desiredStates);
+  }
+
+  // /*
+  // * ----------- GETTERS
+  // */
 
   public Rotation2d getRotation2d() {
     return Rotation2d.fromDegrees(Math.IEEEremainder(mGyro.getAngle(), 360.0))
@@ -379,6 +374,25 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         mSwerveModules[2].getState(), mSwerveModules[3].getState());
   }
 
+  public ArrayList<WPI_TalonFX> getDriveMotors() {
+    ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
+    for (SwerveModuleBase module : mSwerveModules) {
+      motors.add(module.getDriveMotor());
+    }
+    return motors;
+  }
+
+  // /*
+  // * -------- OTHER
+  // */
+
+  // basically zero everything
+  public void calibrate() {
+    for (SwerveModuleBase mod : mSwerveModules) {
+      mod.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(0)), true);
+    }
+  }
+
   /*
    * @return true when a path should be flipped to the red side of the field
    */
@@ -392,36 +406,44 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   private double calculateSnapValue(double xSpeed, double ySpeed, double rot) {
 
-   double output = rot;
+    double output = rot;
 
-   if (Math.abs(rot) >= 0.05) {
-       lastRotTime = snapTimer.get();
-   }
+    if (Math.abs(rot) >= 0.05)
+      lastRotTime = snapTimer.get();
 
-   if (Math.abs(xSpeed) >= 0.05 || Math.abs(ySpeed) >= 0.05) {
-       lastDriveTime = snapTimer.get();
-   }
+    if (Math.abs(xSpeed) >= 0.05 || Math.abs(ySpeed) >= 0.05)
+      lastDriveTime = snapTimer.get();
 
-   timeSinceRot = snapTimer.get() - lastRotTime;
-   timeSinceDrive = snapTimer.get() - lastDriveTime;
+    timeSinceRot = snapTimer.get() - lastRotTime;
+    timeSinceDrive = snapTimer.get() - lastDriveTime;
 
-   if (timeSinceRot < 0.5) {
-      //System.out.println("rot*************");
-       snapAngle = getRotation2d().getRadians();
-       // time since drive was 0.2
-   } else if (Math.abs(rot) < 0.05 && timeSinceDrive < 0.1) {
-        //System.out.println("kot*************");
-       output = snapPIDController.calculate(getRotation2d().getRadians(), snapAngle);
-   }
-    //System.out.print("rot : " + rot + " output : " + output);
-   return output;
-}
-
-  public ArrayList<WPI_TalonFX> getDriveMotors() {
-    ArrayList<WPI_TalonFX> motors = new ArrayList<WPI_TalonFX>();
-    for (SwerveModuleBase module : mSwerveModules) {
-      motors.add(module.getDriveMotor());
+    if (timeSinceRot < 0.5) {
+      snapAngle = getRotation2d().getRadians();
+    } else if (Math.abs(rot) < 0.05 && timeSinceDrive < 0.1) { /* time since drive was 0.2 */
+      output = snapPIDController.calculate(getRotation2d().getRadians(), snapAngle);
     }
-    return motors;
+
+    return output;
   }
+
+  /** Runs forwards at the commanded voltage. */
+  public void runCharacterizationVolts(double volts) {
+    System.out.println("VOLLT");
+    for (var module : mSwerveModules) {
+      module.setVoltage(volts);
+    }
+
+  }
+
+  /** Returns the average drive velocity in radians/sec. */
+  public double getCharacterizationVelocity() {
+    double driveVelocityAverage = 0.0;
+
+    for (var module : mSwerveModules) {
+      driveVelocityAverage += module.getVelocityRPM() * 60;
+    }
+
+    return driveVelocityAverage / 4.0;
+  }
+
 }

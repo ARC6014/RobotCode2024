@@ -80,7 +80,7 @@ public class RobotContainer implements Loggable {
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
         private PowerDistribution mPDH = new PowerDistribution();
 
@@ -100,25 +100,30 @@ public class RobotContainer implements Loggable {
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
-        private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
+        // private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, ()
+        // -> mOperator.getRightX());
 
-        private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
-                        new WristSetState(mWrist, Position.OPEN),
-                        new IntakeSetOpenLoop(mIntake, Conversions
-                                        .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage()))
-                                        .withTimeout(2));
-        private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
-                        new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
-                        new WristSetState(mWrist, Position.CLOSED),
-                        new ArmStateSet(mArm, ArmControlState.INTAKE));
+        // private final ParallelCommandGroup openWristStartIntake = new
+        // ParallelCommandGroup(
+        // new WristSetState(mWrist, Position.OPEN),
+        // new IntakeSetOpenLoop(mIntake, Conversions
+        // .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage()))
+        // .withTimeout(2));
+        // private final ParallelCommandGroup closeWristStopIntakeArmIntake = new
+        // ParallelCommandGroup(
+        // new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
+        // new WristSetState(mWrist, Position.CLOSED),
+        // new ArmStateSet(mArm, ArmControlState.INTAKE));
 
-        private final ParallelCommandGroup startStopFeeder = new ParallelCommandGroup(
-                        new IntakeSetOpenLoop(mIntake,
-                                        Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage()))
-                                        .withTimeout(0.1),
-                        new SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_FROM_INTAKE,
-                                        mPDH.getVoltage()))
-                                        .withTimeout(0.1));
+        // private final ParallelCommandGroup startStopFeeder = new
+        // ParallelCommandGroup(
+        // new IntakeSetOpenLoop(mIntake,
+        // Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage()))
+        // .withTimeout(0.1),
+        // new
+        // SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_FROM_INTAKE,
+        // mPDH.getVoltage()))
+        // .withTimeout(0.1));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
@@ -199,7 +204,7 @@ public class RobotContainer implements Loggable {
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
-                SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
+                //SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
 
         }
 
@@ -215,9 +220,9 @@ public class RobotContainer implements Loggable {
                                 new FieldOrientedTurn(mDrive, 20));
                 NamedCommands.registerCommand("DoNothing", new DoNothing());
 
-                NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
-                NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
-                NamedCommands.registerCommand("Feed", startStopFeeder);
+                // NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
+                // NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
+                // NamedCommands.registerCommand("Feed", startStopFeeder);
                 NamedCommands.registerCommand("ShootSpeakerLong", setArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", setArmFeedAndShootSpeakerShort);
                 NamedCommands.registerCommand("ShootAmp", setArmFeedAndShootAmp);
@@ -268,14 +273,17 @@ public class RobotContainer implements Loggable {
 
                 /* INTAKE */
                 // mOperator.rightStick().onTrue(intakeOpenLoop);
-                mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
-                                Conversions.getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage())));
-                mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
-                                Conversions.getSmartVoltage(IntakeConstants.reversePercent, mPDH.getVoltage())));
+                // mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
+                // Conversions.getSmartVoltage(IntakeConstants.forwardPercent,
+                // mPDH.getVoltage())));
+                // mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
+                // Conversions.getSmartVoltage(IntakeConstants.reversePercent,
+                // mPDH.getVoltage())));
 
-                mOperator.rightBumper().onTrue(openWristStartIntake);
-                mOperator.leftBumper().onTrue(
-                                closeWristStopIntakeArmIntake.andThen(new WaitCommand(1.5)).andThen(startStopFeeder));
+                // mOperator.rightBumper().onTrue(openWristStartIntake);
+                // mOperator.leftBumper().onTrue(
+                // closeWristStopIntakeArmIntake.andThen(new
+                // WaitCommand(1.5)).andThen(startStopFeeder));
 
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
@@ -283,8 +291,8 @@ public class RobotContainer implements Loggable {
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
-                // mDriver.L1().onTrue(new FeedForwardCharacterization(mDrive,
-                // _drive::runCharacterizationVolts, _drive::getCharacterizationVelocity));
+                mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
+                                mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
         }
 
         /**

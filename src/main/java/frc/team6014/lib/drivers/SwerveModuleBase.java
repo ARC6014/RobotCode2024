@@ -47,7 +47,7 @@ public class SwerveModuleBase implements Loggable {
 
     private SimpleMotorFeedforward mDriveFeedforward;
 
-    private boolean isDriveMotorInverted = false; 
+    private boolean isDriveMotorInverted = false;
     private boolean isAngleMotorInverted = true;
     private boolean isRotEncoderInverted = false;
 
@@ -128,9 +128,8 @@ public class SwerveModuleBase implements Loggable {
 
     }
 
-    public double getVelocityMPS() {
-        return Conversions.falconToMPS(getDriveMotor().getSelectedSensorVelocity(), mWheelCircumference,
-                driveGearbox.getRatio());
+    public void setVoltage(double voltage) {
+        mDriveMotor.setVoltage(voltage);
     }
 
     public void setNeutralMode2Brake(boolean brake) {
@@ -180,6 +179,15 @@ public class SwerveModuleBase implements Loggable {
 
     public WPI_TalonFX getDriveMotor() {
         return mDriveMotor;
+    }
+
+    public double getVelocityMPS() {
+        return Conversions.falconToMPS(getDriveMotor().getSelectedSensorVelocity(), mWheelCircumference,
+                driveGearbox.getRatio());
+    }
+
+    public double getVelocityRPM() {
+        return Conversions.falconToRPM(getDriveMotor().getSelectedSensorVelocity(), driveGearbox.getRatio());
     }
 
     // public double getDriveMotorCurrent() {
