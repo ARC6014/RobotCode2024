@@ -110,7 +110,7 @@ public class Constants implements Loggable {
         public static final double drivekI = 0;
         public static final double drivekD = 0;
         public static final double drivekS = 0.73; // prev: 0.23
-        public static final double drivekV = 0.00019; // prev: 0.19
+        public static final double drivekV = 0.0004; // prev: 0.19
         public static final double drivekA = 0;
 
         public static final double anglekP = 0.27;
