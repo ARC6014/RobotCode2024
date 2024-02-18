@@ -102,8 +102,6 @@ public class SwerveModuleBase implements Loggable {
 
         configAll(); // Configs all the motors and encoders
 
-        mRotEncoder6.getConfigurator().apply(new MagnetSensorConfigs().withMagnetOffset(constants.CANCoderAngleOffset));
-
         resetToAbsolute();
 
         lastAngle = getCANCoderRotation().getDegrees();
@@ -122,7 +120,10 @@ public class SwerveModuleBase implements Loggable {
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
         desiredState = CTREModuleState.optimize(desiredState, getState().angle); // minimize the change in
-                                                                                 // heading/easiest way
+                                                                                     // heading/easiest way
+        System.out.println("setDesiredState");
+        System.out.println(desiredState.speedMetersPerSecond);
+        System.out.println(desiredState.angle.getDegrees());
 
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / maxSpeed;
@@ -160,7 +161,8 @@ public class SwerveModuleBase implements Loggable {
     private void configRotEncoder() {
         CANcoderConfiguration config = CTREConfigs.swerveCANCoderConfig();
         config.MagnetSensor
-            .withSensorDirection(isRotEncoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive);
+            .withSensorDirection(isRotEncoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive)
+            .withMagnetOffset(kAngleOffset / 360);
         mRotEncoder6.getConfigurator().apply(config);
     }
 
