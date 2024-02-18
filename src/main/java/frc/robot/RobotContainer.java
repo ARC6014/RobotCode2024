@@ -259,18 +259,18 @@ public class RobotContainer implements Loggable {
                                                 mPDH.getVoltage())));
 
                 /* ARM */
-                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.ZERO));
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                // ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
-                mOperator.rightBumper().onTrue(armOpenLoop);
+                // mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* WRIST */
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-                mOperator.a().onTrue(wristOpenLoop);
+                // mOperator.a().onTrue(wristOpenLoop);
 
                 /* INTAKE */
                 // mOperator.rightStick().onTrue(intakeOpenLoop);
