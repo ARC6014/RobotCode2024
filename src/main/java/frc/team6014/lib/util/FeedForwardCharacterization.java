@@ -15,6 +15,7 @@
 package frc.team6014.lib.util;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants;
@@ -94,11 +95,17 @@ public class FeedForwardCharacterization extends Command {
                     _velocityData.stream().mapToDouble(Double::doubleValue).toArray(),
                     _voltageData.stream().mapToDouble(Double::doubleValue).toArray(), 1);
 
+            SmartDashboard.putString("tCount", "" + Integer.toString(_velocityData.size()) + "");
+            SmartDashboard.putString("kS", String.format("\tkS=%.5f", regression.beta(0)));
+            SmartDashboard.putString("kV", String.format("\tkV=%.5f", regression.beta(1)));
+            SmartDashboard.putString("r2", String.format("\tR2=%.5f", regression.R2()));
+            SmartDashboard.putString("regression", regression.toString());
             System.out.println("FF Characterization Results:");
             System.out.println("\tCount=" + Integer.toString(_velocityData.size()) + "");
             System.out.println(String.format("\tR2=%.5f", regression.R2()));
             System.out.println(String.format("\tkS=%.5f", regression.beta(0)));
             System.out.println(String.format("\tkV=%.5f", regression.beta(1)));
+            System.out.println(regression);
         }
     }
 }

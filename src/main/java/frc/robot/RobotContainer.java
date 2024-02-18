@@ -55,6 +55,7 @@ import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.IntakeSubsystem.Running;
+import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.WristSubsystem.Position;
 import frc.team6014.lib.auto.ARCTrajectory;
 import frc.team6014.lib.math.Conversions;
@@ -204,7 +205,7 @@ public class RobotContainer implements Loggable {
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
-                //SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
+                // SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
 
         }
 
@@ -258,18 +259,18 @@ public class RobotContainer implements Loggable {
                                                 mPDH.getVoltage())));
 
                 /* ARM */
-                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                // ArmControlState.ZERO));
+                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                                ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
-                // mOperator.rightBumper().onTrue(armOpenLoop);
+                mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* WRIST */
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-                // mOperator.a().onTrue(wristOpenLoop);
+                mOperator.a().onTrue(wristOpenLoop);
 
                 /* INTAKE */
                 // mOperator.rightStick().onTrue(intakeOpenLoop);
@@ -285,9 +286,9 @@ public class RobotContainer implements Loggable {
                 // closeWristStopIntakeArmIntake.andThen(new
                 // WaitCommand(1.5)).andThen(startStopFeeder));
 
-                mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
-                mOperator.x().onTrue(setArmFeedAndShootAmp);
-                mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
+                mOperator.y().onTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
+                mOperator.x().onTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
+                mOperator.b().onTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
