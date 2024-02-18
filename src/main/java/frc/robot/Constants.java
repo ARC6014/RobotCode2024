@@ -109,8 +109,8 @@ public class Constants implements Loggable {
         public static final double drivekP = 0.30;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
-        public static final double drivekS = 0.23; // prev: 0.016
-        public static final double drivekV = 0.00;
+        public static final double drivekS = 0.73; // prev: 0.23
+        public static final double drivekV = 0.00019; // prev: 0.19
         public static final double drivekA = 0;
 
         public static final double anglekP = 0.27;
@@ -237,13 +237,13 @@ public class Constants implements Loggable {
         public static final double reverseVelocity = (-2600 / 60) * 1.7;
 
         /** unit: percent */
-        public static final double forwardPercent = 9;
+        public static final double FORWARD_PERCENT = 9;
 
         /** unit: percent */
-        public static final double reversePercent = -9;
+        public static final double REVERSE_PERCENT = -9;
 
         /** unit: percent */
-        public static final double feedPercent = -5;
+        public static final double FEED_PERCENT = -5;
 
         /** unit: rps */
         public static final double feederVelocity = -3000 / 60;
@@ -265,10 +265,10 @@ public class Constants implements Loggable {
         public static final int angleMotorId = 11;
         public static final int boreEncoderDioId = 0;
 
-        public static final Gearbox gearbox = new Gearbox(1, 72);
+        public static final Gearbox gearbox = new Gearbox(1, 12);
 
         /** REV Bore Encoder position offset, unit: revolutions */
-        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 - 5);
+        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 - 5 - 55 - 1.7);
         /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
         public static final double openPosition = 167;
         /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
@@ -335,11 +335,6 @@ public class Constants implements Loggable {
         public static final double SPEAKER_LONG_VOLTAGE = 10.5; // TODO: Tune
 
         /* RPMs */
-        /* NOT USED */
-        public static final double maxRPM = 5700;
-        public static final double AMP_SHOOT_RPM = 2700.0;
-        public static final double SPEAKER_SHOOT_RPM = 500.0;
-
         public static final double FEEDER_OUT = 9;
         public static final double FEEDER_FROM_INTAKE = 4;
 

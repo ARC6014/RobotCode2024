@@ -20,7 +20,7 @@ public class ShooterCommand extends Command {
     addRequirements(mShooterSubsystem);
   }
 
-  public ShooterCommand withOpenLoop(double percentOutput) {
+  public ShooterCommand withArbitraryOut(double percentOutput) {
     this.state = ShooterState.OPEN_LOOP;
     this.percentOutput = percentOutput;
     return this;
@@ -48,7 +48,6 @@ public class ShooterCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     mShooterSubsystem.setShooterState(ShooterState.CLOSED);
-    mShooterSubsystem.setShooterOut(0);
     mShooterSubsystem.stopShMotors();
   }
 

@@ -12,11 +12,14 @@ import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.CANdleLed.AnimationTypes;
+import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.shuffleboard.ShuffleBoardInteractions;
 import io.github.oblarg.oblog.Logger;
 
@@ -99,7 +102,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    //DriveSubsystem.getInstance().resetOdometry(Rotation2d.fromDegrees(180));
+    // DriveSubsystem.getInstance().resetOdometry(Rotation2d.fromDegrees(180));
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
@@ -109,7 +112,8 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      // Timer.delay(0.5);
+      ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
+      ;
       m_autonomousCommand.schedule();
     }
   }
@@ -121,13 +125,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();

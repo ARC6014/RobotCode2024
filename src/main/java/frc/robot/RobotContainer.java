@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -41,8 +42,7 @@ import frc.robot.commands.intake.IntakeSetOpenLoop;
 import frc.robot.commands.intake.IntakeSetStatePID;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
-import frc.robot.commands.shooter.SFeederForward;
-import frc.robot.commands.shooter.SFeederReverse;
+import frc.robot.commands.shooter.FeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.swerve.FieldOrientedTurn;
@@ -55,6 +55,7 @@ import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.IntakeSubsystem.Running;
+import frc.robot.subsystems.ShooterSubsystem.FeederState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.WristSubsystem.Position;
 import frc.team6014.lib.auto.ARCTrajectory;
@@ -81,9 +82,9 @@ public class RobotContainer implements Loggable {
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
-        // private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
 
-        private PowerDistribution mPDH = new PowerDistribution();
+        public static PowerDistribution mPDH = new PowerDistribution();
 
         /* CONTROLLERS */
 
@@ -95,82 +96,43 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        private DriveByJoystick driveByJoystick;
-
         // private final TelescopicOpenLoop telescopicOpenLoop = new
         // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
+
+        private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
-        // private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, ()
-        // -> mOperator.getRightX());
+        private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
-        // private final ParallelCommandGroup openWristStartIntake = new
-        // ParallelCommandGroup(
-        // new WristSetState(mWrist, Position.OPEN),
-        // new IntakeSetOpenLoop(mIntake, Conversions
-        // .getSmartVoltage(IntakeConstants.forwardPercent, mPDH.getVoltage()))
-        // .withTimeout(2));
-        // private final ParallelCommandGroup closeWristStopIntakeArmIntake = new
-        // ParallelCommandGroup(
-        // new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
-        // new WristSetState(mWrist, Position.CLOSED),
-        // new ArmStateSet(mArm, ArmControlState.INTAKE));
+        // AUTO COMMANDS \\
 
-        // private final ParallelCommandGroup startStopFeeder = new
-        // ParallelCommandGroup(
-        // new IntakeSetOpenLoop(mIntake,
-        // Conversions.getSmartVoltage(IntakeConstants.feedPercent, mPDH.getVoltage()))
-        // .withTimeout(0.1),
-        // new
-        // SFeederForward(Conversions.getSmartVoltage(ShooterConstants.FEEDER_FROM_INTAKE,
-        // mPDH.getVoltage()))
-        // .withTimeout(0.1));
+        private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
+                        new WristSetState(mWrist, Position.OPEN),
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)
+                                        .withTimeout(0.5));
+
+        private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
+                        new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
+                        new WristSetState(mWrist, Position.CLOSED),
+                        new ArmStateSet(mArm, ArmControlState.INTAKE));
+
+        private final ParallelCommandGroup startStopFeeder = new ParallelCommandGroup(
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT).withTimeout(0.1),
+                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.1));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
-                        new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                        new WaitCommand(0.5),
-                                                        new SFeederForward(
-                                                                        Conversions.getSmartVoltage(
-                                                                                        ShooterConstants.FEEDER_OUT,
-                                                                                        mPDH.getVoltage()))
-                                                                        .withTimeout(0.2)),
-                                        new ShooterCommand().withOpenLoop(Conversions
-                                                        .getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
-                                                                        mPDH.getVoltage()))
-                                                        .withTimeout(1)));
-
-        // TODO: set rest of the commands to parallel if the above works
-        private final ParallelCommandGroup setArmFeedAndShootAmp = new ParallelCommandGroup(
-                        new ArmStateSet(mArm, ArmControlState.AMP),
-                        new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                        new WaitCommand(1),
-                                                        new SFeederForward(
-                                                                        Conversions.getSmartVoltage(
-                                                                                        ShooterConstants.FEEDER_OUT,
-                                                                                        mPDH.getVoltage()))
-                                                                        .withTimeout(1.5)),
-                                        new ShooterCommand().withOpenLoop(Conversions
-                                                        .getSmartVoltage(ShooterConstants.AMP_VOLTAGE,
-                                                                        mPDH.getVoltage()))
-                                                        .withTimeout(3)));
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.5),
+                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                        .withTimeout(0.2)));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG),
-                        new ParallelCommandGroup(
-                                        new SequentialCommandGroup(
-                                                        new WaitCommand(1),
-                                                        new SFeederForward(
-                                                                        Conversions.getSmartVoltage(
-                                                                                        ShooterConstants.FEEDER_OUT,
-                                                                                        mPDH.getVoltage()))
-                                                                        .withTimeout(1.5)),
-                                        new ShooterCommand().withOpenLoop(Conversions
-                                                        .getSmartVoltage(ShooterConstants.SPEAKER_LONG_VOLTAGE,
-                                                                        mPDH.getVoltage()))
-                                                        .withTimeout(2)));
+                        new SequentialCommandGroup(
+                                        new WaitCommand(1),
+                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                        .withTimeout(1.5)));
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -192,6 +154,7 @@ public class RobotContainer implements Loggable {
                                         () -> mDriver.L1().getAsBoolean(),
                                         () -> mDriver.R1().getAsBoolean());
                 }
+
                 mDrive.setDefaultCommand(driveByJoystick);
 
                 // mTelescopic.setDefaultCommand(telescopicOpenLoop);
@@ -206,7 +169,6 @@ public class RobotContainer implements Loggable {
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
                 // SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
-
         }
 
         /*
@@ -226,10 +188,44 @@ public class RobotContainer implements Loggable {
                 // NamedCommands.registerCommand("Feed", startStopFeeder);
                 NamedCommands.registerCommand("ShootSpeakerLong", setArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", setArmFeedAndShootSpeakerShort);
-                NamedCommands.registerCommand("ShootAmp", setArmFeedAndShootAmp);
-
                 NamedCommands.registerCommand("ShooterToIntaking", new ArmStateSet(mArm, ArmControlState.INTAKE));
 
+                // State Named Commands
+
+                NamedCommands.registerCommand("ShooterAMP", new ShooterCommand().withShooterState(ShooterState.AMP));
+                NamedCommands.registerCommand("ShooterLong",
+                                new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
+                NamedCommands.registerCommand("ShooterShort",
+                                new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
+                NamedCommands.registerCommand("Shooter Close",
+                                new ShooterCommand().withShooterState(ShooterState.CLOSED));
+
+                NamedCommands.registerCommand("FeederLetHimCook",
+                                new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
+                NamedCommands.registerCommand("FeederStop",
+                                new FeederCommand().withFeederState(FeederState.STOP_WAIT_A_SEC));
+                NamedCommands.registerCommand("FeederUps",
+                                new FeederCommand().withFeederState(FeederState.UPSI));
+                NamedCommands.registerCommand("FeederIntakeception",
+                                new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
+
+                NamedCommands.registerCommand("ArmIntake", new ArmStateSet(mArm, ArmControlState.INTAKE));
+                NamedCommands.registerCommand("ArmAmp", new ArmStateSet(mArm, ArmControlState.AMP));
+                NamedCommands.registerCommand("ArmLong", new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
+                NamedCommands.registerCommand("ArmShort", new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
+                NamedCommands.registerCommand("ArmZero", new ArmStateSet(mArm, ArmControlState.ZERO));
+                NamedCommands.registerCommand("ArmHold", new ArmStateSet(mArm, ArmControlState.HOLD));
+
+                NamedCommands.registerCommand("WristClosed", new WristSetState(mWrist, Position.CLOSED));
+                NamedCommands.registerCommand("WristOpen", new WristSetState(mWrist, Position.OPEN));
+                NamedCommands.registerCommand("WristHold", new WristSetState(mWrist, Position.HOLD));
+
+                NamedCommands.registerCommand("IntakeForward",
+                                new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                NamedCommands.registerCommand("IntakeReverse",
+                                new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
+                NamedCommands.registerCommand("IntakeFeed",
+                                new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT));
         }
 
         /**
@@ -249,14 +245,9 @@ public class RobotContainer implements Loggable {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 /* SHOOTER + FEEDER */
-                mDriver.square().whileTrue(new SFeederForward(
-                                Conversions.getSmartVoltage(ShooterConstants.FEEDER_OUT, mPDH.getVoltage())));
-                mDriver.circle().whileTrue(new SFeederReverse(
-                                Conversions.getSmartVoltage(ShooterConstants.FEEDER_REVERSE, mPDH.getVoltage())));
 
-                mDriver.triangle().toggleOnTrue(new ShooterCommand()
-                                .withOpenLoop(Conversions.getSmartVoltage(ShooterConstants.SPEAKER_SHORT_VOLTAGE,
-                                                mPDH.getVoltage())));
+                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
+                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
 
                 /* ARM */
                 // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
@@ -268,27 +259,24 @@ public class RobotContainer implements Loggable {
                 // mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* WRIST */
-                mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
-                mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
+                mOperator.leftTrigger().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mOperator.rightTrigger().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
                 // mOperator.a().onTrue(wristOpenLoop);
 
                 /* INTAKE */
-                // mOperator.rightStick().onTrue(intakeOpenLoop);
-                // mOperator.rightTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
-                // Conversions.getSmartVoltage(IntakeConstants.forwardPercent,
-                // mPDH.getVoltage())));
-                // mOperator.leftTrigger().whileTrue(new IntakeSetOpenLoop(mIntake,
-                // Conversions.getSmartVoltage(IntakeConstants.reversePercent,
-                // mPDH.getVoltage())));
+                mOperator.rightStick().onTrue(intakeOpenLoop);
+                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
 
                 // mOperator.rightBumper().onTrue(openWristStartIntake);
                 // mOperator.leftBumper().onTrue(
                 // closeWristStopIntakeArmIntake.andThen(new
                 // WaitCommand(1.5)).andThen(startStopFeeder));
 
-                mOperator.y().onTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER));
-                mOperator.x().onTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
-                mOperator.b().onTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
+                mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
+                mOperator.b().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
