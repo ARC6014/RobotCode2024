@@ -175,7 +175,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   public void swerveDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
     /* Automatically correcting the heading based on pid */
-    // rot = calculateSnapValue(xSpeed, ySpeed, rot);
+    rot = calculateSnapValue(xSpeed, ySpeed, rot);
     // if robot is field centric, construct ChassisSpeeds from field relative speeds
     // if not, construct ChassisSpeeds from robot relative speeds
     desiredChassisSpeeds = fieldRelative

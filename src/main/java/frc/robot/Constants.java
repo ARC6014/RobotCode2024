@@ -280,11 +280,11 @@ public class Constants implements Loggable {
         public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(4);
 
         /** unit: V/rev */
-        public static final double ANGLE_kP = 0.25;
+        public static final double ANGLE_kP = 0.75;
         /** unit: V/(rev * s) */
         public static final double ANGLE_kI = 0;
         /** unit: Vs/rev */
-        public static final double ANGLE_kD = 0;
+        public static final double ANGLE_kD = 0.04;
 
         public static final double ANGLE_kS = 0;
 
