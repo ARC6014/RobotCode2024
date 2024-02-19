@@ -24,7 +24,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public TalonFX mTalonFX;
 
     /* SENSORS */
-    // public DigitalInput mBeamBreakSensor;
+    public DigitalInput mBeamBreakSensor;
 
     /* RUNNING/INTAKING MOTOR CONTROL */
     private Running mRunning;
@@ -42,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem() {
         mTalonFX = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
 
-        // mBeamBreakSensor = new DigitalInput(IntakeConstants.beamBreakSensorDioId);
+        mBeamBreakSensor = new DigitalInput(IntakeConstants.beamBreakSensorDioId);
 
         mRunning = Running.S_DOWN;
 
@@ -93,9 +93,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // if (!mBeamBreakSensor.get()) {
-        // setState(Running.S_DOWN);
-        // }
+        //if ((!mBeamBreakSensor.get()) && (mRunning != Running.REVERSE)) {
+        //    setState(Running.S_DOWN);
+        //    mTalonFX.stopMotor();
+        //    return;
+        //}
 
         switch (mRunning) {
             case FORWARD:
@@ -133,6 +135,10 @@ public class IntakeSubsystem extends SubsystemBase {
             mTalonFX.setControl(mRunningVelocityControl);
 
         }
+    }
+
+    public boolean getBeambreak() {
+        return mBeamBreakSensor.get();
     }
 
     /* SETPOINT CHECKS */

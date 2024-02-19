@@ -23,7 +23,7 @@ public class OperatorTab extends ShuffleboardTabBase {
         /* WRIST+INTAKE SUBSYSTEMS */
         private WristSubsystem mWrist = WristSubsystem.getInstance();
         private IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        private GenericEntry wristBoreAngle, wristFalconAngle, wristState, wristAtSetpoint, intakeState, intakeSetpoint,
+        private GenericEntry wristBoreAngle, wristFalconAngle, wristState, wristAtSetpoint, intakeState, intakeBeamBreak, intakeSetpoint,
                         intakeActualVelocity, wristAtZero, wristMMRunning;
 
         /* SHOOTER SUBSYSTEM */
@@ -130,6 +130,11 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withPosition(6, 1)
                                 .withSize(1, 1)
                                 .getEntry();
+                intakeBeamBreak = mTab
+                                .add("I-Beambreak", true)
+                                .withPosition(9, 1)
+                                .withSize(1, 1)
+                                .getEntry();
 
                 intakeSetpoint = mTab
                                 .add("I-VelSetpoint", 0)
@@ -211,8 +216,10 @@ public class OperatorTab extends ShuffleboardTabBase {
                 wristAtZero.setBoolean(mWrist.isAtZero());
 
                 intakeState.setString(mIntake.getState().toString());
+                intakeBeamBreak.setBoolean(mIntake.getBeambreak());
                 intakeSetpoint.setDouble(truncate(mIntake.getSetpoint()));
                 intakeActualVelocity.setDouble(truncate(mIntake.getVelocity()));
+
 
                 /* SHOOTER + FEEDER */
                 shooterBeamBreak.setBoolean(mShooter.getSensorState());

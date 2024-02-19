@@ -80,7 +80,9 @@ public class WristSubsystem extends SubsystemBase {
         configs.Voltage.PeakReverseVoltage = -12;
         configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
         configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
-
+        configs.CurrentLimits.SupplyCurrentLimitEnable = true;
+        configs.CurrentLimits.SupplyCurrentLimit = 100;
+        
         configs.MotionMagic.MotionMagicAcceleration = WristConstants.wristAcceleration;
         configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.wristCruiseVelocity;
 
