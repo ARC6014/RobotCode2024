@@ -31,7 +31,7 @@ public class CANdleLed extends SubsystemBase {
     /** Creates a new CANdle. */
     private static CANdleLed m_instance = new CANdleLed();
 
-    private final CANdle m_candle = new CANdle(Constants.LEDConstants.CANdleID, "rio");
+    private final CANdle m_candle = new CANdle(Constants.LEDConstants.CANDLE_ID, "rio");
 
     private Animation m_toAnimate = null;
 

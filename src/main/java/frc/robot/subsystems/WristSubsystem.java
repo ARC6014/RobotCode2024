@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -14,7 +12,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
@@ -24,15 +21,14 @@ public class WristSubsystem extends SubsystemBase {
     private static WristSubsystem mInstance;
 
     /* MOTORS & ENCODER */
-    private final TalonFX mTalonFX = new TalonFX(WristConstants.angleMotorId, Constants.CANIVORE_CANBUS);
-    private final DutyCycleEncoder mBoreEncoder = new DutyCycleEncoder(WristConstants.boreEncoderDioId);
+    private final TalonFX mTalonFX = new TalonFX(WristConstants.ANGLE_MOTOR_ID, Constants.CANIVORE_CANBUS);
+    private final DutyCycleEncoder mBoreEncoder = new DutyCycleEncoder(WristConstants.BORE_ID);
 
     private Gearbox mGearbox = WristConstants.gearbox;
 
     private static final LoggedTunableNumber kWristP = new LoggedTunableNumber("Wrist/kP", WristConstants.ANGLE_kP);
     private static final LoggedTunableNumber kWristI = new LoggedTunableNumber("Wrist/kI", WristConstants.ANGLE_kI);
     private static final LoggedTunableNumber kWristD = new LoggedTunableNumber("Wrist/kD", WristConstants.ANGLE_kD);
-
 
     /** WRIST ANGLE POSITION */
     private Position mPosition;
@@ -55,7 +51,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public WristSubsystem() {
         motorConfig();
-        mBoreEncoder.setPositionOffset(WristConstants.positionOffset);
+        mBoreEncoder.setPositionOffset(WristConstants.POSITION_OFFSET);
 
         mPosition = Position.HOLD;
 
@@ -82,9 +78,9 @@ public class WristSubsystem extends SubsystemBase {
         configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
         configs.CurrentLimits.SupplyCurrentLimitEnable = true;
         configs.CurrentLimits.SupplyCurrentLimit = 60;
-        
-        configs.MotionMagic.MotionMagicAcceleration = WristConstants.wristAcceleration;
-        configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.wristCruiseVelocity;
+
+        configs.MotionMagic.MotionMagicAcceleration = WristConstants.WRIST_ACCELERATION;
+        configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.WRIST_VELOCITY;
 
         mTalonFX.getConfigurator().apply(configs);
     }
@@ -113,10 +109,10 @@ public class WristSubsystem extends SubsystemBase {
                     mTalonFX.setControl(mAngleOpenLoopControl);
                     break;
                 case OPEN:
-                    setWristAngleMotionMagic(WristConstants.openPosition);
+                    setWristAngleMotionMagic(WristConstants.OPEN_POSITION);
                     break;
                 case CLOSED:
-                    setWristAngleMotionMagic(WristConstants.closedPosition);
+                    setWristAngleMotionMagic(WristConstants.CLOSED_POSITION);
                     break;
                 case HOLD:
                     mTalonFX.setControl(new NeutralOut());
@@ -133,10 +129,10 @@ public class WristSubsystem extends SubsystemBase {
                 mTalonFX.setControl(mAngleOpenLoopControl);
                 break;
             case OPEN:
-                setWristAngleMotionMagic(WristConstants.openPosition);
+                setWristAngleMotionMagic(WristConstants.OPEN_POSITION);
                 break;
             case CLOSED:
-                setWristAngleMotionMagic(WristConstants.closedPosition);
+                setWristAngleMotionMagic(WristConstants.CLOSED_POSITION);
                 break;
             case HOLD:
                 mTalonFX.setControl(new NeutralOut());
@@ -153,7 +149,7 @@ public class WristSubsystem extends SubsystemBase {
 
         SmartDashboard.putNumber("Wrist Angle Falcon", Conversions.revolutionsToDegrees(getFalconPosition()));
         SmartDashboard.putNumber("Wrist Angle Bore", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
-        
+
         autoCalibration();
     }
 
@@ -198,11 +194,11 @@ public class WristSubsystem extends SubsystemBase {
             return false;
         }
         return Math.abs(getFalconPosition()
-                - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.positionEqualityTolerance;
+                - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.POSITION_EQUALITY_TOLERANCE;
     }
 
     public boolean isAtZero() {
-        return getFalconPosition() < WristConstants.positionEqualityTolerance;
+        return getFalconPosition() < WristConstants.POSITION_EQUALITY_TOLERANCE;
     }
 
     public boolean isBoreAtSetpoint() {
@@ -210,7 +206,7 @@ public class WristSubsystem extends SubsystemBase {
             return false;
         }
         return Math.abs(getBoreEncoderPosition()
-                - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.positionEqualityTolerance;
+                - Conversions.degreesToRevolutions(mPositionSetpoint)) < WristConstants.POSITION_EQUALITY_TOLERANCE;
     }
 
     /** @return setpoint unit: degrees */

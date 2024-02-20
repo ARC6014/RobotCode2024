@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.LoggedTunableNumber;
@@ -29,8 +28,8 @@ public class ArmSubsystem extends SubsystemBase {
   private static ArmSubsystem mInstance;
 
   /* MOTORS & ENCODER */
-  private final TalonFX armMotor = new TalonFX(ArmConstants.motorID, Constants.CANIVORE_CANBUS);
-  private final DutyCycleEncoder boreEncoder = new DutyCycleEncoder(ArmConstants.boreChannel);
+  private final TalonFX armMotor = new TalonFX(ArmConstants.MOTOR_ID, Constants.CANIVORE_CANBUS);
+  private final DutyCycleEncoder boreEncoder = new DutyCycleEncoder(ArmConstants.BORE_ID);
 
   public Gearbox armGearbox = ArmConstants.gearRatio;
 
@@ -83,7 +82,7 @@ public class ArmSubsystem extends SubsystemBase {
     lastDemandedRotation = getArmAngleFalcon();
 
     /** sets Bore reading to the desired "zero" position */
-    boreEncoder.setPositionOffset(ArmConstants.positionOffset);
+    boreEncoder.setPositionOffset(ArmConstants.POSITION_OFFSET);
 
     m_timer.reset();
     m_timer.start();
@@ -114,8 +113,8 @@ public class ArmSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
 
-    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.armAcceleration;
-    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.armCruiseVelocity;
+    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.ARM_ACCELERATION;
+    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.ARM_VELOCITY;
 
     armMotor.getConfigurator().apply(configs);
     armMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -128,7 +127,7 @@ public class ArmSubsystem extends SubsystemBase {
       return;
     }
 
-    if(isAtSetpointBore() && !isAtSetpointFalcon()) {
+    if (isAtSetpointBore() && !isAtSetpointFalcon()) {
       armMotor.stopMotor();
       resetToAbsolute();
 
@@ -213,21 +212,21 @@ public class ArmSubsystem extends SubsystemBase {
     if (armControlState == ArmControlState.OPEN_LOOP) {
       return false;
     }
-    return Math.abs(getArmAngleFalcon() - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.angleTolerance;
+    return Math.abs(getArmAngleFalcon() - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.ANGLE_TOLERANCE;
   }
 
   /** @return true if 0 is within angle tolerance - FALCON */
   public boolean isAtZeroFalcon() {
-    return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValue()) < ArmConstants.angleTolerance;
+    return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValue()) < ArmConstants.ANGLE_TOLERANCE;
   }
 
   /** @return true if within angle tolerance - BORE */
   public boolean isAtSetpointBore() {
-        if (armControlState == ArmControlState.OPEN_LOOP) {
-            return false;
-        }
-        return Math.abs(getArmAngleBore()
-                - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.angleTolerance;
+    if (armControlState == ArmControlState.OPEN_LOOP) {
+      return false;
+    }
+    return Math.abs(getArmAngleBore()
+        - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.ANGLE_TOLERANCE;
   }
 
   /** @return setpoint unit: degrees */

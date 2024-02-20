@@ -9,8 +9,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -40,9 +38,9 @@ public class IntakeSubsystem extends SubsystemBase {
     private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
     public IntakeSubsystem() {
-        mTalonFX = new TalonFX(IntakeConstants.runningMotorId, Constants.RIO_CANBUS);
+        mTalonFX = new TalonFX(IntakeConstants.RUNNING_MOTOR_ID, Constants.RIO_CANBUS);
 
-        mBeamBreakSensor = new DigitalInput(IntakeConstants.beamBreakSensorDioId);
+        mBeamBreakSensor = new DigitalInput(IntakeConstants.BEAM_BREAK_ID);
 
         mRunning = Running.S_DOWN;
 
@@ -101,11 +99,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
         switch (mRunning) {
             case FORWARD:
-                mRunningVelocitySetpoint = IntakeConstants.forwardVelocity;
+                mRunningVelocitySetpoint = IntakeConstants.FORWARD_VELOCITY;
                 break;
 
             case REVERSE:
-                mRunningVelocitySetpoint = IntakeConstants.reverseVelocity;
+                mRunningVelocitySetpoint = IntakeConstants.REVERSE_VELOCITY;
                 break;
 
             case NEUTRAL:
@@ -120,7 +118,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 break;
 
             case FEEDING_SHOOTER:
-                mRunningVelocitySetpoint = IntakeConstants.feederVelocity;
+                mRunningVelocitySetpoint = IntakeConstants.FEEDER_VELOCITY;
                 break;
 
             default:
@@ -139,17 +137,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public boolean getBeambreak() {
         return mBeamBreakSensor.get();
-    }
-
-    /* SETPOINT CHECKS */
-
-    // isn't used since we don't want the intake to stop when we reach des velocity
-    public boolean isAtSetpoint() {
-        if (mRunning == Running.OPENLOOP) {
-            return false;
-        }
-        return Math.abs(mTalonFX.getPosition().getValueAsDouble()
-                - mRunningVelocitySetpoint) < IntakeConstants.velocityEqualityTolerance;
     }
 
     /* STATE ACCESSORS */

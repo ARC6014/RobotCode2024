@@ -35,7 +35,7 @@ import io.github.oblarg.oblog.Loggable;
 public class Constants implements Loggable {
     public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    public static final boolean isTuning = true;
+    public static final boolean isTuning = true; // tuning mode for tunable numbers
 
     public static int Pigeon2CanID = 60;
 
@@ -187,18 +187,18 @@ public class Constants implements Loggable {
 
     public static final class ArmConstants {
 
-        public static final int motorID = 20;
-        public static final int boreChannel = 1;
+        public static final int MOTOR_ID = 20;
+        public static final int BORE_ID = 1;
 
         public static final Gearbox gearRatio = new Gearbox(1, 119.5);
-        public static final boolean motorInverted = false;
+        public static final boolean ARM_MOTOR_INVERTED = false;
 
-        public static final NeutralModeValue neutralMode = NeutralModeValue.Brake;
+        public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double armCruiseVelocity = 200; // 150
+        public static final double ARM_VELOCITY = 200; // 150
         /** unit: rev/s^2 */
-        public static final double armAcceleration = 170; // 120
+        public static final double ARM_ACCELERATION = 170; // 120
 
         public static final double kP = 1.2;
         public static final double kD = 0.0;
@@ -208,10 +208,10 @@ public class Constants implements Loggable {
         public static final double kV = 0;
 
         /** unit: rotations */
-        public static final double positionOffset = Conversions.degreesToRevolutions(13.34);
+        public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(13.34);
 
         /** unit: rotations */
-        public static final double angleTolerance = Conversions.degreesToRevolutions(1);
+        public static final double ANGLE_TOLERANCE = Conversions.degreesToRevolutions(1);
 
         /* Arm angles for setpoints (relative to the zero of Bore) */
         /** unit: degrees */
@@ -231,27 +231,24 @@ public class Constants implements Loggable {
 
     public static final class IntakeConstants {
 
-        public static final int runningMotorId = 10;
-        public static final int beamBreakSensorDioId = 2;
+        public static final int RUNNING_MOTOR_ID = 10;
+        public static final int BEAM_BREAK_ID = 2;
 
+        // NOT USED
         /** unit: rps */
-        public static final double forwardVelocity = (2600 / 60) * 1.7; // 2600 / 60) *
+        public static final double FORWARD_VELOCITY = (2600 / 60) * 1.7; 
         /** unit: rps */
-        public static final double reverseVelocity = (-2600 / 60) * 1.7;
+        public static final double REVERSE_VELOCITY = (-2600 / 60) * 1.7;
+        /** unit: rps */
+        public static final double FEEDER_VELOCITY = -3000 / 60;
+
 
         /** unit: percent */
         public static final double FORWARD_PERCENT = 9;
-
         /** unit: percent */
         public static final double REVERSE_PERCENT = -9;
-
         /** unit: percent */
         public static final double FEED_PERCENT = -5;
-
-        /** unit: rps */
-        public static final double feederVelocity = -3000 / 60;
-
-        public static final double velocityEqualityTolerance = 0 / 60;
 
         /** unit: V/(rev/s) */
         public static final double RUN_kP = 3.1502;
@@ -265,22 +262,22 @@ public class Constants implements Loggable {
     }
 
     public static final class WristConstants {
-        public static final int angleMotorId = 11;
-        public static final int boreEncoderDioId = 0;
+        public static final int ANGLE_MOTOR_ID = 11;
+        public static final int BORE_ID = 0;
 
         public static final Gearbox gearbox = new Gearbox(1, 12);
 
         /** REV Bore Encoder position offset, unit: revolutions */
-        public static final double positionOffset = Conversions.degreesToRevolutions(218 + 2 - 5 - 55 - 1.7);
+        public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(218 + 2 - 5 - 55 - 1.7);
         /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
-        public static final double openPosition = 167;
+        public static final double OPEN_POSITION = 167;
         /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
-        public static final double closedPosition = 3.2;
+        public static final double CLOSED_POSITION = 3.2;
         /** unit: degrees */
-        public static final double stopPosition = 0;
+        public static final double STOP_POSITION = 0;
 
         /** unit: revolutions */
-        public static final double positionEqualityTolerance = Conversions.degreesToRevolutions(4);
+        public static final double POSITION_EQUALITY_TOLERANCE = Conversions.degreesToRevolutions(4);
 
         /** unit: V/rev */
         public static final double ANGLE_kP = 1.2;
@@ -294,12 +291,9 @@ public class Constants implements Loggable {
         public static final double ANGLE_kV = 0;
 
         /** unit: rev/s */
-        public static final double wristCruiseVelocity = 150; // 100
+        public static final double WRIST_VELOCITY = 150; // 100
         /** unit: rev/s^2 */
-        public static final double wristAcceleration = 300; // 80
-
-        // TODO: voltage cutoff
-        public static final double maxVoltageCutoff = 0;
+        public static final double WRIST_ACCELERATION = 300; // 80
 
     }
 
@@ -309,12 +303,13 @@ public class Constants implements Loggable {
         public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
-        public static final int BEAM_BREAK_ID = 4; // TODO: Config
+        public static final int BEAM_BREAK_ID = 4; 
 
         public static final double kMinOutput = -1;
         public static final double kMaxOutput = 1;
 
         /* PID & FF */
+        // NOT USED
         public static final double kP = 0.000594;
         public static final double kFF = 0.0002219;
         public static final double kIz = 0;
@@ -322,15 +317,14 @@ public class Constants implements Loggable {
         public static final double kI = 0;
 
         /* Neutral Modes */
-        /* NOT USED */
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
         public static final IdleMode MASTER_MODE = IdleMode.kBrake;
 
         /* Inverts */
-        /* NOT USED */
-        public static final boolean masterInverted = false;
-        public static final boolean slaveInverted = false;
-        public static final boolean feederInverted = false;
+        // NOT USED
+        public static final boolean MASTER_INVERTED = false;
+        public static final boolean SLAVE_INVERTED = false;
+        public static final boolean FEEDER_INVERTED = false;
 
         /* VOLTAGE */
         public static final double AMP_VOLTAGE = 5;
@@ -340,7 +334,6 @@ public class Constants implements Loggable {
         /* RPMs */
         public static final double FEEDER_OUT = 9;
         public static final double FEEDER_FROM_INTAKE = 4;
-
         public static final double FEEDER_REVERSE = -6.31;
     }
 
@@ -364,8 +357,8 @@ public class Constants implements Loggable {
     }
 
     public static final class LEDConstants {
-        public static final int BUFFER_LENGTH = 60; // TODO: set led length
-        public static final int CANdleID = 43; // TODO: config
+        public static final int BUFFER_LENGTH = 15; // TODO: set led length
+        public static final int CANDLE_ID = 43; // TODO: config
     }
 
     public class LLConstants {
