@@ -160,29 +160,24 @@ public class SwerveModuleBase implements Loggable {
 
     private void configRotEncoder() {
         CANcoderConfiguration config = CTREConfigs.swerveCANCoderConfig();
-        config.MagnetSensor
-            .withSensorDirection(isRotEncoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive)
-            .withMagnetOffset(kAngleOffset / 360);
+        config.MagnetSensor.SensorDirection = isRotEncoderInverted ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive;
+        config.MagnetSensor.MagnetOffset = kAngleOffset / 360;
         mRotEncoder6.getConfigurator().apply(config);
     }
 
     private void configAngleMotor() {
         mAngleMotor6.setNeutralMode(DriveConstants.angleMotorNeutralMode == NeutralMode.Coast ? NeutralModeValue.Coast : NeutralModeValue.Brake);
         TalonFXConfiguration config = CTREConfigs.swerveAngleConfig();
-        config.Feedback
-            .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
-        config.MotorOutput
-            .withInverted(isAngleMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        config.MotorOutput.Inverted = isAngleMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
         mAngleMotor6.getConfigurator().apply(config);
     }
 
     private void configDriveMotor() {
         mDriveMotor6.setNeutralMode(DriveConstants.driveMotorNeutralMode == NeutralMode.Coast ? NeutralModeValue.Coast : NeutralModeValue.Brake);
         TalonFXConfiguration config = CTREConfigs.swerveAngleConfig();
-        config.Feedback
-            .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor);
-        config.MotorOutput
-            .withInverted(isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive);
+        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+        config.MotorOutput.Inverted = isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
         mAngleMotor6.getConfigurator().apply(config);
     }
 
@@ -226,18 +221,18 @@ public class SwerveModuleBase implements Loggable {
     }
 
     public Rotation2d getCANCoderRotation() {
-        return Rotation2d.fromRotations(mRotEncoder6.getPosition().getValueAsDouble());
+        return Rotation2d.fromRotations(mRotEncoder6.getAbsolutePosition().getValueAsDouble());
     }
 
     public SwerveModulePosition getPosition() {
         double position = mDriveMotor6.getPosition().getValueAsDouble() / driveGearbox.getRatio() * mWheelCircumference;
-        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble() / driveGearbox.getRatio());
+        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble() / angleGearbox.getRatio());
         return new SwerveModulePosition(position, angle);
     }
 
     public SwerveModuleState getState() {
         double velocity = mDriveMotor6.getVelocity().getValueAsDouble() / driveGearbox.getRatio() * mWheelCircumference;
-        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble() / driveGearbox.getRatio());
+        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble() / angleGearbox.getRatio());
         return new SwerveModuleState(velocity, angle);
     }
 

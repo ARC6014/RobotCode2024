@@ -37,45 +37,56 @@ public class CTREConfigs implements Loggable {
         // TODO: this feature is under "Features Omitted" in CTRE v6 docs
         // https://v6.docs.ctr-electronics.com/en/stable/docs/migration/migration-guide/feature-replacements-guide.html#features-omitted
         // talon.configAllowableClosedloopError(0, 0, 20);
+
+        // Inverts, Gear Ratio, Neutral Mode configured in SwerveModuleBase
         TalonFXConfiguration config = new TalonFXConfiguration();
-        config.CurrentLimits
-            .withSupplyCurrentLimitEnable(DriveConstants.driveEnableCurrentLimit)
-            .withSupplyCurrentLimit(DriveConstants.driveContinuousCurrentLimit)
-            .withSupplyCurrentThreshold(DriveConstants.drivePeakCurrentLimit)
-            .withSupplyTimeThreshold(DriveConstants.drivePeakCurrentDuration);
-        config.ClosedLoopRamps
-            .withDutyCycleClosedLoopRampPeriod(DriveConstants.openLoopRamp)
-            .withVoltageClosedLoopRampPeriod(DriveConstants.closedLoopRamp)
-            .withTorqueClosedLoopRampPeriod(DriveConstants.closedLoopRamp);
-        config.Slot0
-            .withKP(V6Converter.v5VelocityWithoutVoltageCompensation_kP(DriveConstants.drivekP))
-            .withKI(V6Converter.v5VelocityWithoutVoltageCompensation_kI(DriveConstants.drivekI))
-            .withKD(V6Converter.v5VelocityWithoutVoltageCompensation_kD(DriveConstants.drivekD));
+        
+        /* Current Limiting */
+        config.CurrentLimits.SupplyCurrentLimitEnable = DriveConstants.driveEnableCurrentLimit;
+        config.CurrentLimits.SupplyCurrentLimit = DriveConstants.driveContinuousCurrentLimit;
+        config.CurrentLimits.SupplyCurrentThreshold = DriveConstants.drivePeakCurrentLimit;
+        config.CurrentLimits.SupplyTimeThreshold = DriveConstants.drivePeakCurrentDuration;
+
+        /* Ramping */
+        config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = DriveConstants.openLoopRamp;
+        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = DriveConstants.closedLoopRamp;
+        config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = DriveConstants.closedLoopRamp;
+
+        /* PID */
+        config.Slot0.kP = V6Converter.v5VelocityWithoutVoltageCompensation_kP(DriveConstants.drivekP);
+        config.Slot0.kI = V6Converter.v5VelocityWithoutVoltageCompensation_kI(DriveConstants.drivekI);
+        config.Slot0.kD = V6Converter.v5VelocityWithoutVoltageCompensation_kD(DriveConstants.drivekD);
+        
         return config;
     }
  
     public static TalonFXConfiguration swerveAngleConfig() {
+        // Inverts, Gear Ratio, Neutral Mode configured in SwerveModuleBase
         TalonFXConfiguration config = new TalonFXConfiguration();
-        config.CurrentLimits
-            .withSupplyCurrentLimitEnable(DriveConstants.angleEnableCurrentLimit)
-            .withSupplyCurrentLimit(DriveConstants.angleContinuousCurrentLimit)
-            .withSupplyCurrentThreshold(DriveConstants.anglePeakCurrentLimit)
-            .withSupplyTimeThreshold(DriveConstants.anglePeakCurrentDuration);
-        config.ClosedLoopRamps
-            .withDutyCycleClosedLoopRampPeriod(DriveConstants.openLoopRamp)
-            .withVoltageClosedLoopRampPeriod(DriveConstants.closedLoopRamp)
-            .withTorqueClosedLoopRampPeriod(DriveConstants.closedLoopRamp);
-        config.Slot0
-            .withKP(V6Converter.v5VelocityWithoutVoltageCompensation_kP(DriveConstants.anglekP))
-            .withKI(V6Converter.v5VelocityWithoutVoltageCompensation_kI(DriveConstants.anglekI))
-            .withKD(V6Converter.v5VelocityWithoutVoltageCompensation_kD(DriveConstants.anglekD));
+        /* Current Limiting */
+        config.CurrentLimits.SupplyCurrentLimitEnable = DriveConstants.angleEnableCurrentLimit;
+        config.CurrentLimits.SupplyCurrentLimit = DriveConstants.angleContinuousCurrentLimit;
+        config.CurrentLimits.SupplyCurrentThreshold = DriveConstants.anglePeakCurrentLimit;
+        config.CurrentLimits.SupplyTimeThreshold = DriveConstants.anglePeakCurrentDuration;
+
+        /* Ramping */
+        config.ClosedLoopRamps.DutyCycleClosedLoopRampPeriod = DriveConstants.openLoopRamp;
+        config.ClosedLoopRamps.VoltageClosedLoopRampPeriod = DriveConstants.closedLoopRamp;
+        config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = DriveConstants.closedLoopRamp;
+
+        /* PID */
+        config.Slot0.kP = V6Converter.v5VelocityWithoutVoltageCompensation_kP(DriveConstants.anglekP);
+        config.Slot0.kI = V6Converter.v5VelocityWithoutVoltageCompensation_kI(DriveConstants.anglekI);
+        config.Slot0.kD = V6Converter.v5VelocityWithoutVoltageCompensation_kD(DriveConstants.anglekD);
+
+        /* Continous wrap */
+        config.ClosedLoopGeneral.ContinuousWrap = true;
         return config;
     }
 
     public static CANcoderConfiguration swerveCANCoderConfig() {
         CANcoderConfiguration config = new CANcoderConfiguration();
-        config.MagnetSensor
-            .withAbsoluteSensorRange(AbsoluteSensorRangeValue.Unsigned_0To1);
+        config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Unsigned_0To1;
         return config;
     }
 }
