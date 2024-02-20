@@ -121,15 +121,11 @@ public class SwerveModuleBase implements Loggable {
 
         desiredState = CTREModuleState.optimize(desiredState, getState().angle); // minimize the change in
                                                                                      // heading/easiest way
-        System.out.println("setDesiredState");
-        System.out.println(desiredState.speedMetersPerSecond);
-        System.out.println(desiredState.angle.getDegrees());
-
         if (isOpenLoop) {
             double percentOutput = desiredState.speedMetersPerSecond / maxSpeed;
             mDriveMotor6.setControl(new DutyCycleOut(percentOutput));
         } else {
-            double velocity = desiredState.speedMetersPerSecond / mWheelCircumference * driveGearbox.getRatio();
+            double velocity = desiredState.speedMetersPerSecond / mWheelCircumference;
             mDriveMotor6.setControl(new VelocityDutyCycle(velocity).withFeedForward(mDriveFeedforward.calculate(desiredState.speedMetersPerSecond)));
         }
 
@@ -137,14 +133,14 @@ public class SwerveModuleBase implements Loggable {
                 ? lastAngle
                 : desiredState.angle.getDegrees();
 
-        mAngleMotor6.setControl(new PositionDutyCycle(lastAngle / 360.0 * angleGearbox.getRatio()));
+        mAngleMotor6.setControl(new PositionDutyCycle(lastAngle / 360.0));
 
         lastAngle = angle;
 
     }
 
     public double getVelocityMPS() {
-        return mDriveMotor6.getVelocity().getValueAsDouble() / driveGearbox.getRatio() * mWheelCircumference;
+        return mDriveMotor6.getVelocity().getValueAsDouble() * mWheelCircumference;
     }
 
     public void setNeutralMode2Brake(boolean brake) {
@@ -170,6 +166,7 @@ public class SwerveModuleBase implements Loggable {
         TalonFXConfiguration config = CTREConfigs.swerveAngleConfig();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         config.MotorOutput.Inverted = isAngleMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        config.Feedback.SensorToMechanismRatio = angleGearbox.getRatio();
         mAngleMotor6.getConfigurator().apply(config);
     }
 
@@ -178,6 +175,7 @@ public class SwerveModuleBase implements Loggable {
         TalonFXConfiguration config = CTREConfigs.swerveAngleConfig();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         config.MotorOutput.Inverted = isDriveMotorInverted ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        config.Feedback.SensorToMechanismRatio = driveGearbox.getRatio();
         mAngleMotor6.getConfigurator().apply(config);
     }
 
@@ -188,7 +186,7 @@ public class SwerveModuleBase implements Loggable {
     }
 
     public void resetToAbsolute() {
-        double position6 = getCANCoderRotation().getRotations() * angleGearbox.getRatio();
+        double position6 = getCANCoderRotation().getRotations();
         mAngleMotor6.setPosition(position6);
     }
 
@@ -225,14 +223,14 @@ public class SwerveModuleBase implements Loggable {
     }
 
     public SwerveModulePosition getPosition() {
-        double position = mDriveMotor6.getPosition().getValueAsDouble() / driveGearbox.getRatio() * mWheelCircumference;
-        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble() / angleGearbox.getRatio());
+        double position = mDriveMotor6.getPosition().getValueAsDouble() * mWheelCircumference;
+        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble());
         return new SwerveModulePosition(position, angle);
     }
 
     public SwerveModuleState getState() {
-        double velocity = mDriveMotor6.getVelocity().getValueAsDouble() / driveGearbox.getRatio() * mWheelCircumference;
-        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble() / angleGearbox.getRatio());
+        double velocity = mDriveMotor6.getVelocity().getValueAsDouble() * mWheelCircumference;
+        Rotation2d angle = Rotation2d.fromRotations(mAngleMotor6.getPosition().getValueAsDouble());
         return new SwerveModuleState(velocity, angle);
     }
 
