@@ -40,6 +40,7 @@ import frc.robot.commands.auto.FakeShoot;
 import frc.robot.commands.intake.IntakeOpenLoop;
 import frc.robot.commands.intake.IntakeSetOpenLoop;
 import frc.robot.commands.intake.IntakeSetStatePID;
+import frc.robot.commands.intake.IntakeStopAtBeambreak;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
 import frc.robot.commands.shooter.FeederCommand;
@@ -106,10 +107,10 @@ public class RobotContainer implements Loggable {
 
         // AUTO COMMANDS \\
 
-        private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
+        private final ParallelDeadlineGroup openWristStartIntake = new ParallelDeadlineGroup(
+                        new IntakeStopAtBeambreak(), // this is the deadline
                         new WristSetState(mWrist, Position.OPEN),
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)
-                                        .withTimeout(0.5));
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
 
         private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
