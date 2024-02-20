@@ -134,6 +134,13 @@ public class RobotContainer implements Loggable {
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(1.5)));
 
+        private final ParallelCommandGroup setArmFeedAndShootAmp = new ParallelCommandGroup(
+                        new ArmStateSet(mArm, ArmControlState.AMP),
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.5),
+                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                        .withTimeout(0.2)));
+
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
          */
@@ -245,6 +252,38 @@ public class RobotContainer implements Loggable {
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
                 /* SHOOTER + FEEDER */
+                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
+                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
+                mDriver.triangle().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
+
+                /* ARM */
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                // ArmControlState.ZERO));
+                mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
+                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
+                mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
+                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
+                // mOperator.rightBumper().onTrue(armOpenLoop);
+
+                /* WRIST */
+                mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
+
+                /* COMMAND GROUPS */
+                mOperator.rightBumper().onTrue(openWristStartIntake);
+                mOperator.leftBumper().onTrue(
+                        closeWristStopIntakeArmIntake.andThen(new WaitCommand(1)).andThen(startStopFeeder));
+
+                mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
+                mOperator.x().onTrue(setArmFeedAndShootAmp);
+                mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
+        }
+
+        private void configureButtonBindingsAlper() {
+                /* DRIVE */
+                mDriver.cross().onTrue(new ResetGyro(mDrive));
+
+                /* SHOOTER + FEEDER */
 
                 mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
                 mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
@@ -267,12 +306,6 @@ public class RobotContainer implements Loggable {
                 mOperator.rightStick().onTrue(intakeOpenLoop);
                 mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
                 mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
-
-                // mOperator.rightBumper().onTrue(openWristStartIntake);
-                // mOperator.leftBumper().onTrue(
-                // closeWristStopIntakeArmIntake.andThen(new
-                // WaitCommand(1.5)).andThen(startStopFeeder));
-
                 mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
                 mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
                 mOperator.b().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
@@ -280,8 +313,8 @@ public class RobotContainer implements Loggable {
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
-                mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
-                                mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
+                // mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
+                //                 mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
         }
 
         /**
