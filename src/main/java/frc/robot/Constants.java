@@ -224,6 +224,9 @@ public class Constants implements Loggable {
         public static final double SPEAKER_SHORT = 39; // 22.5 31.5 36
         /** unit: degrees */
         public static final double AMP = 90 + 15;
+
+        /** unit: degrees */
+        public static final double LAST_RESORT_ANGLE_CUTOFF = 230;
     }
 
     public static final class IntakeConstants {

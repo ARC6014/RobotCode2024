@@ -123,6 +123,11 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (getArmAngleBore() > ArmConstants.LAST_RESORT_ANGLE_CUTOFF) {
+      armMotor.stopMotor();
+      return;
+    }
+
     if(isAtSetpointBore() && !isAtSetpointFalcon()) {
       armMotor.stopMotor();
       resetToAbsolute();
