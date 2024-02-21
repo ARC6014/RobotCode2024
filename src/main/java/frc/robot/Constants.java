@@ -226,7 +226,7 @@ public class Constants implements Loggable {
         public static final double AMP = 90 + 15;
 
         /** unit: degrees */
-        public static final double LAST_RESORT_ANGLE_CUTOFF = 230;
+        public static final double LAST_RESORT_ANGLE_CUTOFF = 150;
     }
 
     public static final class IntakeConstants {
@@ -340,19 +340,22 @@ public class Constants implements Loggable {
         public static final int MASTER_MOTOR_ID = 17; // TODO: Config
         public static final int SLAVE_MOTOR_ID = 18; // TODO: Config
 
-        public static final int TELESCOPIC_GEAR_RATIO = 144 / 11 / 1;
+        public static final double TELESCOPIC_GEAR_RATIO = 13.08;
 
         public static final double TELESCOPIC_CONTROLLER_KD = 0;
         public static final double TELESCOPIC_CONTROLLER_KI = 0;
-        public static final double TELESCOPIC_CONTROLLER_KP = 0;
+        public static final double TELESCOPIC_CONTROLLER_KP = 0.5;
         /** units: r/s */
         public static final double TELESCOPIC_MOTION_ACCEL = 50;
         /** units: r/s^2 */
         public static final double TELESCOPIC_MOTION_VEL = 70;
-        public static final double TELESCOPIC_MOTION_TIMEOUT = 0;
+        public static final double TELESCOPIC_MOTION_TIMEOUT = 3;
         public static final double TELESCOPIC_RESET = 0;
-        public static final double TELESCOPIC_TOLERANCE = 1;
+        public static final double TELESCOPIC_TOLERANCE = 2;
         public static final boolean IS_INVERTED = true;
+        public static final double DENEME = 0.5;
+        /** units: cm */
+        public static final double SPROCKET_CIRCUMFERENCE = 3.2 * Math.PI;
 
     }
 

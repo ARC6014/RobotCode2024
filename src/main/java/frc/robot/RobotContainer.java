@@ -30,6 +30,7 @@ import frc.robot.Constants.ArmConstants;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.TelescopicConstants;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.SetIdleModeInvert;
 import frc.robot.commands.arm.ArmOpenLoop;
@@ -48,6 +49,7 @@ import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.swerve.FieldOrientedTurn;
 import frc.robot.commands.telescopic.TelescopicOpenLoop;
+import frc.robot.commands.telescopic.TelescopicStateCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -58,6 +60,7 @@ import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
+import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 import frc.robot.subsystems.WristSubsystem.Position;
 import frc.team6014.lib.auto.ARCTrajectory;
 import frc.team6014.lib.math.Conversions;
@@ -78,7 +81,8 @@ public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
 
-        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        // private final TelescopicSubsystem mTelescopic =
+        // TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
@@ -96,8 +100,9 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
-                        () -> mOperator.getRightY());
+        // private final TelescopicOpenLoop telescopicOpenLoop = new
+        // TelescopicOpenLoop(mTelescopic,
+        // () -> mOperator.getRightY());
 
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
@@ -164,7 +169,6 @@ public class RobotContainer implements Loggable {
 
                 mDrive.setDefaultCommand(driveByJoystick);
 
-                mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
                 LiveWindow.setEnabled(false);
@@ -176,6 +180,98 @@ public class RobotContainer implements Loggable {
                 SmartDashboard.putData("Auto ", autoChooser);
                 SmartDashboard.putBoolean("Is AutoBuilder Configured", AutoBuilder.isConfigured());
                 // SmartDashboard.putData("Idle Mode Invert (I-W)", new SetIdleModeInvert());
+
+                mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
+
+        }
+
+        /**
+         * Use this method to define your button->command mappings. Buttons can be
+         * created by
+         * instantiating a {@link GenericHID} or one of its subclasses ({@link
+         * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+         * it to a {@link
+         * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+         */
+        private void configureButtonBindings() {
+
+                // new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
+                // new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
+
+                /* DRIVE */
+                mDriver.cross().onTrue(new ResetGyro(mDrive));
+
+                /* SHOOTER + FEEDER */
+                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
+                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
+                mDriver.triangle().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
+
+                /* ARM */
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                // ArmControlState.ZERO));
+                mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
+                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
+                mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
+                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
+                // mOperator.rightBumper().onTrue(armOpenLoop);
+
+                /* WRIST */
+                mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
+
+                /* TELESCOPIC */
+                mDriver.povDown().whileTrue(
+                                new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
+                mDriver.povUp().whileTrue(new TelescopicStateCommand().withShooterState(TelescopicState.STOP));
+                // mOperator.rightStick().onTrue(telescopicOpenLoop);
+
+                /* COMMAND GROUPS */
+                mOperator.rightBumper().onTrue(openWristStartIntake);
+                mOperator.leftBumper().onTrue(
+                                closeWristStopIntakeArmIntake.andThen(new WaitCommand(1)).andThen(startStopFeeder));
+
+                mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
+                mOperator.x().onTrue(setArmFeedAndShootAmp);
+                mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
+
+        }
+
+        private void configureButtonBindingsAlper() {
+                /* DRIVE */
+                mDriver.cross().onTrue(new ResetGyro(mDrive));
+
+                /* SHOOTER + FEEDER */
+
+                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
+                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
+
+                /* ARM */
+                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
+                // ArmControlState.ZERO));
+                mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
+                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
+                mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
+                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
+                // mOperator.rightBumper().onTrue(armOpenLoop);
+
+                /* WRIST */
+                mOperator.leftTrigger().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mOperator.rightTrigger().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
+                // mOperator.a().onTrue(wristOpenLoop);
+
+                /* INTAKE */
+                mOperator.rightStick().onTrue(intakeOpenLoop);
+                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
+                mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
+                mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
+                mOperator.b().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
+
+                // FeedForwardCharacterization example, use this with any subsystem that you
+                // want to characterize
+                // mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
+                // mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
         }
 
         /*
@@ -233,88 +329,6 @@ public class RobotContainer implements Loggable {
                                 new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
                 NamedCommands.registerCommand("IntakeFeed",
                                 new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT));
-        }
-
-        /**
-         * Use this method to define your button->command mappings. Buttons can be
-         * created by
-         * instantiating a {@link GenericHID} or one of its subclasses ({@link
-         * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
-         * it to a {@link
-         * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-         */
-        private void configureButtonBindings() {
-
-                // new Trigger(() -> mOperator.getRawButton(11)).onTrue(new AllignWithLL(1));
-                // new Trigger(() -> mOperator.getRawButton(12)).onTrue(new AllignWithLL(4));
-
-                /* DRIVE */
-                mDriver.cross().onTrue(new ResetGyro(mDrive));
-
-                /* SHOOTER + FEEDER */
-                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
-                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
-                mDriver.triangle().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
-
-                /* ARM */
-                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                // ArmControlState.ZERO));
-                mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
-                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
-                mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
-                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
-                // mOperator.rightBumper().onTrue(armOpenLoop);
-
-                /* WRIST */
-                mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
-                mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-
-                /* COMMAND GROUPS */
-                mOperator.rightBumper().onTrue(openWristStartIntake);
-                mOperator.leftBumper().onTrue(
-                                closeWristStopIntakeArmIntake.andThen(new WaitCommand(1)).andThen(startStopFeeder));
-
-                mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
-                mOperator.x().onTrue(setArmFeedAndShootAmp);
-                mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
-        }
-
-        private void configureButtonBindingsAlper() {
-                /* DRIVE */
-                mDriver.cross().onTrue(new ResetGyro(mDrive));
-
-                /* SHOOTER + FEEDER */
-
-                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
-                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
-
-                /* ARM */
-                // mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                // ArmControlState.ZERO));
-                mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE));
-                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
-                mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT));
-                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG));
-                // mOperator.rightBumper().onTrue(armOpenLoop);
-
-                /* WRIST */
-                mOperator.leftTrigger().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
-                mOperator.rightTrigger().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-                // mOperator.a().onTrue(wristOpenLoop);
-
-                /* INTAKE */
-                mOperator.rightStick().onTrue(intakeOpenLoop);
-                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
-                mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
-                mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
-                mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
-                mOperator.b().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
-                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
-
-                // FeedForwardCharacterization example, use this with any subsystem that you
-                // want to characterize
-                // mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
-                // mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
         }
 
         /**

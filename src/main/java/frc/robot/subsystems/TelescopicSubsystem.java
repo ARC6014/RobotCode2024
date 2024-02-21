@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
+import frc.team6014.lib.math.Conversions;
 
 public class TelescopicSubsystem extends SubsystemBase {
 
@@ -31,14 +32,12 @@ public class TelescopicSubsystem extends SubsystemBase {
   /** units: cm */
   private double setpoint = 0;
 
-  /** units: cm */
-  private final double sprocketCircumference = 0;
+  NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
   public enum TelescopicState {
-    ZERO,
     HOLD,
     OPEN_LOOP,
-    CLIMB,
+    CLIMB, STOP
   }
 
   private TelescopicState telescopicState = TelescopicState.HOLD;
@@ -64,12 +63,10 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
-    // TODO: Configure whether inverted!
     m_slave.setControl(new Follower(m_master.getDeviceID(), TelescopicConstants.IS_INVERTED));
 
     zeroEncoder();
-    setBreakMode();
-
+    setNeutralMode(NeutralModeValue.Brake);
   }
 
   @Override
@@ -77,14 +74,11 @@ public class TelescopicSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
 
     switch (telescopicState) {
-      case ZERO:
-        stop();
-        break;
       case HOLD:
         m_master.setControl(new NeutralOut());
         break;
       case CLIMB:
-        setHeight();
+        setHeightMotionMagic();
         break;
       case OPEN_LOOP:
         setMotorOutput();
@@ -136,7 +130,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble()
         + m_slave.getRotorPosition().getValueAsDouble()) / 2
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
-    return sprocketRotation * sprocketCircumference;
+    return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
   }
 
   public void setTelescopicPosition(double target) {
@@ -146,14 +140,10 @@ public class TelescopicSubsystem extends SubsystemBase {
     setpoint = target;
   }
 
-  public void hold() {
-    telescopicState = TelescopicState.HOLD;
-    m_master.setControl(new NeutralOut());
-  }
-
-  public void setHeight() {
-    m_master.setControl(motionMagic
-        .withPosition(setpoint / sprocketCircumference * TelescopicConstants.TELESCOPIC_GEAR_RATIO));
+  private void setHeightMotionMagic() {
+    m_master.setControl(
+        motionMagic.withPosition(
+            setpoint / TelescopicConstants.SPROCKET_CIRCUMFERENCE * TelescopicConstants.TELESCOPIC_GEAR_RATIO));
   }
 
   public void setTelescopicState(TelescopicState state) {
@@ -164,20 +154,21 @@ public class TelescopicSubsystem extends SubsystemBase {
     return telescopicState;
   }
 
-  public void setBreakMode() {
-    m_master.setNeutralMode(NeutralModeValue.Brake);
-    m_slave.setNeutralMode(NeutralModeValue.Brake);
+  public void setNeutralMode() {
+    this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+    m_master.setNeutralMode(this.kNeutralMode);
+    m_slave.setNeutralMode(this.kNeutralMode);
   }
 
-  // might actually not even use this tbh
-  public void setCoast() {
-    m_master.setNeutralMode(NeutralModeValue.Coast);
-    m_slave.setNeutralMode(NeutralModeValue.Coast);
+  public void setNeutralMode(NeutralModeValue value) {
+    this.kNeutralMode = value;
+    m_master.setNeutralMode(this.kNeutralMode);
+    m_slave.setNeutralMode(this.kNeutralMode);
   }
 
   public void stop() {
-    if (telescopicState != TelescopicState.ZERO) {
-      telescopicState = TelescopicState.ZERO;
+    if (telescopicState != TelescopicState.STOP) {
+      telescopicState = TelescopicState.STOP;
     }
     m_master.stopMotor();
     m_slave.stopMotor();

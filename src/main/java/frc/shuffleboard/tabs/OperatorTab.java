@@ -23,7 +23,8 @@ public class OperatorTab extends ShuffleboardTabBase {
         /* WRIST+INTAKE SUBSYSTEMS */
         private WristSubsystem mWrist = WristSubsystem.getInstance();
         private IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
-        private GenericEntry wristBoreAngle, wristFalconAngle, wristState, wristAtSetpoint, intakeState, intakeBeamBreak, intakeSetpoint,
+        private GenericEntry wristBoreAngle, wristFalconAngle, wristState, wristAtSetpoint, intakeState,
+                        intakeBeamBreak, intakeSetpoint,
                         intakeActualVelocity, wristAtZero, wristMMRunning;
 
         /* SHOOTER SUBSYSTEM */
@@ -148,7 +149,7 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withSize(1, 1)
                                 .getEntry();
                 // ------------------------------------------------------------------------ //
-                
+
                 shooterBeamBreak = mTab
                                 .add("S-BeamBreak", true)
                                 .withPosition(0, 2)
@@ -168,7 +169,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withSize(1, 1)
                                 .getEntry();
 
-
                 feederActualPercent = mTab
                                 .add("F-ActualPercent", 0)
                                 .withPosition(3, 2)
@@ -180,8 +180,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withPosition(4, 2)
                                 .withSize(1, 1)
                                 .getEntry();
-
-                
 
                 // currentAnimation = mTab
                 // .add("Current Anim", "NONE")
@@ -203,7 +201,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 mArm.getArmMotor().getMotionMagicIsRunning()
                                                 .getValue() == MotionMagicIsRunningValue.Enabled);
                 lastRotation.setDouble(Conversions.revolutionsToDegrees(mArm.getLastDemandedRotation()));
-                
 
                 /* WRIST + INTAKE */
                 wristBoreAngle.setDouble(truncate(Conversions.revolutionsToDegrees(mWrist.getBoreEncoderPosition())));
@@ -220,14 +217,12 @@ public class OperatorTab extends ShuffleboardTabBase {
                 intakeSetpoint.setDouble(truncate(mIntake.getSetpoint()));
                 intakeActualVelocity.setDouble(truncate(mIntake.getVelocity()));
 
-
                 /* SHOOTER + FEEDER */
-                shooterBeamBreak.setBoolean(mShooter.getSensorState());
-                shooterActualPercent.setDouble(truncate(mShooter.getMasterMotorSpeed()));
-                shooterState.setString(mShooter.getShooterState().toString());
-                feederActualPercent.setDouble(truncate(mShooter.getFeederMotorSpeed()));
-                feederState.setString(mShooter.getFeederState().toString());
-                
+                // shooterBeamBreak.setBoolean(mShooter.getSensorState());
+                // shooterActualPercent.setDouble(truncate(mShooter.getMasterMotorSpeed()));
+                // shooterState.setString(mShooter.getShooterState().toString());
+                // feederActualPercent.setDouble(truncate(mShooter.getFeederMotorSpeed()));
+                // feederState.setString(mShooter.getFeederState().toString());
 
                 /* LEDS */
                 // currentAnimation.setString(mLed.getCurrentAnimation().toString());

@@ -47,7 +47,7 @@ public class FeederCommand extends Command {
   @Override
   public void end(boolean interrupted) {
     mFeederSubsystem.setFeederState(FeederState.STOP_WAIT_A_SEC);
-    mFeederSubsystem.stopShMotors();
+    // mFeederSubsystem.stopShMotors();
   }
 
   @Override

@@ -113,7 +113,7 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
-      ;
+
       m_autonomousCommand.schedule();
     }
   }
