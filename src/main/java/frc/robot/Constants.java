@@ -236,12 +236,11 @@ public class Constants implements Loggable {
 
         // NOT USED
         /** unit: rps */
-        public static final double FORWARD_VELOCITY = (2600 / 60) * 1.7; 
+        public static final double FORWARD_VELOCITY = (2600 / 60) * 1.7;
         /** unit: rps */
         public static final double REVERSE_VELOCITY = (-2600 / 60) * 1.7;
         /** unit: rps */
         public static final double FEEDER_VELOCITY = -3000 / 60;
-
 
         /** unit: percent */
         public static final double FORWARD_PERCENT = 9;
@@ -303,7 +302,7 @@ public class Constants implements Loggable {
         public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
-        public static final int BEAM_BREAK_ID = 4; 
+        public static final int BEAM_BREAK_ID = 4;
 
         public static final double kMinOutput = -1;
         public static final double kMaxOutput = 1;
@@ -338,8 +337,8 @@ public class Constants implements Loggable {
     }
 
     public static final class TelescopicConstants {
-        public static final int MASTER_MOTOR_ID = 40; // TODO: Config
-        public static final int SLAVE_MOTOR_ID = 41; // TODO: Config
+        public static final int MASTER_MOTOR_ID = 17; // TODO: Config
+        public static final int SLAVE_MOTOR_ID = 18; // TODO: Config
 
         public static final int TELESCOPIC_GEAR_RATIO = 144 / 11 / 1;
 
@@ -353,6 +352,7 @@ public class Constants implements Loggable {
         public static final double TELESCOPIC_MOTION_TIMEOUT = 0;
         public static final double TELESCOPIC_RESET = 0;
         public static final double TELESCOPIC_TOLERANCE = 1;
+        public static final boolean IS_INVERTED = true;
 
     }
 

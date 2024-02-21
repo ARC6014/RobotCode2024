@@ -78,8 +78,7 @@ public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
 
-        // private final TelescopicSubsystem mTelescopic =
-        // TelescopicSubsystem.getInstance();
+        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
@@ -97,8 +96,8 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        // private final TelescopicOpenLoop telescopicOpenLoop = new
-        // TelescopicOpenLoop(mTelesopic, () -> mOperator.getRightY());
+        private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
+                        () -> mOperator.getRightY());
 
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
@@ -165,7 +164,7 @@ public class RobotContainer implements Loggable {
 
                 mDrive.setDefaultCommand(driveByJoystick);
 
-                // mTelescopic.setDefaultCommand(telescopicOpenLoop);
+                mTelescopic.setDefaultCommand(telescopicOpenLoop);
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();
                 LiveWindow.setEnabled(false);
@@ -273,7 +272,7 @@ public class RobotContainer implements Loggable {
                 /* COMMAND GROUPS */
                 mOperator.rightBumper().onTrue(openWristStartIntake);
                 mOperator.leftBumper().onTrue(
-                        closeWristStopIntakeArmIntake.andThen(new WaitCommand(1)).andThen(startStopFeeder));
+                                closeWristStopIntakeArmIntake.andThen(new WaitCommand(1)).andThen(startStopFeeder));
 
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
@@ -315,7 +314,7 @@ public class RobotContainer implements Loggable {
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
                 // mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
-                //                 mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
+                // mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
         }
 
         /**

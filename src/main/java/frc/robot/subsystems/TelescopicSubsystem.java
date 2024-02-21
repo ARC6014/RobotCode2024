@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
 
-
 public class TelescopicSubsystem extends SubsystemBase {
 
   private TalonFX m_master = new TalonFX(TelescopicConstants.MASTER_MOTOR_ID, Constants.RIO_CANBUS);
@@ -27,14 +26,13 @@ public class TelescopicSubsystem extends SubsystemBase {
   private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
 
   private final DutyCycleOut m_percentOut = new DutyCycleOut(0, false, false, false, false);
-  private double targetOutput = 0; 
+  private double targetOutput = 0;
 
   /** units: cm */
   private double setpoint = 0;
 
   /** units: cm */
   private final double sprocketCircumference = 0;
-
 
   public enum TelescopicState {
     ZERO,
@@ -62,12 +60,12 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.Voltage.PeakReverseVoltage = -12;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
-    configs.MotionMagic.MotionMagicAcceleration = TelescopicConstants.TELESCOPIC_MOTION_ACCEL; 
-    configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL; 
+    configs.MotionMagic.MotionMagicAcceleration = TelescopicConstants.TELESCOPIC_MOTION_ACCEL;
+    configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
     // TODO: Configure whether inverted!
-    m_slave.setControl(new Follower(m_master.getDeviceID(), false));
+    m_slave.setControl(new Follower(m_master.getDeviceID(), TelescopicConstants.IS_INVERTED));
 
     zeroEncoder();
     setBreakMode();
@@ -135,7 +133,8 @@ public class TelescopicSubsystem extends SubsystemBase {
   }
 
   public double getHeight() {
-    double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble() + m_slave.getRotorPosition().getValueAsDouble()) / 2
+    double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble()
+        + m_slave.getRotorPosition().getValueAsDouble()) / 2
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
     return sprocketRotation * sprocketCircumference;
   }
