@@ -53,6 +53,7 @@ import frc.robot.commands.telescopic.TelescopicStateCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
@@ -87,6 +88,7 @@ public class RobotContainer implements Loggable {
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
+        private final LimelightSubsystem mLL = LimelightSubsystem.getInstance();
 
         public static PowerDistribution mPDH = new PowerDistribution();
 
@@ -233,6 +235,8 @@ public class RobotContainer implements Loggable {
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
+
+                mOperator.a().onTrue(new AllignWithLL(4));
 
         }
 

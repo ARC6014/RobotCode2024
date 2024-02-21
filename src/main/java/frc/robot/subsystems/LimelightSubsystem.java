@@ -26,9 +26,9 @@ public class LimelightSubsystem extends SubsystemBase {
   private NetworkTableEntry tBotPose_target;
   private NetworkTableEntry tId;
 
-  private double[] mBotPoseArray_field;
-  private double[] mCamPoseArray_target;
-  private double[] mBotPoseArray_target;
+  private double[] mBotPoseArray_field = new double [7];
+  private double[] mCamPoseArray_target = new double [6];
+  private double[] mBotPoseArray_target = new double [6];
 
   private Pose3d mBotPose3d_field;
   private Pose3d mCamPose3d_target;
@@ -52,7 +52,7 @@ public class LimelightSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("LL X", mCamPose3d_target.getX());
     SmartDashboard.putNumber("LL Y", mCamPose3d_target.getY());
-    SmartDashboard.putNumber("LL Z", (mCamPose3d_target.getZ()* (1.00/1.05) ));
+    SmartDashboard.putNumber("LL Z", (mCamPose3d_target.getZ()));
     SmartDashboard.putNumber("LL Theta", Units.radiansToDegrees(mCamPose3d_target.getRotation().getZ()));
     SmartDashboard.putNumber("Tag ID", mId);
   }
