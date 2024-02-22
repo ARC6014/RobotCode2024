@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +19,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -59,6 +61,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private double[] angleDesired = new double[4];
 
   WPI_Pigeon2 mGyro = new WPI_Pigeon2(Constants.Pigeon2CanID, Constants.CANIVORE_CANBUS);
+  LimelightSubsystem mLL = LimelightSubsystem.getInstance();
 
   private boolean isLocked = false;
 
@@ -151,6 +154,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     // This method will be called once per scheduler run
 
     updateOdometry();
+    updatePoseEstimatorWithVisionBotPose();
     poseEstimator.update(
         getRotation2d(),
         getModulePositions());
@@ -446,4 +450,36 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     return driveVelocityAverage / 4.0;
   }
 
+  public void updatePoseEstimatorWithVisionBotPose() {
+    if (mLL.getBotPose2d_field().getX() == 0.0) { //invalid LL data
+      return;
+    }
+
+    // distance from current pose to vision estimated pose
+    double poseDifference = poseEstimator.getEstimatedPosition().getTranslation()
+        .getDistance(mLL.getBotPose2d_field().getTranslation());
+
+    if (mLL.getID() != 0 || mLL.getID()!= -1) { // is ID valid // needs to be updated, there are more conditions
+          double xyStds;
+          double degStds;
+
+          if (mLL.getNumTargets() >= 2) { // trust for multiple tags
+            xyStds = 0.5;
+            degStds = 6;
+          }
+          else if (mLL.getArea() > 0.8 && poseDifference < 0.5) { // trust for 1 close target
+            xyStds = 1.0;
+            degStds = 12;
+          }
+          else if (mLL.getArea() > 0.1 && poseDifference < 0.3) { // trust for 1 far target
+            xyStds = 2.0;
+            degStds = 30;
+          }
+          else { // don't meet conditions
+            return;
+          }
+      poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
+      poseEstimator.addVisionMeasurement(mLL.getBotPose2d_field(), Timer.getFPGATimestamp() - mLL.getLatency()/1000.0);
+    }
+  }
 }

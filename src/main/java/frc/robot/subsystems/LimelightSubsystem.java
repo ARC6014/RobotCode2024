@@ -38,7 +38,12 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d mCamPose2d_target;
   private Pose2d mBotPose2d_target;
 
-  private double mId;
+  private int mId;
+
+  private String fullJson;
+
+  private double mArea;
+  private double mLatency;
 
   private static LimelightSubsystem mLL;
 
@@ -76,8 +81,13 @@ public class LimelightSubsystem extends SubsystemBase {
     mBotPose3d_target = DoubleArrayToPose3d(mBotPoseArray_target);
     mCamPose3d_target = DoubleArrayToPose3d(mCamPoseArray_target);
 
-    mId = tId.getDouble(0);
+    mId = (int) tId.getDouble(0);
 
+    fullJson = tLL.getEntry("json").getString("");
+
+    mArea = tLL.getEntry("ta").getDouble(0);
+
+    mLatency = mBotPoseArray_field[6];
   }
 
   private static Pose3d DoubleArrayToPose3d(double[] inData){
@@ -114,8 +124,26 @@ public class LimelightSubsystem extends SubsystemBase {
     return mCamPose2d_target;
   }
 
-  public double getID(){
+  public int getID(){
     return mId;
+  }
+
+  public int getNumTargets(){
+    int occurrences = 0;
+    for (int i = 0; i < fullJson.length()-4; i++) {
+      if (fullJson.substring(i, i+3).equals("pts")) {
+          occurrences++;
+      }
+    }
+    return occurrences;
+  }
+
+  public double getArea(){
+    return mArea;
+  }
+
+  public double getLatency(){
+    return mLatency;
   }
 
   public static LimelightSubsystem getInstance() {
