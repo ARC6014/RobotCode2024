@@ -13,12 +13,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.shooter.ShooterCommand;
+import frc.robot.subsystems.AddressableLEDSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.CANdleLed.AnimationTypes;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.shuffleboard.ShuffleBoardInteractions;
 import io.github.oblarg.oblog.Logger;
@@ -87,13 +87,13 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-
-    // CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
+    // CANdleLed.getInstance().setPinkStrobe();
 
   }
 
   @Override
   public void disabledPeriodic() {
+
   }
 
   /**

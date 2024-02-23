@@ -360,8 +360,9 @@ public class Constants implements Loggable {
     }
 
     public static final class LEDConstants {
-        public static final int BUFFER_LENGTH = 15; // TODO: set led length
-        public static final int CANDLE_ID = 43; // TODO: config
+        public static final int BUFFER_LENGTH = 30; // TODO: set led length
+        public static final int PWM_PORT = 0; // TODO: Config
+        public static final int CANDLE_ID = 43; 
     }
 
     public class LLConstants {
