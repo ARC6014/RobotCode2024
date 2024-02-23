@@ -24,8 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  // private DigitalInput m_beamBreaker = new
-  // DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -205,8 +204,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /** returns true for no object */
   public boolean getSensorState() {
-    // return m_beamBreaker.get();
-    return false;
+    return m_beamBreaker.get();
   }
 
   public FeederState getFeederState() {
