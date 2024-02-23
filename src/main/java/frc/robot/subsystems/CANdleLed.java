@@ -1,139 +1,152 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.led.CANdle.LEDStripType;
-import com.ctre.phoenix.led.CANdle.VBatOutputMode;
-import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.ColorFlowAnimation;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.led.LarsonAnimation;
-import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 import com.ctre.phoenix.led.RainbowAnimation;
-import com.ctre.phoenix.led.RgbFadeAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
-import com.ctre.phoenix.led.TwinkleAnimation;
-import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
-import com.ctre.phoenix.led.TwinkleOffAnimation;
-import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
+import com.ctre.phoenix.led.CANdle.LEDStripType;
+import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.ColorFlowAnimation.Direction;
+import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.LEDConstants;
 
-public class CANdleLed extends SubsystemBase {
-    /** Creates a new CANdle. */
-    private static CANdleLed m_instance = new CANdleLed();
 
-    private final CANdle m_candle = new CANdle(Constants.LEDConstants.CANDLE_ID, "rio");
+public class CANdleLed {
+    private static CANdleLed instance = new CANdleLed();
+    CANdle candle;
+    CANdleConfiguration config;
+    RainbowAnimation rainbowAnim;
+    StrobeAnimation strobeAnim;
+    StrobeAnimation pinkStrobe;
+    StrobeAnimation purpleStrobe;
+    StrobeAnimation yellowStrobe;
+    LarsonAnimation larsonAnim;
+    FireAnimation FIREEE;
+    ColorFlowAnimation colorFLow;
+    SingleFadeAnimation orangeFade;
 
-    private Animation m_toAnimate = null;
 
-    public enum AnimationTypes {
-        ColorFlow,
-        Fire,
-        Larson,
-        Rainbow,
-        RgbFade,
-        SingleFade,
-        Strobe,
-        Twinkle,
-        TwinkleOff,
-        SetAll,
-        Amplified,
-        Default,
-        Speaker,
-        AMP,
+    public CANdleLed(){
+        candle = new CANdle(LEDConstants.CANDLE_ID);
+        configSettings();
+
     }
 
-    private AnimationTypes m_currentAnimation;
+    public static CANdleLed getInstance(){
+        return instance;
+    }
 
-    public CANdleLed() {
-        CANdleConfiguration config = new CANdleConfiguration();
+    public void setRainbow(){
+        candle.animate(rainbowAnim);
+    }
+
+    public void setStrobe(){
+        candle.animate(strobeAnim);
+    }
+
+
+    public void setPinkStrobe(){
+        candle.animate(pinkStrobe);
+    }
+
+    public void setPurpleStrobe(){
+        candle.animate(purpleStrobe);
+    }
+
+    public void setYellowStrobe(){
+        candle.animate(yellowStrobe);
+    }
+
+    public void setGreenStrobe(){
+        candle.animate(strobeAnim);
+    }
+
+    public void setPewPew(){
+        candle.animate(larsonAnim);
+    }
+
+    public void offAnim(){
+        candle.clearAnimation(0);
+    }
+
+    public void setRed(){
+        candle.setLEDs(255, 0, 0);
+    }
+
+    public void setGreen(){
+        candle.setLEDs(0, 255, 0);
+    }
+
+    public void setBlue(){
+        candle.setLEDs(0, 0, 255);
+    }
+
+    public void setYellow(){
+        offAnim();
+        candle.setLEDs(255, 100, 0);
+        config.brightnessScalar = 1;
+        candle.configAllSettings(config);
+    }
+
+    public void setOrange(){
+         
+        offAnim();
+        config.brightnessScalar = 1;
+        candle.configAllSettings(config);
+        candle.setLEDs(255, 25, 0);
+        
+    }
+
+    public void setOrangeFade(){
+        
+        candle.animate(orangeFade);
+    }
+
+
+
+    public void setOff(){
+        offAnim();
+        candle.setLEDs(0, 0, 0);
+    }
+
+
+
+    public void setPurple(){
+        offAnim();
+        candle.setLEDs(255, 0, 50);
+        config.brightnessScalar = 1;
+        candle.configAllSettings(config);
+    }
+
+    public ErrorCode getLastError(){
+        return candle.getLastError();
+    }
+    private void configSettings(){
+        config = new CANdleConfiguration();
+        candle.configFactoryDefault();
+        config.stripType = LEDStripType.RGB;
+
+        config.brightnessScalar = .5;
+        candle.setLEDs(255, 255, 255);
+        candle.clearAnimation(0);
+        rainbowAnim = new RainbowAnimation(1, 0.85, LEDConstants.BUFFER_LENGTH);
+        strobeAnim = new StrobeAnimation(0, 255, 0, 0, 0, LEDConstants.BUFFER_LENGTH);
+        pinkStrobe = new StrobeAnimation(255, 0, 255, 0, 0, LEDConstants.BUFFER_LENGTH);
+        yellowStrobe = new StrobeAnimation(255, 100, 0, 0 , 0, LEDConstants.BUFFER_LENGTH);
+        purpleStrobe = new StrobeAnimation(255, 0, 50, 0, 0, LEDConstants.BUFFER_LENGTH, 300);
+        FIREEE = new FireAnimation(1, 1, LEDConstants.BUFFER_LENGTH, 0.5, 0.5);
+        colorFLow = new ColorFlowAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH, Direction.Forward, 0);
+        larsonAnim = new LarsonAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH, BounceMode.Back, 25);
+        orangeFade = new SingleFadeAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH);
         config.statusLedOffWhenActive = true;
         config.disableWhenLOS = false;
-        config.stripType = LEDStripType.RGB;
-        config.brightnessScalar = 0.1;
-        config.vBatOutputMode = VBatOutputMode.Modulated;
-        m_candle.configAllSettings(config, 100);
-        changeAnimation(AnimationTypes.SetAll);
-
-    }
-
-    public void changeAnimation(AnimationTypes toChange) {
-        m_currentAnimation = toChange;
-
-        switch (toChange) {
-            case ColorFlow:
-                m_toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, Constants.LEDConstants.BUFFER_LENGTH,
-                        Direction.Forward);
-                break;
-            case Fire:
-                m_toAnimate = new FireAnimation(0.5, 0.7, Constants.LEDConstants.BUFFER_LENGTH, 0.7, 0.5);
-                break;
-            case Larson:
-                m_toAnimate = new LarsonAnimation(0, 255, 46, 0, 1, Constants.LEDConstants.BUFFER_LENGTH,
-                        BounceMode.Front, 3);
-                break;
-            case Rainbow:
-                m_toAnimate = new RainbowAnimation(1, 0.1, Constants.LEDConstants.BUFFER_LENGTH);
-                break;
-            case RgbFade:
-                m_toAnimate = new RgbFadeAnimation(0.7, 0.4, Constants.LEDConstants.BUFFER_LENGTH);
-                break;
-            case SingleFade:
-                m_toAnimate = new SingleFadeAnimation(50, 2, 200, 0, 0.5, Constants.LEDConstants.BUFFER_LENGTH);
-                break;
-            case Strobe:
-                m_toAnimate = new StrobeAnimation(240, 10, 180, 0, 98.0 / 256.0, Constants.LEDConstants.BUFFER_LENGTH);
-                break;
-            case Twinkle:
-                m_toAnimate = new TwinkleAnimation(30, 70, 60, 0, 0.4, Constants.LEDConstants.BUFFER_LENGTH,
-                        TwinklePercent.Percent6);
-                break;
-            case TwinkleOff:
-                m_toAnimate = new TwinkleOffAnimation(70, 90, 175, 0, 0.8, Constants.LEDConstants.BUFFER_LENGTH,
-                        TwinkleOffPercent.Percent100);
-                break;
-            case SetAll:
-                m_toAnimate = null;
-                break;
-            case Default: // orange
-                m_toAnimate = new ColorFlowAnimation(255, 140, 0, 0, 0.7, LEDConstants.BUFFER_LENGTH,
-                        Direction.Forward);
-            case Speaker:
-                m_toAnimate = new ColorFlowAnimation(34, 139, 34, 0, 0.7, LEDConstants.BUFFER_LENGTH,
-                        Direction.Forward);
-            case AMP:
-                m_toAnimate = new ColorFlowAnimation(255, 0, 0, 0, 0.7, LEDConstants.BUFFER_LENGTH, Direction.Forward);
-            case Amplified:
-                m_toAnimate = new RainbowAnimation(1, 0.5, LEDConstants.BUFFER_LENGTH);
-
-        }
-        System.out.println("Changed to " + m_currentAnimation.toString());
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        if (m_toAnimate == null) {
-            m_candle.setLEDs(255, 192, 203);
-        } else {
-            m_candle.animate(m_toAnimate);
-        }
-    }
-
-    public AnimationTypes getCurrentAnimation() {
-        return m_currentAnimation;
-    }
-
-    public static CANdleLed getInstance() {
-        return m_instance;
+        config.vBatOutputMode = VBatOutputMode.Off;
+        candle.configAllSettings(config);
     }
 }

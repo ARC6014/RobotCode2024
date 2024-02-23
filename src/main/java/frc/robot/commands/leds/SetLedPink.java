@@ -4,26 +4,25 @@
 
 package frc.robot.commands.leds;
 
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CANdleLed;
-import frc.robot.subsystems.CANdleLed.AnimationTypes;
 
-public class Party extends Command {
-  /** Creates a new Party. */
-  public Party() {
+public class SetLedPink extends Command {
+  /** Creates a new SetLedPink. */
+  public SetLedPink() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    CANdleLed.getInstance().changeAnimation(AnimationTypes.Rainbow);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    CANdleLed.getInstance().setPinkStrobe();
+    System.out.println("Executing set pink");
+  }
 
   // Called once the command ends or is interrupted.
   @Override

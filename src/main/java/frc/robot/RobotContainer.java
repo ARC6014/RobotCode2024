@@ -44,6 +44,7 @@ import frc.robot.commands.intake.IntakeSetStatePID;
 import frc.robot.commands.intake.IntakeStopAtBeambreak;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
+import frc.robot.commands.leds.SetLedPink;
 import frc.robot.commands.shooter.FeederCommand;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
@@ -226,6 +227,7 @@ public class RobotContainer implements Loggable {
                                 new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
                 mDriver.povUp().whileTrue(new TelescopicStateCommand().withShooterState(TelescopicState.STOP));
                 // mOperator.rightStick().onTrue(telescopicOpenLoop);
+
 
                 /* COMMAND GROUPS */
                 mOperator.rightBumper().onTrue(openWristStartIntake);
