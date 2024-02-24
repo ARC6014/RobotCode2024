@@ -12,6 +12,7 @@ import com.ctre.phoenix.sensors.WPI_Pigeon2;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -169,6 +170,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     // getDriveMotors().get(2).getMotorOutputVoltage());
     // SmartDashboard.putNumber("Swerve Voltage 3",
     // getDriveMotors().get(3).getMotorOutputVoltage());
+
+    SmartDashboard.putNumber("Robot X", poseEstimator.getEstimatedPosition().getX());
+    SmartDashboard.putNumber("Robot Y", poseEstimator.getEstimatedPosition().getY());
+    SmartDashboard.putNumber("Robot tetha", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
 
   }
 
