@@ -19,16 +19,12 @@ import frc.team6014.lib.math.Conversions;
 public class ShooterSubsystem extends SubsystemBase {
 
   /* MOTORS */
-  // private CANSparkMax m_master = new
-  // CANSparkMax(ShooterConstants.MASTER_MOTOR_ID, MotorType.kBrushless);
-  // private CANSparkMax m_slave = new
-  // CANSparkMax(ShooterConstants.SLAVE_MOTOR_ID, MotorType.kBrushless);
-  // private CANSparkMax m_feeder = new
-  // CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
+  private CANSparkMax m_master = new CANSparkMax(ShooterConstants.MASTER_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax m_slave = new CANSparkMax(ShooterConstants.SLAVE_MOTOR_ID, MotorType.kBrushless);
+  private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  // private DigitalInput m_beamBreaker = new
-  // DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -40,7 +36,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private FeederState m_feederState;
 
   double feeder_out;
-  double shooter_out;
+  double shooter_slave_out;
+  double shooter_master_out;
 
   public enum ShooterState {
     OPEN_LOOP,
@@ -62,50 +59,54 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
 
     feeder_out = 0.0;
-    shooter_out = 0.0;
+    shooter_master_out = 0.0;
+    shooter_slave_out = 0.0;
+
 
     m_shootState = ShooterState.CLOSED;
     m_feederState = FeederState.STOP_WAIT_A_SEC;
 
-    // m_master.restoreFactoryDefaults();
-    // m_slave.restoreFactoryDefaults();
-    // m_feeder.restoreFactoryDefaults();
+    m_master.restoreFactoryDefaults();
+    m_slave.restoreFactoryDefaults();
+    m_feeder.restoreFactoryDefaults();
 
-    // m_master.setSmartCurrentLimit(65);
-    // m_slave.setSmartCurrentLimit(65);
-    // // m_feeder.setSmartCurrentLimit(25);
-    // m_master.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
-    // m_slave.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
+    m_master.setSmartCurrentLimit(65);
+    m_slave.setSmartCurrentLimit(65);
+    // m_feeder.setSmartCurrentLimit(25);
+    m_master.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
+    m_slave.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
 
-    // m_masterPIDController = m_master.getPIDController();
-    // m_slavePIDController = m_slave.getPIDController();
+    m_masterPIDController = m_master.getPIDController();
+    m_slavePIDController = m_slave.getPIDController();
 
-    // m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
+    m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
 
-    // // PID coefficients
-    // kMaxOutput = ShooterConstants.kMaxOutput;
-    // kMinOutput = ShooterConstants.kMinOutput;
+    // PID coefficients
+    kMaxOutput = ShooterConstants.kMaxOutput;
+    kMinOutput = ShooterConstants.kMinOutput;
 
-    // m_masterPIDController.setOutputRange(kMinOutput, kMaxOutput);
-    // m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);
+    m_masterPIDController.setOutputRange(kMinOutput, kMaxOutput);
+    m_slavePIDController.setOutputRange(kMinOutput, kMaxOutput);
 
-    // // save settings to flash
-    // m_master.setIdleMode(ShooterConstants.MASTER_MODE);
-    // m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
+    // save settings to flash
+    m_master.setIdleMode(ShooterConstants.MASTER_MODE);
+    m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
 
-    // // slave should turn in opposite with the master
-    // m_slave.follow(m_master, true);
+    // slave should turn in opposite with the master
+    m_master.setInverted(true);
+    // m_slave.follow(m_master);
+    m_slave.setInverted(true);
 
-    // m_master.burnFlash();
-    // m_slave.burnFlash();
-    // m_feeder.burnFlash();
+    m_master.burnFlash();
+    m_slave.burnFlash();
+    m_feeder.burnFlash();
 
   }
 
-  // public boolean isShooterStopped() {
-  // double rpm = m_master.getEncoder().getVelocity();
-  // return rpm < 10;
-  // }
+  public boolean isShooterStopped() {
+    double rpm = m_master.getEncoder().getVelocity();
+    return rpm < 10;
+  }
 
   @Override
   public void periodic() {
@@ -150,14 +151,15 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
     }
 
-    // setShooterMotorSpeed(shooter_out);
-    // setFeederMotorSpeed(feeder_out);
+    setShooterMotorSpeed();
+    setFeederMotorSpeed(feeder_out);
 
-    // SmartDashboard.putNumber("SH-Master RPM",
-    // m_master.getEncoder().getVelocity());
-    // SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
-    // SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
-    // SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
+    SmartDashboard.putNumber("SH-Master RPM",
+        m_master.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
+    SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
+    SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
 
   }
 
@@ -170,10 +172,10 @@ public class ShooterSubsystem extends SubsystemBase {
     m_feederState = newState;
   }
 
-  // public void setFeederMotorSpeed(double percentOutput) {
-  // m_feeder.set(percentOutput);
+  public void setFeederMotorSpeed(double percentOutput) {
+    m_feeder.set(percentOutput);
 
-  // }
+  }
 
   public void setFeederOUT(double percentOutput) {
     var optimalOut = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
@@ -181,14 +183,17 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setShooterOut(double percentOutput) {
-    var optimalOut = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
-    this.shooter_out = optimalOut;
+    var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+    var optimalOutSlave = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+
+    this.shooter_master_out = optimalOutMaster;
+    this.shooter_slave_out = optimalOutSlave;
   }
 
-  // public void setShooterMotorSpeed(double percentOutput) {
-  // m_master.set(percentOutput);
-  // m_slave.set(percentOutput);
-  // }
+  public void setShooterMotorSpeed() {
+    m_master.set(shooter_master_out);
+    m_slave.set(shooter_slave_out);
+  }
 
   /** unit: rot per minute */
   public void setShooterMotorsRPM(double rpm) {
@@ -198,18 +203,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Getters
 
-  // public double getMasterMotorSpeed() {
-  // return m_master.get();
-  // }
+  public double getMasterMotorSpeed() {
+    return m_master.get();
+  }
 
-  // public double getFeederMotorSpeed() {
-  // return m_feeder.get();
-  // }
+  public double getFeederMotorSpeed() {
+    return m_feeder.get();
+  }
 
   /** returns true for no object */
   public boolean getSensorState() {
-    // return m_beamBreaker.get();
-    return false;
+    return m_beamBreaker.get();
   }
 
   public FeederState getFeederState() {
@@ -220,23 +224,26 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_shootState;
   }
 
-  public double getShooterPercentTarget() {
-    return shooter_out;
+  public double getShooterPercentTargetMaster() {
+    return shooter_master_out;
+  }
+  public double getShooterPercentTargetSlave() {
+    return shooter_slave_out;
   }
 
   public double getFeederPercentTarget() {
     return feeder_out;
   }
 
-  // public void stopShMotors() {
-  // setShooterMotorSpeed(0);
-  // m_master.stopMotor();
-  // m_slave.stopMotor();
-  // }
+  public void stopShMotors() {
+    // setShooterMotorSpeed(0);
+    m_master.stopMotor();
+    m_slave.stopMotor();
+  }
 
-  // public void stopFeederMotor() {
-  // m_feeder.stopMotor();
-  // }
+  public void stopFeederMotor() {
+    m_feeder.stopMotor();
+  }
 
   public static ShooterSubsystem getInstance() {
     if (m_instance == null) {

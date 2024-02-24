@@ -4,21 +4,15 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
-import frc.robot.subsystems.CANdleLed.AnimationTypes;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.shuffleboard.ShuffleBoardInteractions;
 import io.github.oblarg.oblog.Logger;
@@ -87,13 +81,13 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-
-    // CANdleLed.getInstance().changeAnimation(AnimationTypes.RgbFade);
+    // CANdleLed.getInstance().setPinkStrobe();
 
   }
 
   @Override
   public void disabledPeriodic() {
+
   }
 
   /**
@@ -105,7 +99,7 @@ public class Robot extends TimedRobot {
     // DriveSubsystem.getInstance().resetOdometry(Rotation2d.fromDegrees(180));
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
-    ArmSubsystem.getInstance().resetToAbsolute();
+    // ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -113,7 +107,6 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
-
       m_autonomousCommand.schedule();
     }
   }
@@ -124,13 +117,18 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void autonomousExit() {
+    ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
+  }
+
+  @Override
   public void teleopInit() {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
-    ArmSubsystem.getInstance().resetToAbsolute();
+    // ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
   }
 
