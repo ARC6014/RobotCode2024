@@ -477,9 +477,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       } else if (mLL.getArea() > 0.1 && poseDifference < 0.3) { // trust for 1 far target
         xyStds = 2.0;
         degStds = 30;
-      } else { // don't meet conditions
+      } else { // no trust
         return;
-      }
+      } 
+      
       poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
       poseEstimator.addVisionMeasurement(mLL.getBotPose2d_field(),
           Timer.getFPGATimestamp() - mLL.getLatency() / 1000.0);
