@@ -80,7 +80,9 @@ public class ArmSubsystem extends SubsystemBase {
     HOLD,
     /** zero position with respect to hard stop */
     ZERO,
-    POSE_T
+    /** interpolation */
+    POSE_T,
+
   }
 
   public ArmSubsystem() {
@@ -181,6 +183,9 @@ public class ArmSubsystem extends SubsystemBase {
       case AMP:
         setArmAngleMotionMagic(ArmConstants.AMP);
         break;
+      case POSE_T:
+          setArmAngleMotionMagic(getAngleFromPoseTable());
+          break;
       case INTAKE:
         setArmAngleMotionMagic(ArmConstants.INTAKE);
         break;

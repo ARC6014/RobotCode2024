@@ -22,6 +22,7 @@ public class AddressableLEDSubsystem extends SubsystemBase implements Loggable {
   public AddressableLEDSubsystem() {
     mLED.setLength(mLEDBuffer.getLength());
     mLED.start();
+    mLED.setData(mLEDBuffer);
   }
 
   @Override
@@ -29,9 +30,13 @@ public class AddressableLEDSubsystem extends SubsystemBase implements Loggable {
     // This method will be called once per scheduler run
     if (RobotState.isDisabled()) {
       setLEDColor(Color.kPink);
+    } else if (RobotState.isEnabled()) {
+      setLEDColor(Color.kAqua);
+    } else {
+      turnOffLED();
     }
 
-    setLEDTailColor(Color.kBlack);
+    // setLEDTailColor(Color.kBlack);
   }
 
   public void setLEDColor(Color color) {
@@ -42,13 +47,16 @@ public class AddressableLEDSubsystem extends SubsystemBase implements Loggable {
 
   }
 
-  public void setLEDTailColor(Color color) {
-    for (int i = mLEDBuffer.getLength() - 1; i >= mLEDBuffer.getLength() - 5; i--) {
-      mLEDBuffer.setLED(i, color);
-    }
-    mLED.setData(mLEDBuffer);
-
-  }
+  /*
+   * public void setLEDTailColor(Color color) {
+   * for (int i = mLEDBuffer.getLength() - 1; i >= mLEDBuffer.getLength() - 5;
+   * i--) {
+   * mLEDBuffer.setLED(i, color);
+   * }
+   * mLED.setData(mLEDBuffer);
+   * 
+   * }
+   */
 
   public void turnOffLED() {
     setLEDColor(Color.kBlack);

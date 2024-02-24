@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
     // DriveSubsystem.getInstance().resetOdometry(Rotation2d.fromDegrees(180));
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
-    ArmSubsystem.getInstance().resetToAbsolute();
+    // ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     }
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
-    ArmSubsystem.getInstance().resetToAbsolute();
+    // ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
   }
 
