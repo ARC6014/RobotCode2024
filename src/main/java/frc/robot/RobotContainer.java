@@ -80,7 +80,7 @@ public class RobotContainer implements Loggable {
 
         public static PowerDistribution mPDH = new PowerDistribution();
 
-        private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem(LEDConstants.PWM_PORT);
+        private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem().getInstance();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -91,11 +91,14 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        // private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic, () -> mOperator.getRightY());
+        // private final TelescopicOpenLoop telescopicOpenLoop = new
+        // TelescopicOpenLoop(mTelescopic, () -> mOperator.getRightY());
 
         private DriveByJoystick driveByJoystick;
-        // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
-        // private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
+        // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
+        // -mOperator.getLeftY());
+        // private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () ->
+        // mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
         // ---------------------- TELEOP COMMANDS ---------------------- //
@@ -113,11 +116,11 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup startStopFeeder = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT).withTimeout(0.1),
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.1));
-        
+
         private final ParallelDeadlineGroup startStopFeederBeamBreak = new ParallelDeadlineGroup(
-                new FeederStopAtBeambreak(), // this is the deadline
-                new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
-                new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
+                        new FeederStopAtBeambreak(), // this is the deadline
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
+                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
@@ -193,7 +196,7 @@ public class RobotContainer implements Loggable {
                 LiveWindow.setEnabled(false);
 
                 configureNamedCommands();
-                configureButtonBindings();
+                configureButtonBindingsAlper();
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
@@ -214,10 +217,10 @@ public class RobotContainer implements Loggable {
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                /** 
-                 * MANUAL 
-                 * METHODS 
-                */
+                /**
+                 * MANUAL
+                 * METHODS
+                 */
                 // Shooter - Feeder
                 mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
                 mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
@@ -240,7 +243,6 @@ public class RobotContainer implements Loggable {
                 mDriver.povUp().whileTrue(new TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
                 // mOperator.rightStick().onTrue(telescopicOpenLoop);
 
-
                 /* COMMAND GROUPS */
                 // Intake
                 mOperator.rightBumper().onTrue(openWristStartIntake);
@@ -258,7 +260,6 @@ public class RobotContainer implements Loggable {
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
-
 
         }
 
@@ -313,7 +314,6 @@ public class RobotContainer implements Loggable {
                 NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
                 NamedCommands.registerCommand("Feed", startStopFeeder);
-
 
                 NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", AUTOsetArmFeedAndShootSpeakerShort);
