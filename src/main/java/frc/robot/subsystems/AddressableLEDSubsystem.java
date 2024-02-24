@@ -9,21 +9,17 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.LEDConstants;
 
 public class AddressableLEDSubsystem extends SubsystemBase {
   /** Creates a new AddressableLED. */
   private static AddressableLED mLED;
   private static AddressableLEDBuffer mLEDBuffer;
-  private static int pwmPort = LEDConstants.PWM_PORT;
-  private static AddressableLEDSubsystem mInstance = new AddressableLEDSubsystem(pwmPort);
 
   public AddressableLEDSubsystem(int pwmPort) {
     mLED = new AddressableLED(pwmPort);
     mLEDBuffer = new AddressableLEDBuffer(LEDConstants.BUFFER_LENGTH);
     mLED.setLength(mLEDBuffer.getLength());
-
     mLED.start();
   }
 
@@ -58,8 +54,4 @@ public class AddressableLEDSubsystem extends SubsystemBase {
     setLEDColor(Color.kBlack);
     mLED.setData(mLEDBuffer);
   }
-
-  public static AddressableLEDSubsystem getInstance(){
-    return mInstance;
-}
 }

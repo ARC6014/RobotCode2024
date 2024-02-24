@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
-import frc.team6014.lib.math.Conversions;
 
 public class TelescopicSubsystem extends SubsystemBase {
 
@@ -35,9 +34,14 @@ public class TelescopicSubsystem extends SubsystemBase {
   NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
   public enum TelescopicState {
+    /* neutral - in brake */
     HOLD,
+    /* open loop control */
     OPEN_LOOP,
-    CLIMB, STOP
+    /* closed-loop motion magic */
+    CLIMB, 
+    /* stop motors */
+    STOP,
   }
 
   private TelescopicState telescopicState = TelescopicState.HOLD;
@@ -54,7 +58,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.Slot0.kI = TelescopicConstants.TELESCOPIC_CONTROLLER_KI;
     configs.Slot0.kD = TelescopicConstants.TELESCOPIC_CONTROLLER_KD;
 
-    configs.Slot0.kS = 0.32; // Add 0.25 V output to overcome static friction
+    configs.Slot0.kS = 0.32; 
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
@@ -83,11 +87,12 @@ public class TelescopicSubsystem extends SubsystemBase {
       case OPEN_LOOP:
         setMotorOutput();
         break;
+      case STOP:
+        stop();
       default:
         stop();
         break;
     }
-
     SmartDashboard.putNumber("Telescopic Height", getHeight());
     SmartDashboard.putString("State", getTelescopicState().toString());
     SmartDashboard.putBoolean("Is at zero?", isAtZero());
@@ -126,6 +131,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     targetOutput = percent;
   }
 
+  // this is probably wrong double-check
   public double getHeight() {
     double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble()
         + m_slave.getRotorPosition().getValueAsDouble()) / 2
@@ -140,6 +146,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     setpoint = target;
   }
 
+  // double check
   private void setHeightMotionMagic() {
     m_master.setControl(
         motionMagic.withPosition(

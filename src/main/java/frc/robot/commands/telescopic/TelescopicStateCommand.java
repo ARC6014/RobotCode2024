@@ -29,7 +29,7 @@ public class TelescopicStateCommand extends Command {
     return this;
   }
 
-  public TelescopicStateCommand withShooterState(TelescopicState state) {
+  public TelescopicStateCommand withTelescopicState(TelescopicState state) {
     this.state = state;
     return this;
   }

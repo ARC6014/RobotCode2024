@@ -4,16 +4,10 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.shooter.ShooterCommand;
-import frc.robot.subsystems.AddressableLEDSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.DriveSubsystem;
@@ -113,7 +107,6 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
-
       m_autonomousCommand.schedule();
     }
   }
@@ -121,6 +114,11 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+  }
+
+  @Override
+  public void autonomousExit() {
+    ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
   }
 
   @Override

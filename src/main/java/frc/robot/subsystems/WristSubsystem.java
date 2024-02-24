@@ -76,8 +76,11 @@ public class WristSubsystem extends SubsystemBase {
         configs.Voltage.PeakReverseVoltage = -12;
         configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
         configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
+
         configs.CurrentLimits.SupplyCurrentLimitEnable = true;
         configs.CurrentLimits.SupplyCurrentLimit = 60;
+        configs.CurrentLimits.StatorCurrentLimitEnable = true;
+        configs.CurrentLimits.StatorCurrentLimit = 60;
 
         configs.MotionMagic.MotionMagicAcceleration = WristConstants.WRIST_ACCELERATION;
         configs.MotionMagic.MotionMagicCruiseVelocity = WristConstants.WRIST_VELOCITY;
@@ -142,7 +145,6 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
-        // SmartDashboard.putString("I-W Idle Mode", kNeutralMode.toString());
         configs.Slot0.withKP(kWristP.get());
         configs.Slot0.withKI(kWristI.get());
         configs.Slot0.withKD(kWristD.get());
