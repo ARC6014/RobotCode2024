@@ -218,11 +218,11 @@ public class OperatorTab extends ShuffleboardTabBase {
                 intakeActualVelocity.setDouble(truncate(mIntake.getVelocity()));
 
                 /* SHOOTER + FEEDER */
-                // shooterBeamBreak.setBoolean(mShooter.getSensorState());
-                // shooterActualPercent.setDouble(truncate(mShooter.getMasterMotorSpeed()));
-                // shooterState.setString(mShooter.getShooterState().toString());
-                // feederActualPercent.setDouble(truncate(mShooter.getFeederMotorSpeed()));
-                // feederState.setString(mShooter.getFeederState().toString());
+                shooterBeamBreak.setBoolean(mShooter.getSensorState());
+                shooterActualPercent.setDouble(truncate(mShooter.getMasterMotorSpeed()));
+                shooterState.setString(mShooter.getShooterState().toString());
+                feederActualPercent.setDouble(truncate(mShooter.getFeederMotorSpeed()));
+                feederState.setString(mShooter.getFeederState().toString());
 
                 /* LEDS */
                 // currentAnimation.setString(mLed.getCurrentAnimation().toString());

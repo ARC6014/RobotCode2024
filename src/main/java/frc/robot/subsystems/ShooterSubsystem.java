@@ -36,7 +36,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private FeederState m_feederState;
 
   double feeder_out;
-  double shooter_out;
+  double shooter_slave_out;
+  double shooter_master_out;
 
   public enum ShooterState {
     OPEN_LOOP,
@@ -58,7 +59,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
 
     feeder_out = 0.0;
-    shooter_out = 0.0;
+    shooter_master_out = 0.0;
+    shooter_slave_out = 0.0;
+
 
     m_shootState = ShooterState.CLOSED;
     m_feederState = FeederState.STOP_WAIT_A_SEC;
@@ -91,7 +94,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     // slave should turn in opposite with the master
     m_master.setInverted(true);
-    m_slave.follow(m_master);
+    // m_slave.follow(m_master);
+    m_slave.setInverted(true);
 
     m_master.burnFlash();
     m_slave.burnFlash();
@@ -147,7 +151,7 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
     }
 
-    setShooterMotorSpeed(shooter_out);
+    setShooterMotorSpeed();
     setFeederMotorSpeed(feeder_out);
 
     SmartDashboard.putNumber("SH-Master RPM",
@@ -155,6 +159,7 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
     SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
     SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
+    SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
 
   }
 
@@ -178,13 +183,16 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setShooterOut(double percentOutput) {
-    var optimalOut = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
-    this.shooter_out = optimalOut;
+    var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+    var optimalOutSlave = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+
+    this.shooter_master_out = optimalOutMaster;
+    this.shooter_slave_out = optimalOutSlave;
   }
 
-  public void setShooterMotorSpeed(double percentOutput) {
-    m_master.set(percentOutput);
-    m_slave.set(percentOutput);
+  public void setShooterMotorSpeed() {
+    m_master.set(shooter_master_out);
+    m_slave.set(shooter_slave_out);
   }
 
   /** unit: rot per minute */
@@ -216,8 +224,11 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_shootState;
   }
 
-  public double getShooterPercentTarget() {
-    return shooter_out;
+  public double getShooterPercentTargetMaster() {
+    return shooter_master_out;
+  }
+  public double getShooterPercentTargetSlave() {
+    return shooter_slave_out;
   }
 
   public double getFeederPercentTarget() {
@@ -225,7 +236,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void stopShMotors() {
-    setShooterMotorSpeed(0);
+    // setShooterMotorSpeed(0);
     m_master.stopMotor();
     m_slave.stopMotor();
   }

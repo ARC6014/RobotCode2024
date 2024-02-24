@@ -21,6 +21,7 @@ public class AddressableLEDSubsystem extends SubsystemBase {
     mLEDBuffer = new AddressableLEDBuffer(LEDConstants.BUFFER_LENGTH);
     mLED.setLength(mLEDBuffer.getLength());
     mLED.start();
+    mLED.setData(mLEDBuffer);
   }
 
   @Override
@@ -28,27 +29,32 @@ public class AddressableLEDSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     if (RobotState.isDisabled()) {
       setLEDColor(Color.kPink);
+    } else if(RobotState.isEnabled()) {
+      setLEDColor(Color.kAqua);
+    } else {
+      turnOffLED();
     }
 
-    setLEDTailColor(Color.kBlack);
+    // setLEDTailColor(Color.kBlack);
   }
 
 
   public void setLEDColor(Color color) {
-    for (int i = 0; i < mLEDBuffer.getLength() - 5; i++) {
+    for (int i = 0; i < mLEDBuffer.getLength() - 1; i++) {
       mLEDBuffer.setLED(i, color);
     }
     mLED.setData(mLEDBuffer);
 
   }
 
+  /* 
   public void setLEDTailColor(Color color) {
-        for (int i = mLEDBuffer.getLength(); i >= mLEDBuffer.getLength() - 5; i--) {
+        for (int i = mLEDBuffer.getLength() -1; i >= mLEDBuffer.getLength() - 5; i--) {
         mLEDBuffer.setLED(i, color);
         }
         mLED.setData(mLEDBuffer);
 
-  }
+  } */
 
   public void turnOffLED() {
     setLEDColor(Color.kBlack);
