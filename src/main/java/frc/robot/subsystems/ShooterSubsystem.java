@@ -91,7 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.setIdleMode(ShooterConstants.MASTER_MODE);
 
     // slave should turn in opposite with the master
-    m_slave.follow(m_master, true);
+    m_master.setInverted(true);
+    m_slave.follow(m_master);
 
     m_master.burnFlash();
     m_slave.burnFlash();
