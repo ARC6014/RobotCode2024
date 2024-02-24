@@ -11,6 +11,8 @@ import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -376,6 +378,15 @@ public class Constants implements Loggable {
     public static class Characterization {
         public static final double START_DELAY_SECS = .5;
         public static final double RAMP_VOLTS_PER_SEC = 0.5;
+    }
+
+    public static final class FieldConstants {
+        public static final Pose2d BLUE_SPEAKER = new Pose2d(1.45, 5.52, new Rotation2d(Math.PI));
+        public static final Pose2d BLUE_AMP = new Pose2d(1.79, 7.60, new Rotation2d(Math.PI / 2));
+        public static final Pose2d BLUE_SOURCE = new Pose2d(15.3, 1.11, Rotation2d.fromDegrees(-55));
+        public static final Pose2d RED_SPEAKER = new Pose2d(15.1, 5.6, new Rotation2d(Math.PI));
+        public static final Pose2d RED_AMP = new Pose2d(14.68, 7.52, new Rotation2d(Math.PI / 2));
+        public static final Pose2d RED_SOURCE = new Pose2d(1.14, 1.00, Rotation2d.fromDegrees(-120));
     }
 
 }

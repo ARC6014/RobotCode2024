@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -14,12 +16,16 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import Jama.util.Maths;
 import edu.wpi.first.math.MathShared;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.LoggedTunableNumber;
@@ -30,7 +36,7 @@ public class ArmSubsystem extends SubsystemBase {
       Constants.isTuning);
 
   private static ArmSubsystem mInstance;
-  private static LimelightSubsystem mLimelightSubsystem = LimelightSubsystem.getInstance();
+  private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
   /* MOTORS & ENCODER */
   private final TalonFX armMotor = new TalonFX(ArmConstants.MOTOR_ID, Constants.CANIVORE_CANBUS);
@@ -184,8 +190,8 @@ public class ArmSubsystem extends SubsystemBase {
         setArmAngleMotionMagic(ArmConstants.AMP);
         break;
       case POSE_T:
-          setArmAngleMotionMagic(getAngleFromPoseTable());
-          break;
+        setArmAngleMotionMagic(getAngleFromPoseTable());
+        break;
       case INTAKE:
         setArmAngleMotionMagic(ArmConstants.INTAKE);
         break;
@@ -235,18 +241,25 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   private double getAngleFromPoseTable() {
-    double x;
-    if (mLimelightSubsystem.getCamPose2d_target().getTranslation().getX() > 0.2) {
-      x = Maths.hypot(mLimelightSubsystem.getCamPose3d_target().getZ(),
-          mLimelightSubsystem.getCamPose3d_target().getY());
-    } else {
-      // TODO:Odometry distance estimation should be implemented
-      x = 0;
+
+    Pose2d speaker = FieldConstants.RED_SPEAKER;
+
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+
+    if (alliance.isEmpty() || alliance.get() == Alliance.Blue) {
+      speaker = FieldConstants.BLUE_SPEAKER;
     }
-    double optimizedAngle = ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(x, 2) + ArmConstants.COEFFICIENT_LINEAR * x
+
+    double poseDifference = mDriveSubsystem.getPose().getTranslation()
+        .getDistance(speaker.getTranslation());
+
+    double optimizedAngle = ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(poseDifference, 2)
+        + ArmConstants.COEFFICIENT_LINEAR * poseDifference
         + ArmConstants.COEFFICIENT_CONSTANT;
+
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
-    return MathUtil.clamp(optimizedAngle, 3, 220);
+    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.LAST_RESORT_ANGLE_CUTOFF);
+
   }
 
   /** @return true if within angle tolerance - BORE */

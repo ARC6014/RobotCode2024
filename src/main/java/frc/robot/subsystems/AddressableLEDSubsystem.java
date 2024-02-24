@@ -15,7 +15,7 @@ import io.github.oblarg.oblog.annotations.Log;
 
 public class AddressableLEDSubsystem extends SubsystemBase implements Loggable {
   /** Creates a new AddressableLED. */
-  private AddressableLEDSubsystem m_instance;
+  private static AddressableLEDSubsystem m_instance;
   private AddressableLED mLED = new AddressableLED(LEDConstants.PWM_PORT);
   private AddressableLEDBuffer mLEDBuffer = new AddressableLEDBuffer(LEDConstants.BUFFER_LENGTH);
 
