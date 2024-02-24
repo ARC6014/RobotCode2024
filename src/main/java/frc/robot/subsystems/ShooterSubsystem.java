@@ -182,6 +182,7 @@ public class ShooterSubsystem extends SubsystemBase {
     this.feeder_out = optimalOut;
   }
 
+  // TODO: Add scalar here to adjust slave output to master
   public void setShooterOut(double percentOutput) {
     var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
     var optimalOutSlave = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());

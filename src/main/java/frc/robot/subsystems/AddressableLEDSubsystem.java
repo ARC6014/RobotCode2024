@@ -10,10 +10,8 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LEDConstants;
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Log;
 
-public class AddressableLEDSubsystem extends SubsystemBase implements Loggable {
+public class AddressableLEDSubsystem extends SubsystemBase {
   /** Creates a new AddressableLED. */
   private static AddressableLEDSubsystem m_instance;
   private AddressableLED mLED = new AddressableLED(LEDConstants.PWM_PORT);
@@ -63,7 +61,6 @@ public class AddressableLEDSubsystem extends SubsystemBase implements Loggable {
     mLED.setData(mLEDBuffer);
   }
 
-  @Log(name = "LED Length", width = 1, height = 1, rowIndex = 0, columnIndex = 0)
   public int getLength() {
     return mLEDBuffer.getLength();
   }

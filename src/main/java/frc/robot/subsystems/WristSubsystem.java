@@ -177,7 +177,7 @@ public class WristSubsystem extends SubsystemBase {
                 mGearbox.drivenToDriving(Conversions.degreesToRevolutions(mPositionSetpoint))));
     }
 
-    /* toggles neutral mode */
+    /** toggles neutral mode */
     public void setNeutralMode() {
         this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
         mTalonFX.setNeutralMode(this.kNeutralMode);

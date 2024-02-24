@@ -192,15 +192,15 @@ public class Constants implements Loggable {
         public static final int MOTOR_ID = 20;
         public static final int BORE_ID = 1;
 
-        public static final Gearbox gearRatio = new Gearbox(1, 119.5);
+        public static final Gearbox gearRatio = new Gearbox(1, 115.77);
         public static final boolean ARM_MOTOR_INVERTED = false;
 
         public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double ARM_VELOCITY = 200; // 150
+        public static final double ARM_VELOCITY = 200; 
         /** unit: rev/s^2 */
-        public static final double ARM_ACCELERATION = 170; // 120
+        public static final double ARM_ACCELERATION = 170; 
 
         public static final double kP = 1.2;
         public static final double kD = 0.0;
@@ -229,6 +229,8 @@ public class Constants implements Loggable {
 
         /** unit: degrees */
         public static final double LAST_RESORT_ANGLE_CUTOFF = 150;
+
+        // interpolation
         public static final double COEFFICIENT_QUADRATIC = 0;
         public static final double COEFFICIENT_LINEAR = 0;
         public static final double COEFFICIENT_CONSTANT = 0;
@@ -307,6 +309,7 @@ public class Constants implements Loggable {
         public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
+        
         public static final int BEAM_BREAK_ID = 4;
 
         public static final double kMinOutput = -1;
