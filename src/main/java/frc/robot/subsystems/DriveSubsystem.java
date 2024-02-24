@@ -451,7 +451,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   public void updatePoseEstimatorWithVisionBotPose() {
-    if (mLL.getBotPose2d_field().getX() == 0.0) { //invalid LL data
+    if (mLL.getBotPose2d_field().getX() == 0.0) { // invalid LL data
       return;
     }
 
@@ -459,27 +459,25 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     double poseDifference = poseEstimator.getEstimatedPosition().getTranslation()
         .getDistance(mLL.getBotPose2d_field().getTranslation());
 
-    if (mLL.getID() != 0 || mLL.getID()!= -1) { // is ID valid // needs to be updated, there are more conditions
-          double xyStds;
-          double degStds;
+    if (mLL.getID() != 0 || mLL.getID() != -1) { // is ID valid // needs to be updated, there are more conditions
+      double xyStds;
+      double degStds;
 
-          if (mLL.getNumTargets() >= 2) { // trust for multiple tags
-            xyStds = 0.5;
-            degStds = 6;
-          }
-          else if (mLL.getArea() > 0.8 && poseDifference < 0.5) { // trust for 1 close target
-            xyStds = 1.0;
-            degStds = 12;
-          }
-          else if (mLL.getArea() > 0.1 && poseDifference < 0.3) { // trust for 1 far target
-            xyStds = 2.0;
-            degStds = 30;
-          }
-          else { // don't meet conditions
-            return;
-          }
+      if (mLL.getNumTargets() >= 2) { // trust for multiple tags
+        xyStds = 0.5;
+        degStds = 6;
+      } else if (mLL.getArea() > 0.8 && poseDifference < 0.5) { // trust for 1 close target
+        xyStds = 1.0;
+        degStds = 12;
+      } else if (mLL.getArea() > 0.1 && poseDifference < 0.3) { // trust for 1 far target
+        xyStds = 2.0;
+        degStds = 30;
+      } else { // don't meet conditions
+        return;
+      }
       poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
-      poseEstimator.addVisionMeasurement(mLL.getBotPose2d_field(), Timer.getFPGATimestamp() - mLL.getLatency()/1000.0);
+      poseEstimator.addVisionMeasurement(mLL.getBotPose2d_field(),
+          Timer.getFPGATimestamp() - mLL.getLatency() / 1000.0);
     }
   }
 }

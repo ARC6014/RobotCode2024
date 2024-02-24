@@ -11,6 +11,9 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import Jama.util.Maths;
+import edu.wpi.first.math.MathShared;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
       Constants.isTuning);
 
   private static ArmSubsystem mInstance;
+  private static LimelightSubsystem mLimelightSubsystem = LimelightSubsystem.getInstance();
 
   /* MOTORS & ENCODER */
   private final TalonFX armMotor = new TalonFX(ArmConstants.MOTOR_ID, Constants.CANIVORE_CANBUS);
@@ -75,6 +79,7 @@ public class ArmSubsystem extends SubsystemBase {
     HOLD,
     /** zero position with respect to hard stop */
     ZERO,
+    POSE_T
   }
 
   public ArmSubsystem() {
@@ -137,6 +142,9 @@ public class ArmSubsystem extends SubsystemBase {
           break;
         case SPEAKER_SHORT:
           setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+          break;
+        case POSE_T:
+          setArmAngleMotionMagic(getAngleFromPoseTable());
           break;
         case SPEAKER_LONG:
           setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
@@ -218,6 +226,20 @@ public class ArmSubsystem extends SubsystemBase {
   /** @return true if 0 is within angle tolerance - FALCON */
   public boolean isAtZeroFalcon() {
     return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValue()) < ArmConstants.ANGLE_TOLERANCE;
+  }
+
+  private double getAngleFromPoseTable() {
+    double x;
+    if (mLimelightSubsystem.getCamPose2d_target().getTranslation().getX() > 0.2) {
+      x = Maths.hypot(mLimelightSubsystem.getCamPose3d_target().getZ(),
+          mLimelightSubsystem.getCamPose3d_target().getY());
+    } else {
+      // TODO:Odometry distance estimation should be implemented
+      x = 0;
+    }
+    double optimizedAngle = ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(x, 2) + ArmConstants.COEFFICIENT_LINEAR * x
+        + ArmConstants.COEFFICIENT_CONSTANT;
+    return MathUtil.clamp(optimizedAngle, 3, 220);
   }
 
   /** @return true if within angle tolerance - BORE */
