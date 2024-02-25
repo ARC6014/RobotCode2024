@@ -117,7 +117,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     switch (m_shootState) {
       case AMP:
-        setShooterOut(Constants.ShooterConstants.AMP_VOLTAGE);
+        setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
         break;
       case SPEAKER_LONG:
         setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
@@ -185,10 +185,17 @@ public class ShooterSubsystem extends SubsystemBase {
   // TODO: Add scalar here to adjust slave output to master
   public void setShooterOut(double percentOutput) {
     var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
-    var optimalOutSlave = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+    var optimalOutSlave = Conversions.getSmartVoltage(percentOutput*1.0417, RobotContainer.mPDH.getVoltage());
 
     this.shooter_master_out = optimalOutMaster;
     this.shooter_slave_out = optimalOutSlave;
+  }
+
+  // TODO: Add scalar here to adjust slave output to master
+  public void setAmpOut(double percentOutput) {
+    var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+    this.shooter_master_out = optimalOutMaster;
+    this.shooter_slave_out = 0;
   }
 
   public void setShooterMotorSpeed() {
