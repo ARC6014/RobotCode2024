@@ -40,6 +40,7 @@ import frc.robot.commands.shooter.FeederStopAtBeambreak;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.swerve.FieldOrientedTurn;
+import frc.robot.commands.telescopic.TelescopicOpenLoop;
 import frc.robot.commands.telescopic.TelescopicStateCommand;
 import frc.robot.subsystems.AddressableLEDSubsystem;
 import frc.robot.subsystems.ArmOnlyBore;
@@ -48,6 +49,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
@@ -71,8 +73,7 @@ public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
 
-        // private final TelescopicSubsystem mTelescopic =
-        // TelescopicSubsystem.getInstance();
+        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         // private final ArmOnlyBore mArmOnlyBore = ArmOnlyBore.getInstance();
 
@@ -83,7 +84,7 @@ public class RobotContainer implements Loggable {
 
         public static PowerDistribution mPDH = new PowerDistribution();
 
-        private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem().getInstance();
+        //private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem().getInstance();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -94,22 +95,24 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        // private final TelescopicOpenLoop telescopicOpenLoop = new
-        // TelescopicOpenLoop(mTelescopic, () -> mOperator.getRightY());
+        private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic, () -> mOperator.getRightY());
 
         private DriveByJoystick driveByJoystick;
-        // private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
-        // -mOperator.getLeftY());
-        // private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () ->
-        // mOperator.getLeftX());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
+        -mOperator.getLeftY());
+        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () ->
+        mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
         // ---------------------- TELEOP COMMANDS ---------------------- //
 
-        private final ParallelDeadlineGroup openWristStartIntake = new ParallelDeadlineGroup(
+        private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
+                new ArmStateSet(mArm, ArmControlState.INTAKE),
+                new ParallelDeadlineGroup(
                         new IntakeStopAtBeambreak(), // this is the deadline
                         new WristSetState(mWrist, Position.OPEN),
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT))
+        );
 
         private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
@@ -259,17 +262,19 @@ public class RobotContainer implements Loggable {
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
                 // Telescopic
-                // mDriver.povDown().whileTrue(
-                // new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
-                // mDriver.povUp().whileTrue(new
-                // TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
-                // mOperator.rightStick().onTrue(telescopicOpenLoop);
+                mDriver.povDown().whileTrue(new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
+                mDriver.povUp().whileTrue(new TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
+                mOperator.rightStick().onTrue(telescopicOpenLoop);
 
                 /* COMMAND GROUPS */
                 // Intake
                 mOperator.rightBumper().onTrue(openWristStartIntake);
                 // Feed
-                mOperator.leftBumper().onTrue(closeWristStopIntakeArmIntake.andThen(startStopFeeder));
+                mOperator.leftBumper().onTrue(
+                        closeWristStopIntakeArmIntake
+                                .andThen(new WaitCommand(0.5))
+                                .andThen(startStopFeeder)
+                );
 
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
@@ -277,7 +282,7 @@ public class RobotContainer implements Loggable {
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
 
                 /* LIMELIGHT */
-                mOperator.a().onTrue(new AllignWithLL(4));
+                mOperator.a().onTrue(new AllignWithLL());
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
