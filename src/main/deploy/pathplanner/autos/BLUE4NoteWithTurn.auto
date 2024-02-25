@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.0,
-      "y": 6.6
+      "x": 1.3,
+      "y": 5.56
     },
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
@@ -43,6 +43,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Feed"
@@ -51,19 +57,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Field-Oriented Turn (20)"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ShootSpeakerLong"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ArmToIntaking"
           }
         },
         {
@@ -92,6 +86,12 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.5
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Feed"
@@ -101,12 +101,6 @@
           "type": "named",
           "data": {
             "name": "ShootSpeakerLong"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShooterToIntaking"
           }
         },
         {
@@ -135,15 +129,15 @@
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "Feed"
+            "waitTime": 0.5
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "Field-Oriented Turn (-20)"
+            "name": "Feed"
           }
         },
         {

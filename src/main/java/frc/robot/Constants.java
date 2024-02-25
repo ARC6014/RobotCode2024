@@ -125,10 +125,10 @@ public class Constants implements Loggable {
         public static final double snapkD = 0.0;
 
         /** will be used for FieldOrientedTurn */
-        public static final double kRotControllerP = 0.15; // prev: 0.13
+        public static final double kRotControllerP = 0.225; // prev: 0.15
         public static final double kRotControllerD = 0.28;
         public static final double kRotControllerMaxVel = 5;
-        public static final double kRotControllerTolerance = 3.5;
+        public static final double kRotControllerTolerance = 5;
 
         public static final double maxSpeed = 5;
 
@@ -221,11 +221,11 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double INTAKE = 9 + 15 - 9.5 - 5;
         /** unit: degrees */
-        public static final double SPEAKER_LONG = 30 + 15;
+        public static final double SPEAKER_LONG = 50;
         /** unit: degrees */
-        public static final double SPEAKER_SHORT = 39; // 22.5 31.5 36
+        public static final double SPEAKER_SHORT = 38; // 22.5 31.5 36
         /** unit: degrees */
-        public static final double AMP = 90 + 15;
+        public static final double AMP = 90 + 15 + 5;
 
         /** unit: degrees */
         public static final double LAST_RESORT_ANGLE_CUTOFF = 150;
@@ -335,11 +335,12 @@ public class Constants implements Loggable {
 
         /* VOLTAGE */
         public static final double AMP_VOLTAGE = 5;
-        public static final double SPEAKER_SHORT_VOLTAGE = 10.5; // TODO: Tune
+        public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // 10.5
         public static final double SPEAKER_LONG_VOLTAGE = 10.5; // TODO: Tune
 
         /* RPMs */
         public static final double FEEDER_OUT = 9;
+        public static final double FEEDER_AMP = 7.5;
         public static final double FEEDER_FROM_INTAKE = 4;
         public static final double FEEDER_REVERSE = -6.31;
     }
