@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -120,6 +121,18 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
 
+    AutoBuilder.configureHolonomic(
+      this::getPoseMeters, 
+      this::resetOdometry, 
+      this::getChassisSpeed,
+      this::setClosedLoopStates, 
+      Constants.holonomicPoseConfig, () -> {
+                if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+                    return true;
+                }
+                return false;
+    }, this);
+
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
         getRotation2d(),
@@ -223,8 +236,13 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   public void resetOdometry(Pose2d pose) {
     // mGyro.reset();
-    mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
-    mOdometry.resetPosition(getRotation2d(), getModulePositions(), pose);
+    // mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
+    mOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
+    // mOdometry.resetPosition(getRotation2d(), getModulePositions(), pose);
+  }
+
+  public Rotation2d getGyroYaw() {
+    return Rotation2d.fromDegrees(mGyro.getYaw());
   }
 
   public void resetOdometryRelativeToAlliance(Pose2d pose) {
