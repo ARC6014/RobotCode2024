@@ -7,13 +7,17 @@ package frc.robot.commands.swerve;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.team6014.lib.math.Conversions;
+import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class FieldOrientedTurn extends Command {
   /** Creates a new FieldOrientedTurn. */
   private double m_error, m_lastError, m_output, m_goalAngle, m_currentAngle;
+  private LoggedTunableNumber kP = new LoggedTunableNumber("AUTO/kP", DriveConstants.kRotControllerP);
+  private LoggedTunableNumber kD = new LoggedTunableNumber("AUTO/kD", DriveConstants.kRotControllerD);
 
   private DriveSubsystem mSwerve;
   private boolean atSetpoint = false;
@@ -48,8 +52,8 @@ public class FieldOrientedTurn extends Command {
       m_error = m_goalAngle - m_currentAngle;
     }
 
-    m_output = DriveConstants.kRotControllerP * m_error
-        + (DriveConstants.kRotControllerD * (m_error - m_lastError));
+    m_output = (Constants.isTuning ? kP.get() : DriveConstants.kRotControllerP) * m_error
+        + ((Constants.isTuning ? kD.get() : DriveConstants.kRotControllerD) * (m_error - m_lastError));
 
     if (m_error >= -DriveConstants.kRotControllerTolerance
         && m_error <= DriveConstants.kRotControllerTolerance) {

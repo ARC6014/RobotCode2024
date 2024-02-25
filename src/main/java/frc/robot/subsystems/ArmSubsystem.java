@@ -150,7 +150,7 @@ public class ArmSubsystem extends SubsystemBase {
           setMotorOutput();
           break;
         case SPEAKER_SHORT:
-          setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+          setArmAngleMotionMagic(ArmConstants.SPEAKER_SHORT);
           break;
         case POSE_T:
           setArmAngleMotionMagic(getAngleFromPoseTable());
@@ -181,7 +181,7 @@ public class ArmSubsystem extends SubsystemBase {
         setMotorOutput();
         break;
       case SPEAKER_SHORT:
-        setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+        setArmAngleMotionMagic(ArmConstants.SPEAKER_SHORT);
         break;
       case SPEAKER_LONG:
         setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
