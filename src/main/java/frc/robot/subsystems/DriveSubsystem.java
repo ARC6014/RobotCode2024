@@ -259,8 +259,11 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   }
 
   public void zeroHeading() {
+    double before = mGyro.getRotation2d().getRadians();
     mGyro.reset();
     mGyro.setYaw(0);
+
+    snapAngle = snapAngle - before;
   }
 
   public void stop() {
