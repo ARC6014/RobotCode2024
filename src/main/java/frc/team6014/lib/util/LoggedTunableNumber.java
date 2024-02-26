@@ -20,6 +20,8 @@ public class LoggedTunableNumber {
 
     private String key;
     private double defaultValue;
+    private boolean defaultValueBoolean;
+    private boolean isBoolean = false;
     private double lastHasChangedValue = defaultValue;
     private boolean tuningMode;
 
@@ -41,6 +43,13 @@ public class LoggedTunableNumber {
         this.key = tableKey + "/" + dashboardKey;
         this.tuningMode = Constants.isTuning;
         setDefault(defaultValue);
+    }
+
+    public LoggedTunableNumber(String dashboardKey, boolean defaultValue) {
+        this.isBoolean = true;
+        this.key = tableKey + "/" + dashboardKey;
+        this.tuningMode = Constants.isTuning;
+        setDefaultBoolean(defaultValue);
     }
 
     /**
@@ -71,6 +80,20 @@ public class LoggedTunableNumber {
         }
     }
 
+    public void setDefaultBoolean(boolean defaultValue) {
+        this.defaultValueBoolean = defaultValue;
+        System.out.println(tuningMode);
+        if (tuningMode) {
+            // This makes sure the data is on NetworkTables but will not change it
+            SmartDashboard.putBoolean(key,
+                    SmartDashboard.getBoolean(key, defaultValueBoolean));
+        } else {
+            // Replace the delet key word with this one, if it doesnt work regina changed
+            // it, if it works daniel made the change
+            SmartDashboard.clearPersistent(key);
+        }
+    }
+
     /**
      * Get the current value, from dashboard if available and in tuning mode
      * 
@@ -79,6 +102,11 @@ public class LoggedTunableNumber {
     public double get() {
         return tuningMode ? SmartDashboard.getNumber(key, defaultValue)
                 : defaultValue;
+    }
+
+    public boolean getBoolean() {
+        return tuningMode ? SmartDashboard.getBoolean(key, defaultValueBoolean)
+                : defaultValueBoolean;
     }
 
     /**

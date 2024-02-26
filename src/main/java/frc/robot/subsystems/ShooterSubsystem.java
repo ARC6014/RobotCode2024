@@ -15,6 +15,7 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterConstants;
 import frc.team6014.lib.math.Conversions;
+import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -24,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
 
   /* SENSORS */
-  private DigitalInput m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+  private DigitalInput m_beamBreaker;
 
   private SparkPIDController m_masterPIDController;
   private SparkPIDController m_slavePIDController;
@@ -38,6 +39,9 @@ public class ShooterSubsystem extends SubsystemBase {
   double feeder_out;
   double shooter_slave_out;
   double shooter_master_out;
+
+  LoggedTunableNumber isShooterVoltage = new LoggedTunableNumber("Shooter Is Voltage Mode",
+      ShooterConstants.IS_VOLTAGE_MODE);
 
   public enum ShooterState {
     OPEN_LOOP,
@@ -58,10 +62,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterSubsystem() {
 
+    m_beamBreaker = new DigitalInput(ShooterConstants.BEAM_BREAK_ID);
+
     feeder_out = 0.0;
     shooter_master_out = 0.0;
     shooter_slave_out = 0.0;
-
 
     m_shootState = ShooterState.CLOSED;
     m_feederState = FeederState.STOP_WAIT_A_SEC;
@@ -115,6 +120,18 @@ public class ShooterSubsystem extends SubsystemBase {
     // m_feederState = FeederState.STOP_WAIT_A_SEC;
     // }
 
+    SmartDashboard.putNumber("SH-Master RPM",
+        m_master.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
+    SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
+    SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
+    SmartDashboard.putNumber("PDH V", RobotContainer.mPDH.getVoltage());
+    if (isShooterVoltage.getBoolean()) {
+
+      return;
+    }
+
     switch (m_shootState) {
       case AMP:
         setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
@@ -154,17 +171,29 @@ public class ShooterSubsystem extends SubsystemBase {
     setShooterMotorSpeed();
     setFeederMotorSpeed(feeder_out);
 
-    SmartDashboard.putNumber("SH-Master RPM",
-        m_master.getEncoder().getVelocity());
-    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
-    SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
-    SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
-    SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
-
   }
 
   // Setters
   public void setShooterState(ShooterState newState) {
+    if (isShooterVoltage.getBoolean()) {
+      switch (m_shootState) {
+        case AMP:
+          setShooterVoltage(Constants.ShooterConstants.AMP_VOLTAGE);
+          break;
+        case SPEAKER_LONG:
+          setShooterVoltage(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
+          break;
+        case SPEAKER_SHORT:
+          setShooterVoltage(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+          break;
+        case OPEN_LOOP:
+          break;
+        case CLOSED:
+        default:
+          setShooterVoltage(0);
+          break;
+      }
+    }
     m_shootState = newState;
   }
 
@@ -183,9 +212,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // TODO: Add scalar here to adjust slave output to master
-  public void setShooterOut(double percentOutput) {
-    var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
-    var optimalOutSlave = Conversions.getSmartVoltage(percentOutput*1.0417, RobotContainer.mPDH.getVoltage());
+  public void setShooterOut(double voltage) {
+    var optimalOutMaster = Conversions.getSmartVoltage(voltage, RobotContainer.mPDH.getVoltage());
+    var optimalOutSlave = Conversions.getSmartVoltage(voltage * ShooterConstants.SLAVE_FUDGE_FACTOR,
+        RobotContainer.mPDH.getVoltage());
 
     this.shooter_master_out = optimalOutMaster;
     this.shooter_slave_out = optimalOutSlave;
@@ -199,8 +229,15 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setShooterMotorSpeed() {
+    SmartDashboard.putNumber("Shooter Master Out", shooter_master_out);
+    SmartDashboard.putNumber("Shooter Slave Out", shooter_slave_out);
     m_master.set(shooter_master_out);
     m_slave.set(shooter_slave_out);
+  }
+
+  public void setShooterVoltage(double voltage) {
+    m_master.setVoltage(voltage);
+    m_slave.setVoltage(voltage * ShooterConstants.SLAVE_FUDGE_FACTOR);
   }
 
   /** unit: rot per minute */
@@ -235,6 +272,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getShooterPercentTargetMaster() {
     return shooter_master_out;
   }
+
   public double getShooterPercentTargetSlave() {
     return shooter_slave_out;
   }

@@ -198,9 +198,9 @@ public class Constants implements Loggable {
         public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
 
         /** unit: rev/s */
-        public static final double ARM_VELOCITY = 200; 
+        public static final double ARM_VELOCITY = 200;
         /** unit: rev/s^2 */
-        public static final double ARM_ACCELERATION = 170; 
+        public static final double ARM_ACCELERATION = 170;
 
         public static final double kP = 1.2;
         public static final double kD = 0.0;
@@ -309,8 +309,8 @@ public class Constants implements Loggable {
         public static final int MASTER_MOTOR_ID = 30;
         public static final int SLAVE_MOTOR_ID = 31;
         public static final int FEEDER_MOTOR_ID = 32;
-        
-        public static final int BEAM_BREAK_ID = 4;
+
+        public static final int BEAM_BREAK_ID = 3;
 
         public static final double kMinOutput = -1;
         public static final double kMaxOutput = 1;
@@ -318,10 +318,10 @@ public class Constants implements Loggable {
         /* PID & FF */
         // NOT USED
         public static final double kP = 0.000594;
-        public static final double kFF = 0.0002219;
-        public static final double kIz = 0;
         public static final double kD = 0.132;
         public static final double kI = 0;
+        public static final double kIz = 0;
+        public static final double kFF = 0;
 
         /* Neutral Modes */
         public static final IdleMode FEEDER_MODE = IdleMode.kBrake;
@@ -343,6 +343,8 @@ public class Constants implements Loggable {
         public static final double FEEDER_AMP = 7.5;
         public static final double FEEDER_FROM_INTAKE = 4;
         public static final double FEEDER_REVERSE = -6.31;
+        public static final boolean IS_VOLTAGE_MODE = false;
+        public static final double SLAVE_FUDGE_FACTOR = 1.0517;
     }
 
     public static final class TelescopicConstants {

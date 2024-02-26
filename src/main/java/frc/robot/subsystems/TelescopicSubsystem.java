@@ -19,7 +19,8 @@ import frc.robot.Constants.TelescopicConstants;
 public class TelescopicSubsystem extends SubsystemBase {
 
   private TalonFX m_master = new TalonFX(TelescopicConstants.MASTER_MOTOR_ID, Constants.RIO_CANBUS);
-  private TalonFX m_slave = new TalonFX(TelescopicConstants.SLAVE_MOTOR_ID, Constants.RIO_CANBUS);
+  // private TalonFX m_slave = new TalonFX(TelescopicConstants.SLAVE_MOTOR_ID,
+  // Constants.RIO_CANBUS);
 
   private static TelescopicSubsystem m_instance;
 
@@ -39,7 +40,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     /* open loop control */
     OPEN_LOOP,
     /* closed-loop motion magic */
-    CLIMB, 
+    CLIMB,
     /* stop motors */
     STOP,
   }
@@ -58,7 +59,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.Slot0.kI = TelescopicConstants.TELESCOPIC_CONTROLLER_KI;
     configs.Slot0.kD = TelescopicConstants.TELESCOPIC_CONTROLLER_KD;
 
-    configs.Slot0.kS = 0.32; 
+    configs.Slot0.kS = 0.32;
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
@@ -67,7 +68,8 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
-    m_slave.setControl(new Follower(m_master.getDeviceID(), TelescopicConstants.IS_INVERTED));
+    // m_slave.setControl(new Follower(m_master.getDeviceID(),
+    // TelescopicConstants.IS_INVERTED));
 
     zeroEncoder();
     setNeutralMode(NeutralModeValue.Brake);
@@ -109,7 +111,7 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   public void zeroEncoder() {
     m_master.setPosition(0);
-    m_slave.setPosition(0);
+    // m_slave.setPosition(0);
   }
 
   public boolean isAtSetpoint() {
@@ -133,8 +135,8 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   // this is probably wrong double-check
   public double getHeight() {
-    double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble()
-        + m_slave.getRotorPosition().getValueAsDouble()) / 2
+    double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble()) // +m_slave.getRotorPosition().getValueAsDouble())
+                                                                               // / 2
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
     return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
   }
@@ -164,13 +166,13 @@ public class TelescopicSubsystem extends SubsystemBase {
   public void setNeutralMode() {
     this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
     m_master.setNeutralMode(this.kNeutralMode);
-    m_slave.setNeutralMode(this.kNeutralMode);
+    // m_slave.setNeutralMode(this.kNeutralMode);
   }
 
   public void setNeutralMode(NeutralModeValue value) {
     this.kNeutralMode = value;
     m_master.setNeutralMode(this.kNeutralMode);
-    m_slave.setNeutralMode(this.kNeutralMode);
+    // m_slave.setNeutralMode(this.kNeutralMode);
   }
 
   public void stop() {
@@ -178,12 +180,12 @@ public class TelescopicSubsystem extends SubsystemBase {
       telescopicState = TelescopicState.STOP;
     }
     m_master.stopMotor();
-    m_slave.stopMotor();
+    // m_slave.stopMotor();
   }
 
   public void resetEncoder() {
     m_master.setPosition(TelescopicConstants.TELESCOPIC_RESET);
-    m_slave.setPosition(TelescopicConstants.TELESCOPIC_RESET);
+    // m_slave.setPosition(TelescopicConstants.TELESCOPIC_RESET);
   }
 
   public static TelescopicSubsystem getInstance() {

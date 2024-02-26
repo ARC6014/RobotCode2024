@@ -84,9 +84,10 @@ public class RobotContainer implements Loggable {
 
         public static PowerDistribution mPDH = new PowerDistribution();
 
-        // private final UsbCam m_cam = new UsbCam();
+        private final UsbCam m_cam = new UsbCam();
 
-        //private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem().getInstance();
+        // private final AddressableLEDSubsystem mLED = new
+        // AddressableLEDSubsystem().getInstance();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -96,24 +97,22 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic, () -> mOperator.getRightY());
+        private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
+                        () -> mOperator.getRightY());
 
         private DriveByJoystick driveByJoystick;
-        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () ->
-        -mOperator.getLeftY());
-        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () ->
-        mOperator.getLeftX());
+        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
+        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
         private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
         // ---------------------- TELEOP COMMANDS ---------------------- //
 
         private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
-                new ArmStateSet(mArm, ArmControlState.INTAKE),
-                new ParallelDeadlineGroup(
-                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
-                        new WristSetState(mWrist, Position.OPEN),
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT))
-        );
+                        new ArmStateSet(mArm, ArmControlState.INTAKE),
+                        new ParallelDeadlineGroup(
+                                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
+                                        new WristSetState(mWrist, Position.OPEN),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
         private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
@@ -156,14 +155,13 @@ public class RobotContainer implements Loggable {
         // ---------------------- AUTO COMMANDS ---------------------- //
 
         private final ParallelCommandGroup AUTOopenWristStartIntake = new ParallelCommandGroup(
-                new ArmStateSet(mArm, ArmControlState.INTAKE),
-                new ParallelDeadlineGroup(
-                        new IntakeStopAtBeambreak().withTimeout(2.0), // this is the deadline
-                        new SequentialCommandGroup(
-                                new WaitCommand(0.5),
-                                new WristSetState(mWrist, Position.OPEN)),
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT))
-        );
+                        new ArmStateSet(mArm, ArmControlState.INTAKE),
+                        new ParallelDeadlineGroup(
+                                        new IntakeStopAtBeambreak().withTimeout(2.0), // this is the deadline
+                                        new SequentialCommandGroup(
+                                                        new WaitCommand(0.5),
+                                                        new WristSetState(mWrist, Position.OPEN)),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
@@ -214,7 +212,7 @@ public class RobotContainer implements Loggable {
                 LiveWindow.setEnabled(false);
 
                 configureNamedCommands();
-                configureButtonBindings();
+                configureButtonBindingsAlper();
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
@@ -267,10 +265,9 @@ public class RobotContainer implements Loggable {
                 mOperator.rightBumper().onTrue(openWristStartIntake);
                 // Feed
                 mOperator.leftBumper().onTrue(
-                        closeWristStopIntakeArmIntake
-                                .andThen(new WaitCommand(0.5))
-                                .andThen(startStopFeeder)
-                );
+                                closeWristStopIntakeArmIntake
+                                                .andThen(new WaitCommand(0.5))
+                                                .andThen(startStopFeeder));
 
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
@@ -296,14 +293,14 @@ public class RobotContainer implements Loggable {
 
                 /* ARM */
                 mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                ArmControlState.ZERO));
+                                ArmControlState.ZERO));
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm,
-                ArmControlState.INTAKE));
+                                ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
-                ArmControlState.SPEAKER_SHORT));
+                                ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
-                ArmControlState.SPEAKER_LONG));
+                                ArmControlState.SPEAKER_LONG));
                 // mOperator.rightBumper().onTrue(armOpenLoop);
 
                 /* WRIST */
@@ -345,22 +342,23 @@ public class RobotContainer implements Loggable {
                 NamedCommands.registerCommand("ArmToIntaking", new ArmStateSet(mArm, ArmControlState.INTAKE));
 
                 // State Named Commands
-                // NamedCommands.registerCommand("ShooterAMP", new ShooterCommand().withShooterState(ShooterState.AMP));
+                // NamedCommands.registerCommand("ShooterAMP", new
+                // ShooterCommand().withShooterState(ShooterState.AMP));
                 // NamedCommands.registerCommand("ShooterLong",
-                //                 new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
+                // new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
                 // NamedCommands.registerCommand("ShooterShort",
-                //                 new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
+                // new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
                 // NamedCommands.registerCommand("Shooter Close",
-                //                 new ShooterCommand().withShooterState(ShooterState.CLOSED));
+                // new ShooterCommand().withShooterState(ShooterState.CLOSED));
 
                 // NamedCommands.registerCommand("FeederLetHimCook",
-                //                 new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
+                // new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
                 // NamedCommands.registerCommand("FeederStop",
-                //                 new FeederCommand().withFeederState(FeederState.STOP_WAIT_A_SEC));
+                // new FeederCommand().withFeederState(FeederState.STOP_WAIT_A_SEC));
                 // NamedCommands.registerCommand("FeederUps",
-                //                 new FeederCommand().withFeederState(FeederState.UPSI));
+                // new FeederCommand().withFeederState(FeederState.UPSI));
                 // NamedCommands.registerCommand("FeederIntakeception",
-                //                 new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
+                // new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
                 // NamedCommands.registerCommand("ArmIntake", new ArmStateSet(mArm,
                 // ArmControlState.INTAKE));
@@ -375,16 +373,19 @@ public class RobotContainer implements Loggable {
                 // NamedCommands.registerCommand("ArmHold", new ArmStateSet(mArm,
                 // ArmControlState.HOLD));
 
-                // NamedCommands.registerCommand("WristClosed", new WristSetState(mWrist, Position.CLOSED));
-                // NamedCommands.registerCommand("WristOpen", new WristSetState(mWrist, Position.OPEN));
-                // NamedCommands.registerCommand("WristHold", new WristSetState(mWrist, Position.HOLD));
+                // NamedCommands.registerCommand("WristClosed", new WristSetState(mWrist,
+                // Position.CLOSED));
+                // NamedCommands.registerCommand("WristOpen", new WristSetState(mWrist,
+                // Position.OPEN));
+                // NamedCommands.registerCommand("WristHold", new WristSetState(mWrist,
+                // Position.HOLD));
 
                 // NamedCommands.registerCommand("IntakeForward",
-                //                 new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                // new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
                 // NamedCommands.registerCommand("IntakeReverse",
-                //                 new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
+                // new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
                 // NamedCommands.registerCommand("IntakeFeed",
-                //                 new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT));
+                // new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT));
         }
 
         /**
