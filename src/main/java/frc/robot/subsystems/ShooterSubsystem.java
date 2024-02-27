@@ -127,27 +127,44 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
     SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
     SmartDashboard.putNumber("PDH V", RobotContainer.mPDH.getVoltage());
+
     if (isShooterVoltage.getBoolean()) {
+      switch (m_shootState) {
+        case AMP:
+          setShooterVoltage(Constants.ShooterConstants.AMP_VOLTAGE);
+          break;
+        case SPEAKER_LONG:
+          setShooterVoltage(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
+          break;
+        case SPEAKER_SHORT:
+          setShooterVoltage(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+          break;
+        case OPEN_LOOP:
+          break;
+        case CLOSED:
+        default:
+          setShooterVoltage(0);
+          break;
+      }
+    } else {
 
-      return;
-    }
-
-    switch (m_shootState) {
-      case AMP:
-        setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
-        break;
-      case SPEAKER_LONG:
-        setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
-        break;
-      case SPEAKER_SHORT:
-        setShooterOut(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
-        break;
-      case OPEN_LOOP:
-        break;
-      case CLOSED:
-      default:
-        setShooterOut(0);
-        break;
+      switch (m_shootState) {
+        case AMP:
+          setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
+          break;
+        case SPEAKER_LONG:
+          setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
+          break;
+        case SPEAKER_SHORT:
+          setShooterOut(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+          break;
+        case OPEN_LOOP:
+          break;
+        case CLOSED:
+        default:
+          setShooterOut(0);
+          break;
+      }
     }
 
     switch (m_feederState) {
@@ -175,25 +192,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Setters
   public void setShooterState(ShooterState newState) {
-    if (isShooterVoltage.getBoolean()) {
-      switch (m_shootState) {
-        case AMP:
-          setShooterVoltage(Constants.ShooterConstants.AMP_VOLTAGE);
-          break;
-        case SPEAKER_LONG:
-          setShooterVoltage(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
-          break;
-        case SPEAKER_SHORT:
-          setShooterVoltage(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
-          break;
-        case OPEN_LOOP:
-          break;
-        case CLOSED:
-        default:
-          setShooterVoltage(0);
-          break;
-      }
-    }
+
     m_shootState = newState;
   }
 
@@ -208,6 +207,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void setFeederOUT(double percentOutput) {
     var optimalOut = Conversions.getSmartVoltage(percentOutput, RobotContainer.mPDH.getVoltage());
+    if(optimalOut > 1) {
+      optimalOut = 1;
+    }
     this.feeder_out = optimalOut;
   }
 
@@ -216,6 +218,12 @@ public class ShooterSubsystem extends SubsystemBase {
     var optimalOutMaster = Conversions.getSmartVoltage(voltage, RobotContainer.mPDH.getVoltage());
     var optimalOutSlave = Conversions.getSmartVoltage(voltage * ShooterConstants.SLAVE_FUDGE_FACTOR,
         RobotContainer.mPDH.getVoltage());
+
+    if(optimalOutMaster > 1) {
+      optimalOutMaster = 1;
+    } else if(optimalOutSlave > 1) {
+      optimalOutSlave = 1;
+    }
 
     this.shooter_master_out = optimalOutMaster;
     this.shooter_slave_out = optimalOutSlave;
