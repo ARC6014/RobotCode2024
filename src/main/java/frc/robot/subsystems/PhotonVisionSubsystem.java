@@ -7,10 +7,20 @@ package frc.robot.subsystems;
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.proto.System;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PVConstants;
 
@@ -20,9 +30,9 @@ public class PhotonVisionSubsystem extends SubsystemBase {
   private PhotonPipelineResult result;
   List<PhotonTrackedTarget> targets;
   PhotonTrackedTarget bestTarget;
-  int targetID = 0;
-  double poseAmbiguity = 0.0;
-  Transform3d bestCameraToTarget;
+  Pose3d cameraPosOnRobot = new Pose3d(
+      new Translation3d(PVConstants.CAM_POSE[0][0], PVConstants.CAM_POSE[0][1], PVConstants.CAM_POSE[0][2]),
+      new Rotation3d(PVConstants.CAM_POSE[1][0], PVConstants.CAM_POSE[1][1], PVConstants.CAM_POSE[1][2]));
 
   /** Creates a new PhotonVisionSubsystem. */
   public PhotonVisionSubsystem() {
@@ -35,9 +45,6 @@ public class PhotonVisionSubsystem extends SubsystemBase {
     if (hasTargets()) {
       targets = result.getTargets();
       bestTarget = result.getBestTarget();
-      targetID = bestTarget.getFiducialId();
-      poseAmbiguity = bestTarget.getPoseAmbiguity();
-      bestCameraToTarget = bestTarget.getBestCameraToTarget();
     }
   }
 
@@ -58,7 +65,48 @@ public class PhotonVisionSubsystem extends SubsystemBase {
   }
 
   public Transform3d getCameraToTarget() {
-    return bestCameraToTarget;
+    return bestTarget.getBestCameraToTarget();
+
+  }
+
+  public Pose3d getRobotPoseOnField() {
+    return PhotonUtils.estimateFieldToRobotAprilTag(getCameraToTarget(),
+        getCameraToRobot(),
+        new Transform3d(cameraPosOnRobot.getTranslation(), cameraPosOnRobot.getRotation()));
+  }
+
+  public Pose3d getCameraToRobot() {
+    try {
+      var targetPose = new AprilTagFieldLayout(PVConstants.APRIL_TAG_LAYOUT).getTagPose(getTargetID());
+      if (targetPose.isPresent()) {
+        return targetPose.get();
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return new Pose3d();
+  }
+
+  public double getDistanceToPose(Pose2d robotPose, Pose2d targetPose) {
+    return PhotonUtils.getDistanceToPose(robotPose, targetPose);
+  }
+
+  public Rotation2d getTheYawToPose(Pose2d robotPose, Pose2d targetPose) {
+    return PhotonUtils.getYawToPose(robotPose, targetPose);
+  }
+
+  public Translation2d getTranslationToTarget(Pose2d robotPose, Pose2d targetPose) {
+    return PhotonUtils.estimateCameraToTargetTranslation(getDistanceToPose(robotPose, targetPose),
+        Rotation2d.fromDegrees(-bestTarget.getYaw()));
+  }
+
+  /*
+   * meters
+   */
+  public double getDistanceToTarget(Pose2d targetPose2d) {
+    return PhotonUtils.calculateDistanceToTargetMeters(cameraPosOnRobot.getZ(),
+        targetPose2d.getY(), cameraPosOnRobot.getRotation().getZ(),
+        Units.degreesToRadians(result.getBestTarget().getPitch()));
   }
 
   public void takeSnapshot() {
@@ -66,11 +114,11 @@ public class PhotonVisionSubsystem extends SubsystemBase {
   }
 
   public int getTargetID() {
-    return targetID;
+    return bestTarget.getFiducialId();
   }
 
   public double getPoseAmbiguity() {
-    return poseAmbiguity;
+    return bestTarget.getPoseAmbiguity();
   }
 
   public boolean hasTargets() {

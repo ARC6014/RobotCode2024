@@ -387,6 +387,8 @@ public class Constants implements Loggable {
     public static class PVConstants {
 
         public static final String PV_CAMERA_NAME = "photonvision";
+        public static final String APRIL_TAG_LAYOUT = "tagMap.json";
+        public static final double[][] CAM_POSE = { { 0, 0, 0 }, { 0, 0, 0 } };// x, y, z, roll, pitch, yaw
 
     }
 
