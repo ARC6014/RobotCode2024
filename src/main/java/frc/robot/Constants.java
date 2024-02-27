@@ -376,9 +376,15 @@ public class Constants implements Loggable {
         public static final int CANDLE_ID = 43;
     }
 
-    public class LLConstants {
+    public static class LLConstants {
         public static String name = "limelight";
         public static double[] camPose_RobotField = { 0, 0, 0, 0, 0, 0 };// x, y, z, roll, pitch, yaw
+    }
+
+    public static class PVConstants {
+
+        public static final String PV_CAMERA_NAME = "photonvision";
+
     }
 
     public static class Characterization {

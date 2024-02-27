@@ -19,16 +19,16 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightSubsystem extends SubsystemBase {
-  /** Creates a new LimeLight. */  
+  /** Creates a new LimeLight. */
   private NetworkTable tLL;
   private NetworkTableEntry tBotPose_field;
   private NetworkTableEntry tCamPose_target;
   private NetworkTableEntry tBotPose_target;
   private NetworkTableEntry tId;
 
-  private double[] mBotPoseArray_field = new double [7];
-  private double[] mCamPoseArray_target = new double [6];
-  private double[] mBotPoseArray_target = new double [6];
+  private double[] mBotPoseArray_field = new double[7];
+  private double[] mCamPoseArray_target = new double[6];
+  private double[] mBotPoseArray_target = new double[6];
 
   private Pose3d mBotPose3d_field;
   private Pose3d mCamPose3d_target;
@@ -52,7 +52,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() { 
+  public void periodic() {
     updateValues();
 
     SmartDashboard.putNumber("LL X", mCamPose3d_target.getX());
@@ -60,9 +60,10 @@ public class LimelightSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("LL Z", (mCamPose3d_target.getZ()));
     SmartDashboard.putNumber("LL Theta", Units.radiansToDegrees(mCamPose3d_target.getRotation().getZ()));
     SmartDashboard.putNumber("Tag ID", mId);
+
   }
 
-  private void updateValues(){
+  private void updateValues() {
     tLL = NetworkTableInstance.getDefault().getTable(Constants.LLConstants.name);
     tBotPose_field = tLL.getEntry("botpose");
     tCamPose_target = tLL.getEntry("camerapose_targetspace");
@@ -90,59 +91,62 @@ public class LimelightSubsystem extends SubsystemBase {
     mLatency = mBotPoseArray_field[6];
   }
 
-  private static Pose3d DoubleArrayToPose3d(double[] inData){
+  private static Pose3d DoubleArrayToPose3d(double[] inData) {
     return new Pose3d(
-      new Translation3d(inData[0], inData[1], inData[2]),
-      new Rotation3d(Units.degreesToRadians(inData[3]), Units.degreesToRadians(inData[4]), Units.degreesToRadians(inData[5]))
-    );
+        new Translation3d(inData[0], inData[1], inData[2]),
+        new Rotation3d(Units.degreesToRadians(inData[3]), Units.degreesToRadians(inData[4]),
+            Units.degreesToRadians(inData[5])));
   }
 
-  private static Pose2d DoubleArrayToPose2d(double[] inData){
+  private static Pose2d DoubleArrayToPose2d(double[] inData) {
     return new Pose2d(
-      new Translation2d(inData[0], inData[1]),
-      new Rotation2d(Units.degreesToRadians(inData[5]))
-    );
+        new Translation2d(inData[0], inData[1]),
+        new Rotation2d(Units.degreesToRadians(inData[5])));
   }
 
-  public Pose3d getBotPose3d_field(){
+  public Pose3d getBotPose3d_field() {
     return mBotPose3d_field;
   }
-  public Pose3d getBotPose3d_target(){
+
+  public Pose3d getBotPose3d_target() {
     return mBotPose3d_target;
   }
-  public Pose3d getCamPose3d_target(){
+
+  public Pose3d getCamPose3d_target() {
     return mCamPose3d_target;
   }
 
-  public Pose2d getBotPose2d_field(){
+  public Pose2d getBotPose2d_field() {
     return mBotPose2d_field;
   }
-  public Pose2d getBotPose2d_target(){
+
+  public Pose2d getBotPose2d_target() {
     return mBotPose2d_target;
   }
-  public Pose2d getCamPose2d_target(){
+
+  public Pose2d getCamPose2d_target() {
     return mCamPose2d_target;
   }
 
-  public int getID(){
+  public int getID() {
     return mId;
   }
 
-  public int getNumTargets(){
+  public int getNumTargets() {
     int occurrences = 0;
-    for (int i = 0; i < fullJson.length()-4; i++) {
-      if (fullJson.substring(i, i+3).equals("pts")) {
-          occurrences++;
+    for (int i = 0; i < fullJson.length() - 4; i++) {
+      if (fullJson.substring(i, i + 3).equals("pts")) {
+        occurrences++;
       }
     }
     return occurrences;
   }
 
-  public double getArea(){
+  public double getArea() {
     return mArea;
   }
 
-  public double getLatency(){
+  public double getLatency() {
     return mLatency;
   }
 
@@ -152,5 +156,5 @@ public class LimelightSubsystem extends SubsystemBase {
     }
     return mLL;
   }
-  
+
 }
