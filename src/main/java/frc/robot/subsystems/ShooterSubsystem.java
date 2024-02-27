@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterConstants;
+import frc.team6014.lib.decorators.Assign;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.LoggedTunableNumber;
 
@@ -132,26 +133,23 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
     SmartDashboard.putNumber("PDH V", RobotContainer.mPDH.getVoltage());
 
-     
-
-      switch (m_shootState) {
-        case AMP:
-          setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
-          break;
-        case SPEAKER_LONG:
-          setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
-          break;
-        case SPEAKER_SHORT:
-          setShooterOut(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
-          break;
-        case OPEN_LOOP:
-          break;
-        case CLOSED:
-        default:
-          setShooterOut(0);
-          break;
-      }
-    
+    switch (m_shootState) {
+      case AMP:
+        setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
+        break;
+      case SPEAKER_LONG:
+        setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
+        break;
+      case SPEAKER_SHORT:
+        setShooterOut(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+        break;
+      case OPEN_LOOP:
+        break;
+      case CLOSED:
+      default:
+        setShooterOut(0);
+        break;
+    }
 
     switch (m_feederState) {
       case LET_HIM_COOK:
@@ -192,23 +190,25 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setFeederOUT(double percentOutput) {
-    var optimalOut = Conversions.getSmartVoltage(percentOutput, MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
+    var optimalOut = Conversions.getSmartVoltage(percentOutput,
+        MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
     // if(optimalOut > 1) {
-    //   optimalOut = 1;
+    // optimalOut = 1;
     // }
     this.feeder_out = optimalOut;
   }
 
   // TODO: Add scalar here to adjust slave output to master
   public void setShooterOut(double voltage) {
-    var optimalOutMaster = Conversions.getSmartVoltage(voltage, MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
+    var optimalOutMaster = Conversions.getSmartVoltage(voltage,
+        MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
     var optimalOutSlave = Conversions.getSmartVoltage(voltage * ShooterConstants.SLAVE_FUDGE_FACTOR,
         MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
 
     // if(optimalOutMaster > 1) {
-    //   optimalOutMaster = 1;
+    // optimalOutMaster = 1;
     // } else if(optimalOutSlave > 1) {
-    //   optimalOutSlave = 1;
+    // optimalOutSlave = 1;
     // }
 
     this.shooter_master_out = optimalOutMaster;
@@ -216,7 +216,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setAmpOut(double percentOutput) {
-    var optimalOutMaster = Conversions.getSmartVoltage(percentOutput, MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
+    var optimalOutMaster = Conversions.getSmartVoltage(percentOutput,
+        MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));
     this.shooter_master_out = optimalOutMaster;
     this.shooter_slave_out = 0;
   }
