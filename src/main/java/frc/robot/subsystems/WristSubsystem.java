@@ -26,9 +26,12 @@ public class WristSubsystem extends SubsystemBase {
 
     private Gearbox mGearbox = WristConstants.gearbox;
 
-    private static final LoggedTunableNumber kWristP = new LoggedTunableNumber("Wrist/kP", WristConstants.ANGLE_kP);
-    private static final LoggedTunableNumber kWristI = new LoggedTunableNumber("Wrist/kI", WristConstants.ANGLE_kI);
-    private static final LoggedTunableNumber kWristD = new LoggedTunableNumber("Wrist/kD", WristConstants.ANGLE_kD);
+    private static final LoggedTunableNumber<Number> kWristP = new LoggedTunableNumber<Number>("Wrist/kP",
+            WristConstants.ANGLE_kP);
+    private static final LoggedTunableNumber<Number> kWristI = new LoggedTunableNumber<Number>("Wrist/kI",
+            WristConstants.ANGLE_kI);
+    private static final LoggedTunableNumber<Number> kWristD = new LoggedTunableNumber<Number>("Wrist/kD",
+            WristConstants.ANGLE_kD);
 
     /** WRIST ANGLE POSITION */
     private Position mPosition;
@@ -145,9 +148,9 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
-        configs.Slot0.withKP(kWristP.get());
-        configs.Slot0.withKI(kWristI.get());
-        configs.Slot0.withKD(kWristD.get());
+        configs.Slot0.withKP(kWristP.get().doubleValue());
+        configs.Slot0.withKI(kWristI.get().doubleValue());
+        configs.Slot0.withKD(kWristD.get().doubleValue());
 
         SmartDashboard.putNumber("Wrist Angle Falcon", Conversions.revolutionsToDegrees(getFalconPosition()));
         SmartDashboard.putNumber("Wrist Angle Bore", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));

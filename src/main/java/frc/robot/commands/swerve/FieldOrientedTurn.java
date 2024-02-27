@@ -16,13 +16,11 @@ import frc.team6014.lib.util.LoggedTunableNumber;
 public class FieldOrientedTurn extends Command {
   /** Creates a new FieldOrientedTurn. */
   private double m_error, m_lastError, m_output, m_goalAngle, m_currentAngle;
-  private LoggedTunableNumber kP = new LoggedTunableNumber("AUTO/kP", DriveConstants.kRotControllerP);
-  private LoggedTunableNumber kD = new LoggedTunableNumber("AUTO/kD", DriveConstants.kRotControllerD);
+  private LoggedTunableNumber<Number> kP = new LoggedTunableNumber<Number>("AUTO/kP", DriveConstants.kRotControllerP);
+  private LoggedTunableNumber<Number> kD = new LoggedTunableNumber<Number>("AUTO/kD", DriveConstants.kRotControllerD);
 
   private DriveSubsystem mSwerve;
   private boolean atSetpoint = false;
-
-  
 
   public FieldOrientedTurn(DriveSubsystem swerve, double goalAngle) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -52,8 +50,8 @@ public class FieldOrientedTurn extends Command {
       m_error = m_goalAngle - m_currentAngle;
     }
 
-    m_output = (Constants.isTuning ? kP.get() : DriveConstants.kRotControllerP) * m_error
-        + ((Constants.isTuning ? kD.get() : DriveConstants.kRotControllerD) * (m_error - m_lastError));
+    m_output = (Constants.isTuning ? kP.get().doubleValue() : DriveConstants.kRotControllerP) * m_error
+        + ((Constants.isTuning ? kD.get().doubleValue() : DriveConstants.kRotControllerD) * (m_error - m_lastError));
 
     if (m_error >= -DriveConstants.kRotControllerTolerance
         && m_error <= DriveConstants.kRotControllerTolerance) {

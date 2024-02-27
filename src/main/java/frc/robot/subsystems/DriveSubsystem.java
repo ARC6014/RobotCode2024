@@ -69,9 +69,12 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
       DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
-  private static final LoggedTunableNumber kSnapP = new LoggedTunableNumber("Snap/kP", DriveConstants.snapkP);
-  private static final LoggedTunableNumber kSnapI = new LoggedTunableNumber("Snap/kI", DriveConstants.snapkI);
-  private static final LoggedTunableNumber kSnapD = new LoggedTunableNumber("Snap/kD", DriveConstants.snapkD);
+  private static final LoggedTunableNumber<Number> kSnapP = new LoggedTunableNumber<Number>("Snap/kP",
+      DriveConstants.snapkP);
+  private static final LoggedTunableNumber<Number> kSnapI = new LoggedTunableNumber<Number>("Snap/kI",
+      DriveConstants.snapkI);
+  private static final LoggedTunableNumber<Number> kSnapD = new LoggedTunableNumber<Number>("Snap/kD",
+      DriveConstants.snapkD);
 
   private final Timer snapTimer = new Timer();
 
@@ -174,7 +177,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    snapPIDController.setPID(kSnapP.get(), kSnapI.get(), kSnapD.get());
+    snapPIDController.setPID(kSnapP.get().doubleValue(), kSnapI.get().doubleValue(), kSnapD.get().doubleValue());
     // SmartDashboard.putNumber("Swerve Voltage 0 ",
     // getDriveMotors().get(0).getMotorOutputVoltage());
     // SmartDashboard.putNumber("Swerve Voltage 1",

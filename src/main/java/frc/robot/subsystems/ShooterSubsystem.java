@@ -45,7 +45,7 @@ public class ShooterSubsystem extends SubsystemBase {
   double shooter_slave_out;
   double shooter_master_out;
 
-  LoggedTunableNumber isShooterVoltage = new LoggedTunableNumber("Shooter Is Voltage Mode",
+  private LoggedTunableNumber<Boolean> isShooterVoltage = new LoggedTunableNumber<Boolean>("Shooter Is Voltage Mode",
       ShooterConstants.IS_VOLTAGE_MODE);
 
   public enum ShooterState {
@@ -176,7 +176,25 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Setters
   public void setShooterState(ShooterState newState) {
-    // TODO: Add voltage condition here @Carabelli
+    if (isShooterVoltage.get()) {
+      switch (m_shootState) {
+        case AMP:
+          setShooterVoltage(Constants.ShooterConstants.AMP_VOLTAGE);
+          break;
+        case SPEAKER_LONG:
+          setShooterVoltage(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
+          break;
+        case SPEAKER_SHORT:
+          setShooterVoltage(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+          break;
+        case OPEN_LOOP:
+          break;
+        case CLOSED:
+        default:
+          setShooterVoltage(0);
+          break;
+      }
+    }
     m_shootState = newState;
   }
 

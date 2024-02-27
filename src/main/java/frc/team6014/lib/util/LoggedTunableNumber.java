@@ -15,14 +15,12 @@ import frc.robot.Constants;
  * default if not or
  * value not in dashboard.
  */
-public class LoggedTunableNumber {
+public class LoggedTunableNumber<T> {
     private static final String tableKey = "TunableNumbers";
 
     private String key;
-    private double defaultValue;
-    private boolean defaultValueBoolean;
-    private boolean isBoolean = false;
-    private double lastHasChangedValue = defaultValue;
+    private T defaultValue;
+    private T lastHasChangedValue;
     private boolean tuningMode;
 
     /**
@@ -30,26 +28,20 @@ public class LoggedTunableNumber {
      * 
      * @param dashboardKey Key on dashboard
      * @param defaultValue Default value
-     * @param tuningMode   Whether the robot is in tuning mode
+     * @param tuningMode   Whether the robot is in tuning mode for this specific
+     *                     value
      * @return The new TunableNumber
      */
-    public LoggedTunableNumber(String dashboardKey, double defaultValue, boolean tuningMode) {
+    public LoggedTunableNumber(String dashboardKey, T defaultValue, boolean tuningMode) {
         this.key = tableKey + "/" + dashboardKey;
         this.tuningMode = tuningMode;
         setDefault(defaultValue);
     }
 
-    public LoggedTunableNumber(String dashboardKey, double defaultValue) {
+    public LoggedTunableNumber(String dashboardKey, T defaultValue) {
         this.key = tableKey + "/" + dashboardKey;
         this.tuningMode = Constants.isTuning;
         setDefault(defaultValue);
-    }
-
-    public LoggedTunableNumber(String dashboardKey, boolean defaultValue) {
-        this.isBoolean = true;
-        this.key = tableKey + "/" + dashboardKey;
-        this.tuningMode = Constants.isTuning;
-        setDefaultBoolean(defaultValue);
     }
 
     /**
@@ -57,7 +49,7 @@ public class LoggedTunableNumber {
      * 
      * @return The default value
      */
-    public double getDefault() {
+    public T getDefault() {
         return defaultValue;
     }
 
@@ -66,27 +58,21 @@ public class LoggedTunableNumber {
      * 
      * @param defaultValue The default value
      */
-    public void setDefault(double defaultValue) {
+    public void setDefault(T defaultValue) {
         this.defaultValue = defaultValue;
         System.out.println(tuningMode);
-        if (tuningMode) {
-            // This makes sure the data is on NetworkTables but will not change it
-            SmartDashboard.putNumber(key,
-                    SmartDashboard.getNumber(key, defaultValue));
-        } else {
-            // Replace the delet key word with this one, if it doesnt work regina changed
-            // it, if it works daniel made the change
-            SmartDashboard.clearPersistent(key);
-        }
-    }
 
-    public void setDefaultBoolean(boolean defaultValue) {
-        this.defaultValueBoolean = defaultValue;
-        System.out.println(tuningMode);
         if (tuningMode) {
+
             // This makes sure the data is on NetworkTables but will not change it
-            SmartDashboard.putBoolean(key,
-                    SmartDashboard.getBoolean(key, defaultValueBoolean));
+
+            if (defaultValue instanceof Number)
+                SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, (Double) defaultValue));
+            else if (defaultValue instanceof String || defaultValue instanceof Boolean)
+                SmartDashboard.putString(key, SmartDashboard.getString(key, (String) defaultValue));
+            else
+                System.out.println("Unsupported Number type");
+
         } else {
             // Replace the delet key word with this one, if it doesnt work regina changed
             // it, if it works daniel made the change
@@ -99,14 +85,19 @@ public class LoggedTunableNumber {
      * 
      * @return The current value
      */
-    public double get() {
-        return tuningMode ? SmartDashboard.getNumber(key, defaultValue)
-                : defaultValue;
-    }
-
-    public boolean getBoolean() {
-        return tuningMode ? SmartDashboard.getBoolean(key, defaultValueBoolean)
-                : defaultValueBoolean;
+    public T get() {
+        if (defaultValue instanceof Boolean) {
+            return tuningMode ? (T) Boolean.valueOf(SmartDashboard.getString(key, defaultValue.toString()))
+                    : defaultValue;
+        } else if (defaultValue instanceof String) {
+            return tuningMode ? (T) (SmartDashboard.getString(key, defaultValue.toString()))
+                    : defaultValue;
+        } else if (defaultValue instanceof Number) {
+            return tuningMode ? (T) (Number) (SmartDashboard.getNumber(key, (Double) defaultValue))
+                    : defaultValue;
+        } else
+            System.out.println("Unsupported data type");
+        return defaultValue;
     }
 
     /**
@@ -117,7 +108,7 @@ public class LoggedTunableNumber {
      *         otherwise
      */
     public boolean hasChanged() {
-        double currentValue = get();
+        T currentValue = get();
         if (currentValue != lastHasChangedValue) {
             lastHasChangedValue = currentValue;
             return true;

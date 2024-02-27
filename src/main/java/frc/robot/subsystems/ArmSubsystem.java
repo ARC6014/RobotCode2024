@@ -26,13 +26,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
+import frc.team6014.lib.decorators.Assign;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class ArmSubsystem extends SubsystemBase {
 
-  private static final LoggedTunableNumber tunableaAngle = new LoggedTunableNumber("ARM/tunableAngle", 38,
+  private static final LoggedTunableNumber<Number> tunableaAngle = new LoggedTunableNumber<Number>("ARM/tunableAngle",
+      38.0,
       Constants.isTuning);
 
   private static ArmSubsystem mInstance;
@@ -112,6 +114,7 @@ public class ArmSubsystem extends SubsystemBase {
     return mInstance;
   }
 
+  @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE (with feedformard ).")
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
     TalonFXConfiguration configs = new TalonFXConfiguration();
@@ -121,6 +124,7 @@ public class ArmSubsystem extends SubsystemBase {
     configs.Slot0.kD = ArmConstants.kD;
     configs.Slot0.kS = ArmConstants.kS;
     configs.Slot0.kV = ArmConstants.kV;
+    configs.Slot0.kG = ArmConstants.kG; // Just in case
 
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
@@ -150,7 +154,7 @@ public class ArmSubsystem extends SubsystemBase {
           setMotorOutput();
           break;
         case SPEAKER_SHORT:
-          setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+          setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get().doubleValue() : ArmConstants.SPEAKER_SHORT);
           break;
         case POSE_T:
           setArmAngleMotionMagic(getAngleFromPoseTable());
@@ -181,7 +185,7 @@ public class ArmSubsystem extends SubsystemBase {
         setMotorOutput();
         break;
       case SPEAKER_SHORT:
-        setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get() : ArmConstants.SPEAKER_SHORT);
+        setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get().doubleValue() : ArmConstants.SPEAKER_SHORT);
         break;
       case SPEAKER_LONG:
         setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
