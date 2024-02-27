@@ -339,11 +339,15 @@ public class Constants implements Loggable {
         public static final double SPEAKER_LONG_VOLTAGE = 10.5; // TODO: Tune
 
         /* RPMs */
-        public static final double FEEDER_OUT = 9;
+        public static final double FEEDER_OUT = 10;
         public static final double FEEDER_AMP = 7.5;
         public static final double FEEDER_FROM_INTAKE = 4;
         public static final double FEEDER_REVERSE = -6.31;
+
+        // voltage-control
         public static final boolean IS_VOLTAGE_MODE = false;
+
+        // scalar to multiply lower set of shooter 
         public static final double SLAVE_FUDGE_FACTOR = 1.0517;
     }
 

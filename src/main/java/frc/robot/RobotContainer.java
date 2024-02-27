@@ -212,7 +212,7 @@ public class RobotContainer implements Loggable {
                 LiveWindow.setEnabled(false);
 
                 configureNamedCommands();
-                configureButtonBindingsAlper();
+                configureButtonBindings();
 
                 autoChooser = AutoBuilder.buildAutoChooser();
                 SmartDashboard.putData("Auto ", autoChooser);
