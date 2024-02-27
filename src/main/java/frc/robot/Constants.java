@@ -76,7 +76,6 @@ public class Constants implements Loggable {
             FRONTRIGHTMODULE_TRANSLATION2D, // FR
             REARLEFTMODULE_TRANSLATION2D, // RL
             REARRIGHTMODULE_TRANSLATION2D); // RR
-    public static final boolean IS_TATMIN = true;
 
     public static final class DriveConstants {
         public static final boolean isFieldOriented = true;
@@ -347,7 +346,7 @@ public class Constants implements Loggable {
         // voltage-control
         public static final boolean IS_VOLTAGE_MODE = false;
 
-        // scalar to multiply lower set of shooter 
+        // scalar to multiply lower set of shooter
         public static final double SLAVE_FUDGE_FACTOR = 1.0517;
     }
 

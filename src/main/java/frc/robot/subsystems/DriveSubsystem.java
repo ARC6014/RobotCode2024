@@ -122,16 +122,16 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     mOdometry = new SwerveDriveOdometry(Constants.kinematics, getRotation2d(), getModulePositions());
 
     AutoBuilder.configureHolonomic(
-      this::getPoseMeters, 
-      this::resetOdometry, 
-      this::getChassisSpeed,
-      this::setClosedLoopStates, 
-      Constants.holonomicPoseConfig, () -> {
-                if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
-                    return true;
-                }
-                return false;
-    }, this);
+        this::getPoseMeters,
+        this::resetOdometry,
+        this::getChassisSpeed,
+        this::setClosedLoopStates,
+        Constants.holonomicPoseConfig, () -> {
+          if (DriverStation.getAlliance().get() == DriverStation.Alliance.Red) {
+            return true;
+          }
+          return false;
+        }, this);
 
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
@@ -194,15 +194,40 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
    * Manual Swerve Drive Method
    */
 
+  public Rotation2d getOdometryHeading() {
+    return poseEstimator.getEstimatedPosition().getRotation();
+  }
+
   public void swerveDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
     /* Automatically correcting the heading based on pid */
-    rot = calculateSnapValue(xSpeed, ySpeed, rot);
+    // rot = calculateSnapValue(xSpeed, ySpeed, rot);
     // if robot is field centric, construct ChassisSpeeds from field relative speeds
     // if not, construct ChassisSpeeds from robot relative speeds
-    desiredChassisSpeeds = fieldRelative
-        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot, getDriverCentricRotation2d())
+
+    ChassisSpeeds velocity = fieldRelative
+        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
+            getDriverCentricRotation2d())
         : new ChassisSpeeds(xSpeed, ySpeed, rot);
+
+    // discretize the ChassisSpeeds
+    desiredChassisSpeeds = ChassisSpeeds.discretize(velocity, 0.02);
+
+    // TODO: Implement if needed
+    // Heading Angular Velocity Deadband, might make a configuration option later.
+    // Originally made by Team 1466 Webb Robotics.
+    // Modified by Team 7525 Pioneers and BoiledBurntBagel of 6036
+    // if (true) {
+    // if (Math.abs(velocity.omegaRadiansPerSecond) < HEADING_CORRECTION_DEADBAND
+    // && (Math.abs(velocity.vxMetersPerSecond) > HEADING_CORRECTION_DEADBAND
+    // || Math.abs(velocity.vyMetersPerSecond) > HEADING_CORRECTION_DEADBAND)) {
+    // velocity.omegaRadiansPerSecond =
+    // swerveController.headingCalculate(getOdometryHeading().getRadians(),
+    // lastHeadingRadians);
+    // } else {
+    // lastHeadingRadians = getOdometryHeading().getRadians();
+    // }
+    // }
 
     states = Constants.kinematics.toSwerveModuleStates(desiredChassisSpeeds);
 
@@ -236,7 +261,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   public void resetOdometry(Pose2d pose) {
     // mGyro.reset();
-    // mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 : 1).getDegrees());
+    // mGyro.setYaw(pose.getRotation().times(DriveConstants.invertGyro ? -1 :
+    // 1).getDegrees());
     mOdometry.resetPosition(getGyroYaw(), getModulePositions(), pose);
     // mOdometry.resetPosition(getRotation2d(), getModulePositions(), pose);
   }
@@ -440,7 +466,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
     if (Math.abs(rot) >= 0.05)
       lastRotTime = snapTimer.get();
-      snapAngle = getRotation2d().getRadians();
+    snapAngle = getRotation2d().getRadians();
 
     if (Math.abs(xSpeed) >= 0.05 || Math.abs(ySpeed) >= 0.05)
       lastDriveTime = snapTimer.get();
@@ -499,8 +525,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         degStds = 30;
       } else { // no trust
         return;
-      } 
-      
+      }
+
       poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(xyStds, xyStds, Units.degreesToRadians(degStds)));
       poseEstimator.addVisionMeasurement(mLL.getBotPose2d_field(),
           Timer.getFPGATimestamp() - mLL.getLatency() / 1000.0);

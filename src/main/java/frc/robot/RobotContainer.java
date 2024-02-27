@@ -84,7 +84,7 @@ public class RobotContainer implements Loggable {
 
         public static PowerDistribution mPDH = new PowerDistribution();
 
-        private final UsbCam m_cam = new UsbCam();
+        // private final UsbCam m_cam = new UsbCam();
 
         // private final AddressableLEDSubsystem mLED = new
         // AddressableLEDSubsystem().getInstance();
@@ -131,9 +131,9 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup setArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new SequentialCommandGroup(
-                                        new WaitCommand(0.5),
+                                        new WaitCommand(0.75),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.5)),
+                                                        .withTimeout(1)),
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
