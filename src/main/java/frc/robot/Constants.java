@@ -212,7 +212,7 @@ public class Constants implements Loggable {
         public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(13.34);
 
         /** unit: rotations */
-        public static final double ANGLE_TOLERANCE = Conversions.degreesToRevolutions(1);
+        public static final double ANGLE_TOLERANCE = Conversions.degreesToRevolutions(0.5);
 
         /* Arm angles for setpoints (relative to the zero of Bore) */
         /** unit: degrees */
@@ -333,21 +333,22 @@ public class Constants implements Loggable {
         public static final boolean FEEDER_INVERTED = false;
 
         /* VOLTAGE */
-        public static final double AMP_VOLTAGE = 5;
-        public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // 10.5
-        public static final double SPEAKER_LONG_VOLTAGE = 10.5; // TODO: Tune
+        public static final double AMP_VOLTAGE = 5; // Should not exceed 11
+        public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // Should not exceed 11
+        public static final double SPEAKER_LONG_VOLTAGE = 9.75; // Should not exceed 11
 
         /* RPMs */
-        public static final double FEEDER_OUT = 10;
-        public static final double FEEDER_AMP = 7.5;
-        public static final double FEEDER_FROM_INTAKE = 4;
-        public static final double FEEDER_REVERSE = -6.31;
+        public static final double FEEDER_OUT = 10; // Should not exceed 11
+        public static final double FEEDER_AMP = 7.5; // Should not exceed 11
+        public static final double FEEDER_FROM_INTAKE = 4; // Should not exceed 11
+        public static final double FEEDER_REVERSE = -6.31; // Should not exceed 11
 
         // voltage-control
         public static final boolean IS_VOLTAGE_MODE = false;
 
         // scalar to multiply lower set of shooter
         public static final double SLAVE_FUDGE_FACTOR = 1.0517;
+
     }
 
     public static final class TelescopicConstants {

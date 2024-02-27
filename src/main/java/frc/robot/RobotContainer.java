@@ -121,7 +121,7 @@ public class RobotContainer implements Loggable {
 
         private final ParallelCommandGroup startStopFeeder = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT).withTimeout(0.3),
-                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.1));
+                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.2));
 
         private final ParallelDeadlineGroup startStopFeederBeamBreak = new ParallelDeadlineGroup(
                         new FeederStopAtBeambreak(), // this is the deadline
@@ -133,7 +133,7 @@ public class RobotContainer implements Loggable {
                         new SequentialCommandGroup(
                                         new WaitCommand(0.75),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(1)),
+                                                        .withTimeout(1.5)),
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
@@ -256,8 +256,8 @@ public class RobotContainer implements Loggable {
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
                 // Telescopic
-                mDriver.povDown().whileTrue(new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
-                mDriver.povUp().whileTrue(new TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
+                // mDriver.povDown().whileTrue(new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
+                // mDriver.povUp().whileTrue(new TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
                 mOperator.rightStick().onTrue(telescopicOpenLoop);
 
                 /* COMMAND GROUPS */

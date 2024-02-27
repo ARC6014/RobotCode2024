@@ -26,6 +26,7 @@ public class FeederCommand extends Command {
   }
 
   public FeederCommand withFeederState(FeederState state) {
+    System.out.println("Feeder state yaptik amk");
     this.state = state;
     return this;
   }
