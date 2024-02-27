@@ -202,9 +202,9 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
     /* Automatically correcting the heading based on pid */
     // rot = calculateSnapValue(xSpeed, ySpeed, rot);
+
     // if robot is field centric, construct ChassisSpeeds from field relative speeds
     // if not, construct ChassisSpeeds from robot relative speeds
-
     ChassisSpeeds velocity = fieldRelative
         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeed, ySpeed, rot,
             getDriverCentricRotation2d())
