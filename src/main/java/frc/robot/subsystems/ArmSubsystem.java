@@ -17,6 +17,8 @@ import Jama.util.Maths;
 import edu.wpi.first.math.MathShared;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -81,6 +83,8 @@ public class ArmSubsystem extends SubsystemBase {
   /** unit: rotations */
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
+  private final Pose2d zeroTest;
+
   public enum ArmControlState {
     /** open-loop control */
     OPEN_LOOP,
@@ -102,6 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public ArmSubsystem() {
+
     motorConfig();
     lastDemandedRotation = getArmAngleFalcon();
 
@@ -112,6 +117,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_timer.start();
 
     lastAbsoluteTime = m_timer.get();
+    this.zeroTest = new Pose2d();
 
   }
 
@@ -166,7 +172,7 @@ public class ArmSubsystem extends SubsystemBase {
           setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get().doubleValue() : ArmConstants.SPEAKER_SHORT);
           break;
         case POSE_T:
-          setArmAngleMotionMagic(getAngleFromPoseTable());
+          setArmAngleMotionMagic(getAngleFromPoseTable(zeroTest));
           break;
         case SPEAKER_LONG:
           setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
@@ -203,7 +209,7 @@ public class ArmSubsystem extends SubsystemBase {
         setArmAngleMotionMagic(ArmConstants.AMP);
         break;
       case POSE_T:
-        setArmAngleMotionMagic(getAngleFromPoseTable());
+        setArmAngleMotionMagic(getAngleFromPoseTable(zeroTest));
         break;
       case INTAKE:
         setArmAngleMotionMagic(ArmConstants.INTAKE);
@@ -257,11 +263,21 @@ public class ArmSubsystem extends SubsystemBase {
 
     Pose2d speaker = FieldConstants.RED_SPEAKER;
 
+    return getAngleFromPoseTable(speaker);
+
+  }
+
+  private double getAngleFromPoseTable(Pose2d target) {
+
+    Pose2d speaker = target;
+
     Optional<Alliance> alliance = DriverStation.getAlliance();
 
     if (alliance.isEmpty() || alliance.get() == Alliance.Blue) {
       speaker = FieldConstants.BLUE_SPEAKER;
     }
+
+    // System.out.println(mDriveSubsystem.getPose().getTranslation());
 
     double poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(speaker.getTranslation());
@@ -271,7 +287,8 @@ public class ArmSubsystem extends SubsystemBase {
         + ArmConstants.COEFFICIENT_CONSTANT;
 
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
-    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.LAST_RESORT_ANGLE_CUTOFF);
+    SmartDashboard.putNumber("Pose Difference", poseDifference);
+    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
 
   }
 

@@ -249,7 +249,7 @@ public class RobotContainer implements Loggable {
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.SPEAKER_LONG));
+                                ArmControlState.POSE_T));
 
                 // Wrist
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));

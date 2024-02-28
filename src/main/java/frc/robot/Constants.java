@@ -231,9 +231,9 @@ public class Constants implements Loggable {
         public static final double LAST_RESORT_ANGLE_CUTOFF = 150;
 
         // interpolation
-        public static final double COEFFICIENT_QUADRATIC = 0;
-        public static final double COEFFICIENT_LINEAR = 0;
-        public static final double COEFFICIENT_CONSTANT = 0;
+        public static final double COEFFICIENT_QUADRATIC = -1.643;
+        public static final double COEFFICIENT_LINEAR = 17.35;
+        public static final double COEFFICIENT_CONSTANT = 21.2;
     }
 
     public static final class IntakeConstants {
