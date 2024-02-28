@@ -43,7 +43,6 @@ import frc.robot.commands.swerve.FieldOrientedTurn;
 import frc.robot.commands.telescopic.TelescopicOpenLoop;
 import frc.robot.commands.telescopic.TelescopicStateCommand;
 import frc.robot.subsystems.AddressableLEDSubsystem;
-import frc.robot.subsystems.ArmOnlyBore;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -57,9 +56,7 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 import frc.robot.subsystems.UsbCam;
 import frc.robot.subsystems.WristSubsystem.Position;
-import frc.team6014.lib.auto.ARCTrajectory;
 import io.github.oblarg.oblog.Loggable;
-import frc.team6014.lib.util.FeedForwardCharacterization;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -73,21 +70,16 @@ import frc.team6014.lib.util.FeedForwardCharacterization;
 public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
-
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
         private final IntakeSubsystem mIntake = IntakeSubsystem.getInstance();
         private final LimelightSubsystem mLL = LimelightSubsystem.getInstance();
 
         public static PowerDistribution mPDH = new PowerDistribution();
-
-        private final UsbCam m_cam = new UsbCam();
-
-        // private final AddressableLEDSubsystem mLED = new
-        // AddressableLEDSubsystem().getInstance();
+        private final UsbCam mCamera = new UsbCam();
+        // private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem().getInstance();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -99,7 +91,6 @@ public class RobotContainer implements Loggable {
         /* COMMANDS */
         private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
                         () -> mOperator.getRightY());
-
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());

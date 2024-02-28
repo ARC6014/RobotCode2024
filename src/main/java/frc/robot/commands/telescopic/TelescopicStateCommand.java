@@ -7,8 +7,6 @@ package frc.robot.commands.telescopic;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.shooter.ShooterCommand;
-import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 import frc.robot.subsystems.TelescopicSubsystem;
 

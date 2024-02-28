@@ -5,9 +5,6 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.MjpegServer;
-import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.cscore.VideoMode;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -131,7 +128,7 @@ public class Robot extends TimedRobot {
     }
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
-    ArmSubsystem.getInstance().setTestPoint(DriveSubsystem.getInstance().getPose());
+    ArmSubsystem.getInstance().setInterpolatedPoint(DriveSubsystem.getInstance().getPose());
     ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
   }

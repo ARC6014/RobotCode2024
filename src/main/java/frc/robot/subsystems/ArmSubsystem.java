@@ -13,12 +13,9 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import Jama.util.Maths;
-import edu.wpi.first.math.MathShared;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.interpolation.Interpolator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
@@ -28,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
-import frc.team6014.lib.decorators.Assign;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.LoggedTunableNumber;
@@ -85,6 +81,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private double poseDifference = 0;
 
+  /** stores interpolated setpoint */
   private Pose2d zeroTest;
 
   public enum ArmControlState {
@@ -289,8 +286,6 @@ public class ArmSubsystem extends SubsystemBase {
         + ArmConstants.COEFFICIENT_CONSTANT;
 
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
-    SmartDashboard.putNumber("Speaker X", target.getX());
-    SmartDashboard.putNumber("Speaker Y", target.getY());
     
     return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
 
@@ -305,14 +300,15 @@ public class ArmSubsystem extends SubsystemBase {
         - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.ANGLE_TOLERANCE;
   }
 
-  public Pose2d getTestPoint() {
+  /** @return interpolated setpoint (pose2d) */
+  public Pose2d getInterpolatedPoint() {
     return zeroTest;
   }
 
-  public void setTestPoint(Pose2d pointToSet) {
+  /** changes the interpolated setpoint (pose2d) */
+  public void setInterpolatedPoint(Pose2d pointToSet) {
     zeroTest = pointToSet;
   }
-
 
   /** @return setpoint unit: degrees */
   public double getSetpoint() {

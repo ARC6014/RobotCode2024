@@ -6,10 +6,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.WristConstants;
@@ -148,12 +146,9 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
-        configs.Slot0.withKP(kWristP.get().doubleValue());
-        configs.Slot0.withKI(kWristI.get().doubleValue());
-        configs.Slot0.withKD(kWristD.get().doubleValue());
-
-        // SmartDashboard.putNumber("Wrist Angle Falcon", Conversions.revolutionsToDegrees(getFalconPosition()));
-        // SmartDashboard.putNumber("Wrist Angle Bore", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
+        // configs.Slot0.withKP(kWristP.get().doubleValue());
+        // configs.Slot0.withKI(kWristI.get().doubleValue());
+        // configs.Slot0.withKD(kWristD.get().doubleValue());
 
         autoCalibration();
     }
@@ -253,7 +248,7 @@ public class WristSubsystem extends SubsystemBase {
      * Resets to absolute if:
      * time has elapsed 10 seconds since previous calibration
      * OR
-     * current Falcon rotation is 1 degrees off from the Bore reading
+     * current Falcon rotation is 2 degrees off from the Bore reading
      * AND
      * the mechanism isn't moving
      */

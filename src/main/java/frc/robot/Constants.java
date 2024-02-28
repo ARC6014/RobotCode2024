@@ -207,7 +207,7 @@ public class Constants implements Loggable {
         public static final double kS = 0.14;
         public static final double kV = 0;
         public static final double kA = 0;
-        public static final double kF = 0.4; // TODO: tune this
+        public static final double kF = 0.4; 
 
         /** unit: rotations */
         public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(13.34);
@@ -328,7 +328,6 @@ public class Constants implements Loggable {
         public static final IdleMode MASTER_MODE = IdleMode.kBrake;
 
         /* Inverts */
-        // NOT USED
         public static final boolean MASTER_INVERTED = false;
         public static final boolean SLAVE_INVERTED = false;
         public static final boolean FEEDER_INVERTED = false;
@@ -338,7 +337,6 @@ public class Constants implements Loggable {
         public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // Should not exceed 11
         public static final double SPEAKER_LONG_VOLTAGE = 9.75; // Should not exceed 11
 
-        /* RPMs */
         public static final double FEEDER_OUT = 10; // Should not exceed 11
         public static final double FEEDER_AMP = 7.5; // Should not exceed 11
         public static final double FEEDER_FROM_INTAKE = 4; // Should not exceed 11

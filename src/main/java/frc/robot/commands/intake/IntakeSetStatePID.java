@@ -3,7 +3,6 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.Running;
-import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 
 public class IntakeSetStatePID extends Command {
     private IntakeSubsystem mIntakeSubsystem;
