@@ -14,8 +14,7 @@ public class UsbCam extends SubsystemBase {
     private UsbCamera usbCamera;
 
     public UsbCam() {
-        CameraServer.startAutomaticCapture();
-        usbCamera = CameraServer.startAutomaticCapture(0);
+        usbCamera = CameraServer.startAutomaticCapture(1);
         SmartDashboard.putBoolean("İs Enabled", usbCamera.isConnected());
         // setFPS(60);
         // setResolution(640, 252);

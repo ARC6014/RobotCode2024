@@ -84,7 +84,7 @@ public class RobotContainer implements Loggable {
 
         public static PowerDistribution mPDH = new PowerDistribution();
 
-        // private final UsbCam m_cam = new UsbCam();
+        private final UsbCam m_cam = new UsbCam();
 
         // private final AddressableLEDSubsystem mLED = new
         // AddressableLEDSubsystem().getInstance();
@@ -256,8 +256,10 @@ public class RobotContainer implements Loggable {
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
                 // Telescopic
-                // mDriver.povDown().whileTrue(new TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
-                // mDriver.povUp().whileTrue(new TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
+                // mDriver.povDown().whileTrue(new
+                // TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
+                // mDriver.povUp().whileTrue(new
+                // TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
                 mOperator.rightStick().onTrue(telescopicOpenLoop);
 
                 /* COMMAND GROUPS */

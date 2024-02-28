@@ -40,6 +40,9 @@ public class ArmSubsystem extends SubsystemBase {
       ArmConstants.kF,
       Constants.isTuning);
 
+  private static final LoggedTunableNumber<Number> armVelocity = new LoggedTunableNumber<Number>("ARM/Vel",
+      ArmConstants.ARM_VELOCITY);
+
   private static ArmSubsystem mInstance;
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
 
@@ -119,7 +122,8 @@ public class ArmSubsystem extends SubsystemBase {
     return mInstance;
   }
 
-  // @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE (with feedformard ).")
+  // @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE
+  // (with feedformard ).")
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
     configs = new TalonFXConfiguration();
@@ -130,7 +134,6 @@ public class ArmSubsystem extends SubsystemBase {
     configs.Slot0.kS = ArmConstants.kS;
     configs.Slot0.kV = ArmConstants.kV;
     configs.Slot0.kA = ArmConstants.kA;
-    
 
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
@@ -138,7 +141,7 @@ public class ArmSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
 
     configs.MotionMagic.MotionMagicAcceleration = ArmConstants.ARM_ACCELERATION;
-    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.ARM_VELOCITY;
+    configs.MotionMagic.MotionMagicCruiseVelocity = armVelocity.get().doubleValue();
 
     armMotor.getConfigurator().apply(configs);
     armMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -305,8 +308,8 @@ public class ArmSubsystem extends SubsystemBase {
     setpoint = target;
     armMotor.setControl(motionMagicVoltage.withPosition(
         armGearbox.drivenToDriving(Conversions.degreesToRevolutions(setpoint)))
-        .withFeedForward((Constants.isTuning ? armFF.get().doubleValue(): ArmConstants.kF) 
-        * Math.cos(Math.toRadians(setpoint))));
+        .withFeedForward((Constants.isTuning ? armFF.get().doubleValue() : ArmConstants.kF)
+            * Math.cos(Math.toRadians(setpoint))));
   }
 
   public void setArmVoltage(double voltage) {
