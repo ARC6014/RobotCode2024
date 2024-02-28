@@ -137,7 +137,7 @@ public class RobotContainer implements Loggable {
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
-                        new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG),
+                        new ArmStateSet(mArm, ArmControlState.POSE_T),
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
@@ -269,7 +269,7 @@ public class RobotContainer implements Loggable {
                 mOperator.leftBumper().onTrue(
                                 closeWristStopIntakeArmIntake
                                                 .andThen(new WaitCommand(0.5))
-                                                .andThen(startStopFeeder));
+                                                .andThen(startStopFeederBeamBreak));
 
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);

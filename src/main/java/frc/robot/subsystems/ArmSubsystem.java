@@ -83,7 +83,9 @@ public class ArmSubsystem extends SubsystemBase {
   /** unit: rotations */
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
-  private final Pose2d zeroTest;
+  private double poseDifference = 0;
+
+  private Pose2d zeroTest;
 
   public enum ArmControlState {
     /** open-loop control */
@@ -117,7 +119,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_timer.start();
 
     lastAbsoluteTime = m_timer.get();
-    this.zeroTest = new Pose2d();
+    // this.zeroTest = mDriveSubsystem.getPose();
 
   }
 
@@ -227,6 +229,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     lastDemandedRotation = getArmAngleFalcon();
 
+    SmartDashboard.putNumber("Pose Difference", poseDifference);
+
     autoCalibration();
   }
 
@@ -263,31 +267,31 @@ public class ArmSubsystem extends SubsystemBase {
 
     Pose2d speaker = FieldConstants.RED_SPEAKER;
 
-    return getAngleFromPoseTable(speaker);
-
-  }
-
-  private double getAngleFromPoseTable(Pose2d target) {
-
-    Pose2d speaker = target;
-
     Optional<Alliance> alliance = DriverStation.getAlliance();
 
     if (alliance.isEmpty() || alliance.get() == Alliance.Blue) {
       speaker = FieldConstants.BLUE_SPEAKER;
     }
 
+    return getAngleFromPoseTable(speaker);
+
+  }
+
+  private double getAngleFromPoseTable(Pose2d target) {
+
     // System.out.println(mDriveSubsystem.getPose().getTranslation());
 
-    double poseDifference = mDriveSubsystem.getPose().getTranslation()
-        .getDistance(speaker.getTranslation());
+    poseDifference = mDriveSubsystem.getPose().getTranslation()
+        .getDistance(target.getTranslation());
 
     double optimizedAngle = ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(poseDifference, 2)
         + ArmConstants.COEFFICIENT_LINEAR * poseDifference
         + ArmConstants.COEFFICIENT_CONSTANT;
 
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
-    SmartDashboard.putNumber("Pose Difference", poseDifference);
+    SmartDashboard.putNumber("Speaker X", target.getX());
+    SmartDashboard.putNumber("Speaker Y", target.getY());
+    
     return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
 
   }
@@ -300,6 +304,15 @@ public class ArmSubsystem extends SubsystemBase {
     return Math.abs(getArmAngleBore()
         - Conversions.degreesToRevolutions(setpoint)) < ArmConstants.ANGLE_TOLERANCE;
   }
+
+  public Pose2d getTestPoint() {
+    return zeroTest;
+  }
+
+  public void setTestPoint(Pose2d pointToSet) {
+    zeroTest = pointToSet;
+  }
+
 
   /** @return setpoint unit: degrees */
   public double getSetpoint() {
