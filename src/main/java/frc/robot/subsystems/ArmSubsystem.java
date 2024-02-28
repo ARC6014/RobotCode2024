@@ -34,7 +34,10 @@ import frc.team6014.lib.util.LoggedTunableNumber;
 public class ArmSubsystem extends SubsystemBase {
 
   private static final LoggedTunableNumber<Number> tunableaAngle = new LoggedTunableNumber<Number>("ARM/tunableAngle",
-      38.0,
+      ArmConstants.SPEAKER_SHORT,
+      Constants.isTuning);
+  private static final LoggedTunableNumber<Number> armFF = new LoggedTunableNumber<Number>("ARM/FF",
+      ArmConstants.kF,
       Constants.isTuning);
 
   private static ArmSubsystem mInstance;
@@ -50,6 +53,8 @@ public class ArmSubsystem extends SubsystemBase {
   private final Timer m_timer = new Timer();
   /** Last time when we resetted to absolute */
   private double lastAbsoluteTime;
+
+  TalonFXConfiguration configs;
 
   /**
    * Angle to go by the arm
@@ -114,17 +119,18 @@ public class ArmSubsystem extends SubsystemBase {
     return mInstance;
   }
 
-  @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE (with feedformard ).")
+  // @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE (with feedformard ).")
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
-    TalonFXConfiguration configs = new TalonFXConfiguration();
+    configs = new TalonFXConfiguration();
 
     configs.Slot0.kP = ArmConstants.kP;
     configs.Slot0.kI = ArmConstants.kI;
     configs.Slot0.kD = ArmConstants.kD;
     configs.Slot0.kS = ArmConstants.kS;
     configs.Slot0.kV = ArmConstants.kV;
-    configs.Slot0.kG = ArmConstants.kG; // Just in case
+    configs.Slot0.kA = ArmConstants.kA;
+    
 
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
@@ -298,7 +304,9 @@ public class ArmSubsystem extends SubsystemBase {
   public void setArmAngleMotionMagic(double target) {
     setpoint = target;
     armMotor.setControl(motionMagicVoltage.withPosition(
-        armGearbox.drivenToDriving(Conversions.degreesToRevolutions(setpoint))));
+        armGearbox.drivenToDriving(Conversions.degreesToRevolutions(setpoint)))
+        .withFeedForward((Constants.isTuning ? armFF.get().doubleValue(): ArmConstants.kF) 
+        * Math.cos(Math.toRadians(setpoint))));
   }
 
   public void setArmVoltage(double voltage) {

@@ -68,8 +68,11 @@ public class LoggedTunableNumber<T> {
 
             if (defaultValue instanceof Number)
                 SmartDashboard.putNumber(key, SmartDashboard.getNumber(key, (Double) defaultValue));
-            else if (defaultValue instanceof String || defaultValue instanceof Boolean)
+            else if (defaultValue instanceof String)
                 SmartDashboard.putString(key, SmartDashboard.getString(key, (String) defaultValue));
+            else if (defaultValue instanceof Boolean) {
+                SmartDashboard.putBoolean(key, SmartDashboard.getBoolean(key, (Boolean) defaultValue));
+            }
             else
                 System.out.println("Unsupported Number type");
 

@@ -204,9 +204,10 @@ public class Constants implements Loggable {
         public static final double kP = 1.2;
         public static final double kD = 0.0;
         public static final double kI = 0;
-        public static final double kG = 0;
         public static final double kS = 0.14;
         public static final double kV = 0;
+        public static final double kA = 0;
+        public static final double kF = 0.4; // TODO: tune this
 
         /** unit: rotations */
         public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(13.34);
@@ -218,7 +219,7 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double ZERO = 0;
         /** unit: degrees */
-        public static final double INTAKE = 9 + 15 - 9.5 - 5;
+        public static final double INTAKE = 10.5;
         /** unit: degrees */
         public static final double SPEAKER_LONG = 50;
         /** unit: degrees */

@@ -152,8 +152,8 @@ public class WristSubsystem extends SubsystemBase {
         configs.Slot0.withKI(kWristI.get().doubleValue());
         configs.Slot0.withKD(kWristD.get().doubleValue());
 
-        SmartDashboard.putNumber("Wrist Angle Falcon", Conversions.revolutionsToDegrees(getFalconPosition()));
-        SmartDashboard.putNumber("Wrist Angle Bore", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
+        // SmartDashboard.putNumber("Wrist Angle Falcon", Conversions.revolutionsToDegrees(getFalconPosition()));
+        // SmartDashboard.putNumber("Wrist Angle Bore", Conversions.revolutionsToDegrees(getBoreEncoderPosition()));
 
         autoCalibration();
     }
