@@ -118,6 +118,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     lastAbsoluteTime = m_timer.get();
     // this.zeroTest = mDriveSubsystem.getPose();
+    setInterpolatedPoint(mDriveSubsystem.getPose());
 
   }
 
@@ -239,12 +240,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   private double getAngleFromPoseTable() {
 
-    Pose2d speaker = FieldConstants.RED_SPEAKER;
+    Pose2d speaker = FieldConstants.BLUE_SPEAKER;
 
     Optional<Alliance> alliance = DriverStation.getAlliance();
 
-    if (alliance.isEmpty() || alliance.get() == Alliance.Blue) {
-      speaker = FieldConstants.BLUE_SPEAKER;
+    if (alliance.get() == Alliance.Red) {
+      speaker = FieldConstants.RED_SPEAKER;
     }
 
     return getAngleFromPoseTable(speaker);

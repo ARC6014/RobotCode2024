@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     }
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
-    ArmSubsystem.getInstance().setInterpolatedPoint(DriveSubsystem.getInstance().getPose());
+    // ArmSubsystem.getInstance().setInterpolatedPoint(DriveSubsystem.getInstance().getPose());
     ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
   }

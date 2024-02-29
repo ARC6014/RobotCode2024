@@ -117,7 +117,7 @@ public class RobotContainer implements Loggable {
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.2));
 
         private final ParallelDeadlineGroup startStopFeederBeamBreak = new ParallelDeadlineGroup(
-                        new FeederStopAtBeambreak(), // this is the deadline
+                        new FeederStopAtBeambreak().withTimeout(3), // this is the deadline     
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
@@ -176,6 +176,11 @@ public class RobotContainer implements Loggable {
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(0.5)));
+
+        private final ParallelDeadlineGroup AUTOstartStopFeederBeamBreak = new ParallelDeadlineGroup(
+                        new FeederStopAtBeambreak().withTimeout(1.75), // this is the deadline     
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
+                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
         /**
          * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -331,7 +336,7 @@ public class RobotContainer implements Loggable {
 
                 NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
-                NamedCommands.registerCommand("Feed", startStopFeeder);
+                NamedCommands.registerCommand("Feed", AUTOstartStopFeederBeamBreak);
 
                 NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", AUTOsetArmFeedAndShootSpeakerShort);
