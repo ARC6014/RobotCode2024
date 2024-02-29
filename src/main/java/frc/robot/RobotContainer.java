@@ -56,6 +56,7 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 import frc.robot.subsystems.UsbCam;
 import frc.robot.subsystems.WristSubsystem.Position;
+import frc.team6014.lib.util.FeedForwardCharacterization;
 import io.github.oblarg.oblog.Loggable;
 
 /**
@@ -79,7 +80,8 @@ public class RobotContainer implements Loggable {
 
         public static PowerDistribution mPDH = new PowerDistribution();
         private final UsbCam mCamera = new UsbCam();
-        // private final AddressableLEDSubsystem mLED = new AddressableLEDSubsystem().getInstance();
+        // private final AddressableLEDSubsystem mLED = new
+        // AddressableLEDSubsystem().getInstance();
 
         /* CONTROLLERS */
         private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
@@ -312,8 +314,9 @@ public class RobotContainer implements Loggable {
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
-                // mDriver.L2().whileTrue(new FeedForwardCharacterization(mDrive,
-                // mDrive::runCharacterizationVolts, mDrive::getCharacterizationVelocity));
+                mDriver.L2().whileTrue(new FeedForwardCharacterization(mArm,
+                                mArm::setArmVoltage, mArm::getCharacterizationVelocity)
+                                .beforeStarting(() -> mArm.setArmControlState(ArmControlState.CHARACTERIZATION), mArm));
         }
 
         /*

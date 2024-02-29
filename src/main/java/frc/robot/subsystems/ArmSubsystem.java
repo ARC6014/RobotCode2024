@@ -13,7 +13,6 @@ import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -102,6 +101,8 @@ public class ArmSubsystem extends SubsystemBase {
     /** interpolation */
     POSE_T,
 
+    CHARACTERIZATION
+
   }
 
   public ArmSubsystem() {
@@ -162,39 +163,11 @@ public class ArmSubsystem extends SubsystemBase {
     if (isAtSetpointBore() && !isAtSetpointFalcon()) {
       armMotor.stopMotor();
       resetToAbsolute();
-
-      switch (armControlState) {
-        case OPEN_LOOP:
-          setMotorOutput();
-          break;
-        case SPEAKER_SHORT:
-          setArmAngleMotionMagic(Constants.isTuning ? tunableaAngle.get().doubleValue() : ArmConstants.SPEAKER_SHORT);
-          break;
-        case POSE_T:
-          setArmAngleMotionMagic(getAngleFromPoseTable(zeroTest));
-          break;
-        case SPEAKER_LONG:
-          setArmAngleMotionMagic(ArmConstants.SPEAKER_LONG);
-          break;
-        case AMP:
-          setArmAngleMotionMagic(ArmConstants.AMP);
-          break;
-        case INTAKE:
-          setArmAngleMotionMagic(ArmConstants.INTAKE);
-          break;
-        case HOLD:
-          armMotor.setControl(new NeutralOut());
-          break;
-        case ZERO:
-          setArmAngleMotionMagic(ArmConstants.ZERO);
-          break;
-        default:
-          setArmPercentOutput(0.0);
-          break;
-      }
-      return;
     }
+
     switch (armControlState) {
+      case CHARACTERIZATION:
+        break;
       case OPEN_LOOP:
         setMotorOutput();
         break;
@@ -222,6 +195,10 @@ public class ArmSubsystem extends SubsystemBase {
       default:
         setArmPercentOutput(0.0);
         break;
+    }
+
+    if (isAtSetpointBore() && !isAtSetpointFalcon()) {
+      return;
     }
 
     lastDemandedRotation = getArmAngleFalcon();
@@ -286,7 +263,7 @@ public class ArmSubsystem extends SubsystemBase {
         + ArmConstants.COEFFICIENT_CONSTANT;
 
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
-    
+
     return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
 
   }
@@ -378,6 +355,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public double getLastDemandedRotation() {
     return lastDemandedRotation;
+  }
+
+  // HAHA
+
+  /** Returns the average drive velocity in radians/sec. */
+  public double getCharacterizationVelocity() {
+    return armMotor.getVelocity().getValueAsDouble();
   }
 
   /**
