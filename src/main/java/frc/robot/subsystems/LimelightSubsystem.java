@@ -26,7 +26,7 @@ public class LimelightSubsystem extends SubsystemBase {
   private NetworkTableEntry tBotPose_target;
   private NetworkTableEntry tId;
 
-  private double[] mBotPoseArray_field = new double[7];
+  private double[] mBotPoseArray_field = new double[8];
   private double[] mCamPoseArray_target = new double[6];
   private double[] mBotPoseArray_target = new double[6];
 
@@ -39,8 +39,6 @@ public class LimelightSubsystem extends SubsystemBase {
   private Pose2d mBotPose2d_target;
 
   private int mId;
-
-  private String fullJson;
 
   private double mArea;
   private double mLatency;
@@ -77,8 +75,6 @@ public class LimelightSubsystem extends SubsystemBase {
     mCamPose3d_target = DoubleArrayToPose3d(mCamPoseArray_target);
 
     mId = (int) tId.getDouble(0);
-
-    fullJson = tLL.getEntry("json").getString("");
 
     mArea = tLL.getEntry("ta").getDouble(0);
 
@@ -127,13 +123,7 @@ public class LimelightSubsystem extends SubsystemBase {
   }
 
   public int getNumTargets() {
-    int occurrences = 0;
-    for (int i = 0; i < fullJson.length() - 4; i++) {
-      if (fullJson.substring(i, i + 3).equals("pts")) {
-        occurrences++;
-      }
-    }
-    return occurrences;
+    return (int) mBotPoseArray_field[7];
   }
 
   public double getArea() {

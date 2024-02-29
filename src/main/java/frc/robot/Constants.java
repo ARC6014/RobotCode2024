@@ -405,6 +405,9 @@ public class Constants implements Loggable {
         public static final Pose2d RED_SPEAKER = new Pose2d(15.1, 5.6, new Rotation2d(Math.PI));
         public static final Pose2d RED_AMP = new Pose2d(14.68, 7.52, new Rotation2d(Math.PI / 2));
         public static final Pose2d RED_SOURCE = new Pose2d(1.14, 1.00, Rotation2d.fromDegrees(-120));
+
+        public static final double FieldX = 16.54;
+        public static final double FieldY = 8.21;
     }
 
 }
