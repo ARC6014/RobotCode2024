@@ -84,6 +84,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   private double timeSinceDrive = 0.0;
   private double timeSinceRot = 0.0;
   private double lastDriveTime = 0.0;
+  private boolean isSnapActive = false;
 
   public SwerveDrivePoseEstimator poseEstimator;
 
@@ -135,7 +136,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
           }
           return false;
         }, this);
-      
+
     poseEstimator = new SwerveDrivePoseEstimator(
         Constants.kinematics,
         getRotation2d(),
@@ -164,6 +165,10 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       mInstance = new DriveSubsystem();
     }
     return mInstance;
+  }
+
+  public void setSnapActive(boolean active) {
+    isSnapActive = active;
   }
 
   @Override
@@ -204,7 +209,9 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   public void swerveDrive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
 
     /* Automatically correcting the heading based on pid */
-    // rot = calculateSnapValue(xSpeed, ySpeed, rot);
+    if (isSnapActive) {
+      rot = calculateSnapValue(xSpeed, ySpeed, rot);
+    }
 
     // if robot is field centric, construct ChassisSpeeds from field relative speeds
     // if not, construct ChassisSpeeds from robot relative speeds
@@ -404,8 +411,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
   public Pose2d getPose() {
     return poseEstimator.getEstimatedPosition();
   }
-
-  
 
   public SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {

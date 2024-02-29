@@ -182,7 +182,7 @@ public class ArmSubsystem extends SubsystemBase {
         setArmAngleMotionMagic(ArmConstants.AMP);
         break;
       case POSE_T:
-        setArmAngleMotionMagic(getAngleFromPoseTable(zeroTest));
+        setArmAngleMotionMagic(ArmConstants.IS_ON_FIELD ? getAngleFromPoseTable() : getAngleFromPoseTable(zeroTest));
         break;
       case INTAKE:
         setArmAngleMotionMagic(ArmConstants.INTAKE);
@@ -255,7 +255,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double getAngleFromPoseTable(Pose2d target) {
 
     // System.out.println(mDriveSubsystem.getPose().getTranslation());
-
+    SmartDashboard.putString("getSubsystem()", target.getTranslation().toString());
     poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(target.getTranslation());
 

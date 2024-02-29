@@ -54,18 +54,11 @@ public class LimelightSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     updateValues();
-
-    SmartDashboard.putNumber("LL X", mCamPose3d_target.getX());
-    SmartDashboard.putNumber("LL Y", mCamPose3d_target.getY());
-    SmartDashboard.putNumber("LL Z", (mCamPose3d_target.getZ()));
-    SmartDashboard.putNumber("LL Theta", Units.radiansToDegrees(mCamPose3d_target.getRotation().getZ()));
-    SmartDashboard.putNumber("Tag ID", mId);
-
   }
 
   private void updateValues() {
     tLL = NetworkTableInstance.getDefault().getTable(Constants.LLConstants.name);
-    tBotPose_field = tLL.getEntry("botpose");
+    tBotPose_field = tLL.getEntry("botpose_wpiblue");
     tCamPose_target = tLL.getEntry("camerapose_targetspace");
     tBotPose_target = tLL.getEntry("botpose_targetspace");
     tId = tLL.getEntry("tid");
@@ -77,6 +70,7 @@ public class LimelightSubsystem extends SubsystemBase {
     mBotPose2d_field = DoubleArrayToPose2d(mBotPoseArray_field);
     mBotPose2d_target = DoubleArrayToPose2d(mBotPoseArray_target);
     mCamPose2d_target = DoubleArrayToPose2d(mCamPoseArray_target);
+    SmartDashboard.putString("LLL", mBotPose2d_field.toString());
 
     mBotPose3d_field = DoubleArrayToPose3d(mBotPoseArray_field);
     mBotPose3d_target = DoubleArrayToPose3d(mBotPoseArray_target);

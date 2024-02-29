@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -117,7 +118,7 @@ public class RobotContainer implements Loggable {
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.2));
 
         private final ParallelDeadlineGroup startStopFeederBeamBreak = new ParallelDeadlineGroup(
-                        new FeederStopAtBeambreak().withTimeout(3), // this is the deadline     
+                        new FeederStopAtBeambreak().withTimeout(3), // this is the deadline
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
@@ -178,7 +179,7 @@ public class RobotContainer implements Loggable {
                                                         .withTimeout(0.5)));
 
         private final ParallelDeadlineGroup AUTOstartStopFeederBeamBreak = new ParallelDeadlineGroup(
-                        new FeederStopAtBeambreak().withTimeout(1.75), // this is the deadline     
+                        new FeederStopAtBeambreak().withTimeout(1.75), // this is the deadline
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
@@ -319,9 +320,13 @@ public class RobotContainer implements Loggable {
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
-                mDriver.L2().whileTrue(new FeedForwardCharacterization(mArm,
-                                mArm::setArmVoltage, mArm::getCharacterizationVelocity)
-                                .beforeStarting(() -> mArm.setArmControlState(ArmControlState.CHARACTERIZATION), mArm));
+                // mDriver.L2().whileTrue(new FeedForwardCharacterization(mArm,
+                // mArm::setArmVoltage, mArm::getCharacterizationVelocity)
+                // .beforeStarting(() ->
+                // mArm.setArmControlState(ArmControlState.CHARACTERIZATION), mArm));
+
+                mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
+                                () -> DriveSubsystem.getInstance().setSnapActive(false)));
         }
 
         /*
