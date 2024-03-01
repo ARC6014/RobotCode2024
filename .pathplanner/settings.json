@@ -6,7 +6,8 @@
     "1",
     "4NoteCloseSideSecondLine",
     "4NoteFirstLine",
-    "5NoteCloseSide"
+    "5NoteCloseSide",
+    "4NoteFarSide"
   ],
   "autoFolders": [
     "4Note"
