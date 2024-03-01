@@ -67,7 +67,8 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
-    m_slave.setControl(new Follower(m_master.getDeviceID(), TelescopicConstants.IS_INVERTED));
+    // m_master.setInverted(TelescopicConstants.IS_INVERTED);
+    m_slave.setControl(new Follower(m_master.getDeviceID(), true));
 
     zeroEncoder();
     setNeutralMode(NeutralModeValue.Brake);
@@ -122,6 +123,7 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   public void setMotorOutput() {
     m_master.setControl(m_percentOut.withOutput(targetOutput));
+    m_slave.setControl(m_percentOut.withOutput(targetOutput));
   }
 
   public void openLoop(double percent) {
@@ -178,7 +180,7 @@ public class TelescopicSubsystem extends SubsystemBase {
       telescopicState = TelescopicState.STOP;
     }
     m_master.stopMotor();
-    // m_slave.stopMotor();
+    m_slave.stopMotor();
   }
 
   public void resetEncoder() {

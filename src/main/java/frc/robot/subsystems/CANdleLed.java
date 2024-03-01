@@ -33,8 +33,9 @@ public class CANdleLed {
 
 
     public CANdleLed(){
-        candle = new CANdle(LEDConstants.CANDLE_ID);
+        candle = new CANdle(LEDConstants.CANDLE_ID, "rio");
         configSettings();
+        candle.configLOSBehavior(false);
 
     }
 
@@ -79,6 +80,10 @@ public class CANdleLed {
         candle.setLEDs(255, 0, 0);
     }
 
+    public void setPink(){
+        candle.setLEDs(255, 0, 255);
+    }
+
     public void setGreen(){
         candle.setLEDs(0, 255, 0);
     }
@@ -109,13 +114,10 @@ public class CANdleLed {
     }
 
 
-
     public void setOff(){
         offAnim();
         candle.setLEDs(0, 0, 0);
     }
-
-
 
     public void setPurple(){
         offAnim();
@@ -132,7 +134,7 @@ public class CANdleLed {
         candle.configFactoryDefault();
         config.stripType = LEDStripType.RGB;
 
-        config.brightnessScalar = .5;
+        config.brightnessScalar = 1;
         candle.setLEDs(255, 255, 255);
         candle.clearAnimation(0);
         rainbowAnim = new RainbowAnimation(1, 0.85, LEDConstants.BUFFER_LENGTH);
@@ -143,10 +145,10 @@ public class CANdleLed {
         FIREEE = new FireAnimation(1, 1, LEDConstants.BUFFER_LENGTH, 0.5, 0.5);
         colorFLow = new ColorFlowAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH, Direction.Forward, 0);
         larsonAnim = new LarsonAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH, BounceMode.Back, 25);
-        orangeFade = new SingleFadeAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH);
-        config.statusLedOffWhenActive = true;
-        config.disableWhenLOS = false;
-        config.vBatOutputMode = VBatOutputMode.Off;
+        orangeFade = new SingleFadeAnimation(255, 25, 0, 0, 0.5, LEDConstants.BUFFER_LENGTH);        config.statusLedOffWhenActive = true;
+        // config.disableWhenLOS = false;
+        // config.vBatOutputMode = VBatOutputMode.Off;
         candle.configAllSettings(config);
+        
     }
 }

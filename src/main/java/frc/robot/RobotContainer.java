@@ -118,7 +118,7 @@ public class RobotContainer implements Loggable {
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.2));
 
         private final ParallelDeadlineGroup startStopFeederBeamBreak = new ParallelDeadlineGroup(
-                        new FeederStopAtBeambreak().withTimeout(3), // this is the deadline
+                        new FeederStopAtBeambreak().withTimeout(2), // this is the deadline
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
@@ -151,25 +151,25 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup AUTOopenWristStartIntake = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(2.0), // this is the deadline
-                                        new SequentialCommandGroup(
-                                                        new WaitCommand(0.5),
-                                                        new WristSetState(mWrist, Position.OPEN)),
-                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
+                                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline  
+                                        new WristSetState(mWrist, Position.OPEN)),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.5)));
+                                                        .withTimeout(0.5)),
+                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG),
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.5)));
+                                                        .withTimeout(0.5)),
+                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG).withTimeout(1.75));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootAmp = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.AMP),
@@ -179,7 +179,7 @@ public class RobotContainer implements Loggable {
                                                         .withTimeout(0.5)));
 
         private final ParallelDeadlineGroup AUTOstartStopFeederBeamBreak = new ParallelDeadlineGroup(
-                        new FeederStopAtBeambreak().withTimeout(1.75), // this is the deadline
+                        new FeederStopAtBeambreak().withTimeout(1), // this is the deadline
                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
                         new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
 
@@ -280,6 +280,7 @@ public class RobotContainer implements Loggable {
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
+                mDriver.L2().toggleOnTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true), () -> DriveSubsystem.getInstance().setSnapActive(false)));
 
         }
 

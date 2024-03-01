@@ -14,7 +14,7 @@ public class SetIdleModeInvert extends Command {
   private boolean isFinished = false;
   private final IntakeSubsystem m_intakeSubsystem = IntakeSubsystem.getInstance();
   private final WristSubsystem m_wristSubsystem = WristSubsystem.getInstance();
-  private final TelescopicSubsystem m_telescopicSubsystem = TelescopicSubsystem.getInstance();
+  // private final TelescopicSubsystem m_telescopicSubsystem = TelescopicSubsystem.getInstance();
 
   public SetIdleModeInvert() {
   }
@@ -23,7 +23,7 @@ public class SetIdleModeInvert extends Command {
   public void initialize() {
     m_intakeSubsystem.setNeutralMode();
     m_wristSubsystem.setNeutralMode();
-    m_telescopicSubsystem.setNeutralMode();
+    // m_telescopicSubsystem.setNeutralMode();
     isFinished = true;
 
   }

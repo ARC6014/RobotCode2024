@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    // CANdleLed.getInstance().setPinkStrobe();
+    CANdleLed.getInstance().setPink();
 
   }
 
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
+      // ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
       m_autonomousCommand.schedule();
     }
   }

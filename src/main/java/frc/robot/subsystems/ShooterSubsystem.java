@@ -47,6 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private LoggedTunableNumber<Boolean> isShooterVoltage = new LoggedTunableNumber<Boolean>("Shooter Is Voltage Mode",
       ShooterConstants.IS_VOLTAGE_MODE);
+  private LoggedTunableNumber<Number> speakerShortSpeed = new LoggedTunableNumber<Number>("SP Short Speed", ShooterConstants.SPEAKER_SHORT_VOLTAGE);
 
   public enum ShooterState {
     OPEN_LOOP,
@@ -140,7 +141,7 @@ public class ShooterSubsystem extends SubsystemBase {
         setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
         break;
       case SPEAKER_SHORT:
-        setShooterOut(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+        setShooterOut(Constants.isTuning ? speakerShortSpeed.get().doubleValue() : ShooterConstants.SPEAKER_SHORT_VOLTAGE);
         break;
       case OPEN_LOOP:
         break;
