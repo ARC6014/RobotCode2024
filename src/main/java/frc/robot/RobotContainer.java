@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -33,6 +34,7 @@ import frc.robot.commands.arm.ArmStateSet;
 import frc.robot.commands.auto.DoNothing;
 import frc.robot.commands.intake.IntakeOpenLoop;
 import frc.robot.commands.intake.IntakeSetOpenLoop;
+import frc.robot.commands.intake.IntakeSetStatePID;
 import frc.robot.commands.intake.IntakeStopAtBeambreak;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
@@ -52,6 +54,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
+import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
@@ -170,13 +173,6 @@ public class RobotContainer implements Loggable {
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(0.5)),
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG).withTimeout(1.75));
-
-        private final ParallelCommandGroup AUTOsetArmFeedAndShootAmp = new ParallelCommandGroup(
-                        new ArmStateSet(mArm, ArmControlState.AMP),
-                        new SequentialCommandGroup(
-                                        new WaitCommand(0.5),
-                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.5)));
 
         private final ParallelDeadlineGroup AUTOstartStopFeederBeamBreak = new ParallelDeadlineGroup(
                         new FeederStopAtBeambreak().withTimeout(1), // this is the deadline
@@ -338,61 +334,14 @@ public class RobotContainer implements Loggable {
                 NamedCommands.registerCommand("Field-Oriented Turn (-20)", new FieldOrientedTurn(mDrive, -20));
                 NamedCommands.registerCommand("Field-Oriented Turn (25)",
                                 new FieldOrientedTurn(mDrive, 25));
-                NamedCommands.registerCommand("DoNothing", new DoNothing());
 
                 NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
-                NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
+                NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake); 
                 NamedCommands.registerCommand("Feed", AUTOstartStopFeederBeamBreak);
 
                 NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", AUTOsetArmFeedAndShootSpeakerShort);
                 NamedCommands.registerCommand("ArmToIntaking", new ArmStateSet(mArm, ArmControlState.INTAKE));
-
-                // State Named Commands
-                // NamedCommands.registerCommand("ShooterAMP", new
-                // ShooterCommand().withShooterState(ShooterState.AMP));
-                // NamedCommands.registerCommand("ShooterLong",
-                // new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
-                // NamedCommands.registerCommand("ShooterShort",
-                // new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
-                // NamedCommands.registerCommand("Shooter Close",
-                // new ShooterCommand().withShooterState(ShooterState.CLOSED));
-
-                // NamedCommands.registerCommand("FeederLetHimCook",
-                // new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
-                // NamedCommands.registerCommand("FeederStop",
-                // new FeederCommand().withFeederState(FeederState.STOP_WAIT_A_SEC));
-                // NamedCommands.registerCommand("FeederUps",
-                // new FeederCommand().withFeederState(FeederState.UPSI));
-                // NamedCommands.registerCommand("FeederIntakeception",
-                // new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
-
-                // NamedCommands.registerCommand("ArmIntake", new ArmStateSet(mArm,
-                // ArmControlState.INTAKE));
-                // NamedCommands.registerCommand("ArmAmp", new ArmStateSet(mArm,
-                // ArmControlState.AMP));
-                // NamedCommands.registerCommand("ArmLong", new ArmStateSet(mArm,
-                // ArmControlState.SPEAKER_LONG));
-                // NamedCommands.registerCommand("ArmShort", new ArmStateSet(mArm,
-                // ArmControlState.SPEAKER_SHORT));
-                // NamedCommands.registerCommand("ArmZero", new ArmStateSet(mArm,
-                // ArmControlState.ZERO));
-                // NamedCommands.registerCommand("ArmHold", new ArmStateSet(mArm,
-                // ArmControlState.HOLD));
-
-                // NamedCommands.registerCommand("WristClosed", new WristSetState(mWrist,
-                // Position.CLOSED));
-                // NamedCommands.registerCommand("WristOpen", new WristSetState(mWrist,
-                // Position.OPEN));
-                // NamedCommands.registerCommand("WristHold", new WristSetState(mWrist,
-                // Position.HOLD));
-
-                // NamedCommands.registerCommand("IntakeForward",
-                // new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
-                // NamedCommands.registerCommand("IntakeReverse",
-                // new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
-                // NamedCommands.registerCommand("IntakeFeed",
-                // new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT));
         }
 
         /**

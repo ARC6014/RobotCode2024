@@ -11,7 +11,7 @@ public class IntakeSetStatePID extends Command {
     public IntakeSetStatePID(IntakeSubsystem intakeSubsystem, IntakeSubsystem.Running state) {
         mIntakeSubsystem = intakeSubsystem;
         mState = state;
-        addRequirements(mIntakeSubsystem);
+        // addRequirements(mIntakeSubsystem);
     }
 
     @Override

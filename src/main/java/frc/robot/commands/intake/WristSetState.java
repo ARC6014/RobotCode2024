@@ -20,7 +20,6 @@ public class WristSetState extends Command {
 
     @Override
     public void execute() {
-        System.out.println("Alo Amk");
 
     }
 
