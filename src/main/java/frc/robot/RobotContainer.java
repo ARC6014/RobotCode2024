@@ -27,7 +27,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.TelescopicConstants;
 import frc.robot.commands.ResetGyro;
-import frc.robot.commands.SetIdleModeInvert;
+import frc.robot.commands.idlemodes.SetIdleModeInvert;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.arm.ArmStateSet;
 import frc.robot.commands.auto.DoNothing;

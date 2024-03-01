@@ -9,6 +9,7 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.CANdleLed;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.shuffleboard.ShuffleboardTabBase;
 import frc.team6014.lib.math.Conversions;
@@ -30,6 +31,10 @@ public class OperatorTab extends ShuffleboardTabBase {
         /* SHOOTER SUBSYSTEM */
         private ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private GenericEntry shooterBeamBreak, shooterActualPercent, shooterState, feederActualPercent, feederState;
+
+        /* TELESCOPIC SUBSYSTEM */
+        private TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        private GenericEntry telescopAtZero, telescopState, telescopHeight;
         /* LEDS */
         // private CANdleLed mLed = CANdleLed.getInstance();
         private GenericEntry currentAnimation;
@@ -180,6 +185,22 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withPosition(4, 2)
                                 .withSize(1, 1)
                                 .getEntry();
+                // ------------------------------------------------------------------------ //
+                telescopAtZero = mTab
+                                .add("Teles-Zero", false)
+                                .withPosition(0, 3)
+                                .withSize(1, 1)
+                                .getEntry();
+                telescopHeight = mTab
+                                .add("Teles-Height", 0)
+                                .withPosition(1, 3)
+                                .withSize(1, 1)
+                                .getEntry();
+                telescopState = mTab
+                                .add("Teles-State", "NaS")
+                                .withPosition(2, 3)
+                                .withSize(1, 1)
+                                .getEntry();
 
                 // currentAnimation = mTab
                 // .add("Current Anim", "NONE")
@@ -223,6 +244,11 @@ public class OperatorTab extends ShuffleboardTabBase {
                 shooterState.setString(mShooter.getShooterState().toString());
                 feederActualPercent.setDouble(truncate(mShooter.getFeederMotorSpeed()));
                 feederState.setString(mShooter.getFeederState().toString());
+
+                /* TELESCOPIC */
+                telescopAtZero.setBoolean(mTelescopic.isAtZero());
+                telescopHeight.setDouble(mTelescopic.getHeight());
+                telescopState.setString(mTelescopic.getTelescopicState().toString());
 
                 /* LEDS */
                 // currentAnimation.setString(mLed.getCurrentAnimation().toString());

@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
@@ -67,7 +66,6 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
-    // m_master.setInverted(TelescopicConstants.IS_INVERTED);
     m_slave.setControl(new Follower(m_master.getDeviceID(), true));
 
     zeroEncoder();
@@ -94,9 +92,6 @@ public class TelescopicSubsystem extends SubsystemBase {
         stop();
         break;
     }
-    SmartDashboard.putNumber("Telescopic Height", getHeight());
-    SmartDashboard.putString("State", getTelescopicState().toString());
-    SmartDashboard.putBoolean("Is at zero?", isAtZero());
 
   }
 
