@@ -111,6 +111,7 @@ public class RobotContainer implements Loggable {
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
+
         private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
                         new WristSetState(mWrist, Position.CLOSED),
@@ -155,6 +156,13 @@ public class RobotContainer implements Loggable {
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
                                         new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline  
+                                        new WristSetState(mWrist, Position.OPEN)),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+
+        private final ParallelCommandGroup AUTOopenWristStartIntakeLong = new ParallelCommandGroup(
+                        new ArmStateSet(mArm, ArmControlState.INTAKE),
+                        new ParallelDeadlineGroup(
+                                        new IntakeStopAtBeambreak().withTimeout(5.0), // this is the deadline  
                                         new WristSetState(mWrist, Position.OPEN)),
                                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
 
@@ -336,6 +344,7 @@ public class RobotContainer implements Loggable {
                                 new FieldOrientedTurn(mDrive, 25));
 
                 NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
+                NamedCommands.registerCommand("ReadyIntakingLong", AUTOopenWristStartIntakeLong);
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake); 
                 NamedCommands.registerCommand("Feed", AUTOstartStopFeederBeamBreak);
 
