@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -45,6 +46,8 @@ import frc.robot.Constants.FieldConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.LoggedTunableNumber;
+import frc.team6014.lib.util.Interpolating.InterpolatingDouble;
+import frc.team6014.lib.util.Interpolating.InterpolatingTreeMap;
 
 public class ArmSubsystem extends SubsystemBase {
 
@@ -124,6 +127,9 @@ public class ArmSubsystem extends SubsystemBase {
     ZERO,
     /** interpolation */
     POSE_T,
+
+    // ** look up table setup **/
+    LOOKUP,
 
     CHARACTERIZATION
 
@@ -211,6 +217,9 @@ public class ArmSubsystem extends SubsystemBase {
         break;
       case POSE_T:
         setArmAngleMotionMagic(ArmConstants.IS_ON_FIELD ? getAngleFromPoseTable() : getAngleFromPoseTable(zeroTest));
+        break;
+      case LOOKUP:
+        setArmAngleMotionMagic(getAngleFromLookUp());
         break;
       case INTAKE:
         setArmAngleMotionMagic(ArmConstants.INTAKE);
@@ -300,7 +309,36 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
 
     return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
+  }
 
+  private double getAngleFromLookUp() {
+
+    Pose2d speaker = FieldConstants.BLUE_SPEAKER;
+
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+
+    if (alliance.get() == Alliance.Red) {
+      speaker = FieldConstants.RED_SPEAKER;
+    }
+
+    return getAngleFromPoseTable(speaker);
+
+  }
+
+  private double getAngleFromLookUp(Pose2d target) {
+
+    InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
+    for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
+      map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
+          new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][1]));
+    }
+
+    poseDifference = mDriveSubsystem.getPose().getTranslation()
+        .getDistance(target.getTranslation());
+
+    double optimizedAngle = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
+    SmartDashboard.putNumber("LookUp OAngle", optimizedAngle);
+    return optimizedAngle;
   }
 
   /** @return true if within angle tolerance - BORE */

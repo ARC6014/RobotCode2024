@@ -258,7 +258,7 @@ public class RobotContainer implements Loggable {
 
                 // Arm
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.INTAKE));
+                                ArmControlState.LOOKUP));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.SPEAKER_SHORT));
