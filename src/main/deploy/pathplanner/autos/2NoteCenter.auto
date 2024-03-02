@@ -1,0 +1,74 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.36,
+      "y": 5.5
+    },
+    "rotation": 180.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeakerShort"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "2NoteCenter"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ReadyIntaking"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CloseIntake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.4
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ShootSpeakerLong"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ArmToIntaking"
+          }
+        }
+      ]
+    }
+  },
+  "folder": "2Note",
+  "choreoAuto": false
+}

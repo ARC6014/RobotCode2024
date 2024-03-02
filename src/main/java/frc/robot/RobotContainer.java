@@ -185,7 +185,7 @@ public class RobotContainer implements Loggable {
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
-                        new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG),
+                        new ArmStateSet(mArm, ArmControlState.POSE_T), // interpolation shooting
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)

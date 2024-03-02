@@ -48,7 +48,7 @@ public class Constants implements Loggable {
     public static final double maxModuleSpeed = 4.0;
 
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-            new PIDConstants(1.0, 0, 0),
+            new PIDConstants(1.0, 0, 0), // TODO: kP to be 2.5 @akakaa.25
             new PIDConstants(5, 0, 0),
             maxModuleSpeed,
             drivebaseRadius,
@@ -107,12 +107,12 @@ public class Constants implements Loggable {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        public static final double drivekP = 0.30;
+        public static final double drivekP = 0.30; // Beşiktaş: 0.12
         public static final double drivekI = 0;
         public static final double drivekD = 0;
-        public static final double drivekS = 0.73; // prev: 0.23
-        public static final double drivekV = 0.0004; // prev: 0.19
-        public static final double drivekA = 0;
+        public static final double drivekS = 0.73; // Beşiktaş: 0.32
+        public static final double drivekV = 0.0004; // Beşiktaş: 1.51
+        public static final double drivekA = 0; // Beşiktaş: 0.27
 
         public static final double anglekP = 0.27;
         public static final double anglekI = 0;
@@ -232,7 +232,7 @@ public class Constants implements Loggable {
 
         // interpolation
         // -1.770x^2 + 17.05x + 21.47
-        public static final double COEFFICIENT_QUADRATIC = 0.6545; 
+        public static final double COEFFICIENT_QUADRATIC = 0.6545;
         public static final double COEFFICIENT_LINEAR = 17.05;
         public static final double COEFFICIENT_CONSTANT = 61.28;
         public static final boolean IS_ON_FIELD = true;
@@ -241,7 +241,6 @@ public class Constants implements Loggable {
         public static final double G_COEFFICENT_B = 0.6545;
         public static final double G_COEFFICENT_C = -1.741;
         public static final double G_COEFFICENT_D = 61.28;
-
 
     }
 

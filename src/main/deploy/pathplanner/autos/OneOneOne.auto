@@ -2,8 +2,8 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.23,
-      "y": 5.58
+      "x": 1.36,
+      "y": 5.5
     },
     "rotation": 180.0
   },
@@ -24,7 +24,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLSpeakerToNote"
+                  "pathName": "3NoteLong1"
                 }
               },
               {
@@ -45,7 +45,7 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 0.4
           }
         },
         {
@@ -67,40 +67,16 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLNote2Note"
+                  "pathName": "3NoteLong2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "ReadyIntaking"
+                  "name": "ReadyIntakingLong"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "CloseIntake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Feed"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ShootSpeakerLong"
           }
         },
         {
@@ -110,13 +86,32 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "BLNote2Note2"
+                  "pathName": "3NoteLong3"
                 }
               },
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "ReadyIntaking"
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "CloseIntake"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.4
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Feed"
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -125,36 +120,12 @@
         {
           "type": "named",
           "data": {
-            "name": "CloseIntake"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Feed"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "ShootSpeakerLong"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ArmToIntaking"
           }
         }
       ]
     }
   },
-  "folder": "4Note",
+  "folder": "3Note",
   "choreoAuto": false
 }

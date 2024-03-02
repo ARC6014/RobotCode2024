@@ -4,13 +4,18 @@
   "holonomicMode": true,
   "pathFolders": [
     "1",
+    "2Note",
     "4NoteCloseSideSecondLine",
+    "4NoteFarSide",
     "4NoteFirstLine",
     "5NoteCloseSide",
-    "4NoteFarSide"
+    "3Note"
   ],
   "autoFolders": [
-    "4Note"
+    "1Note",
+    "2Note",
+    "4Note",
+    "3Note"
   ],
   "defaultMaxVel": 10.0,
   "defaultMaxAccel": 5.0,
