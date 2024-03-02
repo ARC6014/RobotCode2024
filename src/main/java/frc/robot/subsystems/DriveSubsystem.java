@@ -10,6 +10,7 @@ import java.util.Optional;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -222,24 +223,7 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
             getDriverCentricRotation2d())
         : new ChassisSpeeds(xSpeed, ySpeed, rot);
 
-    // discretize the ChassisSpeeds
     desiredChassisSpeeds = ChassisSpeeds.discretize(velocity, 0.02);
-
-    // TODO: Implement if needed
-    // Heading Angular Velocity Deadband, might make a configuration option later.
-    // Originally made by Team 1466 Webb Robotics.
-    // Modified by Team 7525 Pioneers and BoiledBurntBagel of 6036
-    // if (true) {
-    // if (Math.abs(velocity.omegaRadiansPerSecond) < HEADING_CORRECTION_DEADBAND
-    // && (Math.abs(velocity.vxMetersPerSecond) > HEADING_CORRECTION_DEADBAND
-    // || Math.abs(velocity.vyMetersPerSecond) > HEADING_CORRECTION_DEADBAND)) {
-    // velocity.omegaRadiansPerSecond =
-    // swerveController.headingCalculate(getOdometryHeading().getRadians(),
-    // lastHeadingRadians);
-    // } else {
-    // lastHeadingRadians = getOdometryHeading().getRadians();
-    // }
-    // }
 
     states = Constants.kinematics.toSwerveModuleStates(desiredChassisSpeeds);
 
@@ -542,5 +526,26 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
       poseEstimator.addVisionMeasurement(mLL.getBotPose2d_field(),
           Timer.getFPGATimestamp() - mLL.getLatency() / 1000.0);
     }
+  }
+
+  /**
+   * Use PathPlanner Path finding to go to a point on the field.
+   *
+   * @param pose Target {@link Pose2d} to go to.
+   * @return PathFinding command
+   */
+  public Command driveToPose(Pose2d pose) {
+    // TODO: Replace with Constants if this were to be used
+    PathConstraints constraints = new PathConstraints(
+        3.0, 4.0,
+        Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+    return AutoBuilder.pathfindToPose(
+        pose,
+        constraints,
+        0.0,
+        0.0 // This is how far the robot should travel before attempting to rotate in
+            // meters.
+    );
   }
 }
