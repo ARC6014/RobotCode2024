@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.AllignWithLL;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LEDConstants;
@@ -111,7 +112,6 @@ public class RobotContainer implements Loggable {
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
-
         private final ParallelCommandGroup closeWristStopIntakeArmIntake = new ParallelCommandGroup(
                         new IntakeSetOpenLoop(mIntake, 0.0).withTimeout(0.1),
                         new WristSetState(mWrist, Position.CLOSED),
@@ -155,16 +155,16 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup AUTOopenWristStartIntake = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline  
+                                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
                                         new WristSetState(mWrist, Position.OPEN)),
-                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
 
         private final ParallelCommandGroup AUTOopenWristStartIntakeLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(5.0), // this is the deadline  
+                                        new IntakeStopAtBeambreak().withTimeout(5.0), // this is the deadline
                                         new WristSetState(mWrist, Position.OPEN)),
-                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
@@ -284,7 +284,8 @@ public class RobotContainer implements Loggable {
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
-                mDriver.L2().toggleOnTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true), () -> DriveSubsystem.getInstance().setSnapActive(false)));
+                mDriver.L2().toggleOnTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
+                                () -> DriveSubsystem.getInstance().setSnapActive(false)));
 
         }
 
@@ -332,6 +333,15 @@ public class RobotContainer implements Loggable {
 
                 mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
                                 () -> DriveSubsystem.getInstance().setSnapActive(false)));
+
+                mOperator.a().and(mOperator.rightBumper())
+                                .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                mOperator.b().and(mOperator.rightBumper())
+                                .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                mOperator.x().and(mOperator.rightBumper())
+                                .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                mOperator.y().and(mOperator.rightBumper())
+                                .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         }
 
         /*
@@ -345,7 +355,7 @@ public class RobotContainer implements Loggable {
 
                 NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
                 NamedCommands.registerCommand("ReadyIntakingLong", AUTOopenWristStartIntakeLong);
-                NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake); 
+                NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
                 NamedCommands.registerCommand("Feed", AUTOstartStopFeederBeamBreak);
 
                 NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLong);

@@ -494,7 +494,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   /** Runs forwards at the commanded voltage. */
   public void runCharacterizationVolts(double volts) {
-    System.out.println("VOLLT");
     for (var module : mSwerveModules) {
       module.setVoltage(volts);
     }

@@ -4,7 +4,6 @@
 
 package frc.team6014.lib.util;
 
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
@@ -58,7 +57,6 @@ public class LoggedTunableNumber<T> {
      */
     public void setDefault(T defaultValue) {
         this.defaultValue = defaultValue;
-        System.out.println(tuningMode);
 
         if (tuningMode) {
 
@@ -70,8 +68,7 @@ public class LoggedTunableNumber<T> {
                 SmartDashboard.putString(key, SmartDashboard.getString(key, (String) defaultValue));
             else if (defaultValue instanceof Boolean) {
                 SmartDashboard.putBoolean(key, SmartDashboard.getBoolean(key, (Boolean) defaultValue));
-            }
-            else
+            } else
                 System.out.println("Unsupported Number type");
 
         } else {

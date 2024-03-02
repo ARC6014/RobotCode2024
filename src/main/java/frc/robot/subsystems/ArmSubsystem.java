@@ -5,22 +5,39 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
+import java.util.function.Supplier;
+
+import static edu.wpi.first.units.MutableMeasure.mutable;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
@@ -82,6 +99,14 @@ public class ArmSubsystem extends SubsystemBase {
 
   /** stores interpolated setpoint */
   private Pose2d zeroTest;
+
+  private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
+  private final MutableMeasure<Angle> m_angle = mutable(Rotations.of(0));
+  private final MutableMeasure<Velocity<Angle>> m_velocity = mutable(RotationsPerSecond.of(0));
+
+  private SysIdRoutine m_sysid = new SysIdRoutine(
+      new Config(),
+      new SysIdRoutine.Mechanism(mInstance::setArmVoltage, mInstance::logArmVoltage, mInstance));
 
   public enum ArmControlState {
     /** open-loop control */
@@ -254,7 +279,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   private double getAngleFromPoseTable(Pose2d target) {
 
-    // System.out.println(mDriveSubsystem.getPose().getTranslation());
     SmartDashboard.putString("getSubsystem()", target.getTranslation().toString());
     poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(target.getTranslation());
@@ -321,6 +345,22 @@ public class ArmSubsystem extends SubsystemBase {
     lastDemandedRotation = getArmAngleFalcon();
   }
 
+  public void setArmVoltage(Measure<Voltage> voltage) {
+    armMotor.setVoltage(voltage.in(Volts));
+    lastDemandedRotation = getArmAngleFalcon();
+  }
+
+  public void logArmVoltage(SysIdRoutineLog log) {
+    log.motor("arm")
+        .voltage(
+            m_appliedVoltage.mut_replace(
+                armMotor.get() * RobotController.getBatteryVoltage(), Volts))
+        .angularPosition(m_angle.mut_replace(boreEncoder.getDistance(), Rotations))
+        .angularVelocity(
+            m_velocity.mut_replace(armMotor.getVelocity().getValueAsDouble(), RotationsPerSecond));
+
+  }
+
   public void setArmPercentOutput(double percent) {
     armControlState = ArmControlState.OPEN_LOOP;
     targetOutput = percent;
@@ -381,5 +421,24 @@ public class ArmSubsystem extends SubsystemBase {
       resetToAbsolute();
       lastAbsoluteTime = m_timer.get();
     }
+  }
+
+  /**
+   * Returns a command that will execute a quasistatic test in the given
+   * direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysid.quasistatic(direction);
+  }
+
+  /**
+   * Returns a command that will execute a dynamic test in the given direction.
+   *
+   * @param direction The direction (forward or reverse) to run the test in
+   */
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysid.dynamic(direction);
   }
 }

@@ -1,1 +1,10 @@
-{}
+{
+    "SysId": {
+        "Analysis Type": "General Mechanism",
+        "NetworkTables Settings": {
+            "serverTeam": "6014"
+        },
+        "mode": "Client (NT4)",
+        "serverTeam": "10.60.14.2"
+    }
+}
