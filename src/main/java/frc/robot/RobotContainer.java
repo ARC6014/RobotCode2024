@@ -29,6 +29,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.LEDConstants;
 import frc.robot.Constants.TelescopicConstants;
 import frc.robot.commands.ResetGyro;
+import frc.robot.commands.RotateToSpeaker;
 import frc.robot.commands.idlemodes.SetIdleModeInvert;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.arm.ArmStateSet;
@@ -76,7 +77,8 @@ import io.github.oblarg.oblog.Loggable;
 public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        // private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        // private final TelescopicSubsystem mTelescopic =
+        // TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
@@ -96,8 +98,9 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        // private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
-        //                 () -> mOperator.getRightY());
+        // private final TelescopicOpenLoop telescopicOpenLoop = new
+        // TelescopicOpenLoop(mTelescopic,
+        // () -> mOperator.getRightY());
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
@@ -109,7 +112,8 @@ public class RobotContainer implements Loggable {
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelCommandGroup(
                                         new WristSetState(mWrist, Position.OPEN),
-                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT).withTimeout(2.25)));
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)
+                                                        .withTimeout(2.25)));
 
         private final ParallelCommandGroup openWristStartIntakeBeamBreak = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
@@ -263,6 +267,8 @@ public class RobotContainer implements Loggable {
                 // Wrist
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
+
+                mDriver.povUp().onTrue(new RotateToSpeaker());
 
                 // Telescopic
                 // mDriver.povDown().whileTrue(new

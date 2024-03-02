@@ -9,6 +9,7 @@ import edu.wpi.first.math.estimator.PoseEstimator;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -26,7 +27,7 @@ public class RotateToSpeaker extends Command {
 
   /** Creates a new RotateToSpeaker. */
   public RotateToSpeaker() {
-    m_thetaController.setTolerance(Math.toRadians(1));
+    m_thetaController.setTolerance(Math.toRadians(3));
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mDrive);
   }
@@ -44,24 +45,25 @@ public class RotateToSpeaker extends Command {
   public void execute() {
     tethaSpeed = m_thetaController.calculate(mDrive.getPose().getRotation().getRadians(),
         Units.degreesToRadians(targetAngle));
-    mDrive.swerveDrive(0, 0, tethaSpeed, true);
+
+    mDrive.swerveDrive(0, 0, Units.radiansToDegrees(tethaSpeed), true);
+    SmartDashboard.putNumber("LL Target Angle", targetAngle);
+    SmartDashboard.putBoolean("LL Rotate SP", m_thetaController.atGoal());
+    SmartDashboard.putNumber("LL T S", Units.radiansToDegrees(tethaSpeed));
   }
 
   public double calcTargetAngle() {
     double tAngle = mDrive.getPose().getRotation().getDegrees();
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tAngle = 180 -
-          Math.acos(mDrive.getPose().getX() /
-              mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.BLUE_SPEAKER.getTranslation()));
+      tAngle = 180 - Math.acos(mDrive.getPose().getX()
+          / mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.BLUE_SPEAKER.getTranslation()));
+    } else {
+      tAngle = Math.acos((Constants.FieldConstants.FieldX - mDrive.getPose().getX())
+          / mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER.getTranslation()));
     }
-    else {
-        tAngle = Math.acos((Constants.FieldConstants.FieldX - mDrive.getPose().getX()) /
-            mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER.getTranslation()));
-        
-      }
+    if (mDrive.getPose().getY() < Constants.FieldConstants.BLUE_SPEAKER.getY())
+      tAngle = tAngle * -1;
 
-      if (mDrive.getPose().getY() < Constants.FieldConstants.BLUE_SPEAKER.getY()) tAngle = tAngle * -1;
-        
     return tAngle;
   }
 
