@@ -231,10 +231,18 @@ public class Constants implements Loggable {
         public static final double LAST_RESORT_ANGLE_CUTOFF = 150;
 
         // interpolation
-        public static final double COEFFICIENT_QUADRATIC = -1.643;
-        public static final double COEFFICIENT_LINEAR = 17.35;
-        public static final double COEFFICIENT_CONSTANT = 21.2;
+        // -1.770x^2 + 17.05x + 21.47
+        public static final double COEFFICIENT_QUADRATIC = 0.6545; 
+        public static final double COEFFICIENT_LINEAR = 17.05;
+        public static final double COEFFICIENT_CONSTANT = 61.28;
         public static final boolean IS_ON_FIELD = true;
+
+        public static final double G_COEFFICENT_A = -24.19;
+        public static final double G_COEFFICENT_B = 0.6545;
+        public static final double G_COEFFICENT_C = -1.741;
+        public static final double G_COEFFICENT_D = 61.28;
+
+
     }
 
     public static final class IntakeConstants {
@@ -399,7 +407,7 @@ public class Constants implements Loggable {
     }
 
     public static final class FieldConstants {
-        public static final Pose2d BLUE_SPEAKER = new Pose2d(1.45, 5.52, new Rotation2d(Math.PI));
+        public static final Pose2d BLUE_SPEAKER = new Pose2d(0, 5.52, new Rotation2d(Math.PI));
         public static final Pose2d BLUE_AMP = new Pose2d(1.79, 7.60, new Rotation2d(Math.PI / 2));
         public static final Pose2d BLUE_SOURCE = new Pose2d(15.3, 1.11, Rotation2d.fromDegrees(-55));
         public static final Pose2d RED_SPEAKER = new Pose2d(15.1, 5.6, new Rotation2d(Math.PI));

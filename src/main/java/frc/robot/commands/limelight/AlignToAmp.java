@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.limelight;
 
 import javax.swing.text.TabSet;
 
@@ -22,13 +22,14 @@ public class AlignToAmp extends Command {
   private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
 
   private double ySpeed = 0, xSpeed = 0, tethaSpeed = 0;
-  
-  private final ProfiledPIDController x_pid = new ProfiledPIDController(DriveConstants.drivekP, DriveConstants.drivekI, 
-  DriveConstants.drivekD, DriveConstants.transPIDconstraints);
-  private final ProfiledPIDController y_pid = new ProfiledPIDController(DriveConstants.drivekP, DriveConstants.drivekI, 
-    DriveConstants.drivekD, DriveConstants.transPIDconstraints);
-  private final ProfiledPIDController m_thetaController = new ProfiledPIDController(DriveConstants.anglekP, DriveConstants.anglekI,
-    DriveConstants.anglekD, DriveConstants.rotPIDconstraints);
+
+  private final ProfiledPIDController x_pid = new ProfiledPIDController(DriveConstants.drivekP, DriveConstants.drivekI,
+      DriveConstants.drivekD, DriveConstants.transPIDconstraints);
+  private final ProfiledPIDController y_pid = new ProfiledPIDController(DriveConstants.drivekP, DriveConstants.drivekI,
+      DriveConstants.drivekD, DriveConstants.transPIDconstraints);
+  private final ProfiledPIDController m_thetaController = new ProfiledPIDController(DriveConstants.anglekP,
+      DriveConstants.anglekI,
+      DriveConstants.anglekD, DriveConstants.rotPIDconstraints);
 
   private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
@@ -55,19 +56,18 @@ public class AlignToAmp extends Command {
 
   private Pose2d calcTarget() {
     Pose2d tPose = new Pose2d();
-    if (DriverStation.getAlliance().get() == Alliance.Blue){
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
       tPose = new Pose2d(
-        new Translation2d(Constants.FieldConstants.BLUE_AMP.getX(), 0.44),
-        new Rotation2d(Units.degreesToRadians(90)));
+          new Translation2d(Constants.FieldConstants.BLUE_AMP.getX(), 0.44),
+          new Rotation2d(Units.degreesToRadians(90)));
     } else {
       tPose = new Pose2d(
-        new Translation2d(Constants.FieldConstants.RED_AMP.getY(), 0.44),
-        new Rotation2d(Units.degreesToRadians(90)));
+          new Translation2d(Constants.FieldConstants.RED_AMP.getY(), 0.44),
+          new Rotation2d(Units.degreesToRadians(90)));
     }
     return tPose;
   }
 
-  
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -75,9 +75,10 @@ public class AlignToAmp extends Command {
 
     xSpeed = x_pid.calculate(currPose.getX(), targetPose.getX());
     ySpeed = y_pid.calculate(currPose.getY(), targetPose.getY());
-    tethaSpeed = m_thetaController.calculate(currPose.getRotation().getRadians(), targetPose.getRotation().getRadians());
+    tethaSpeed = m_thetaController.calculate(currPose.getRotation().getRadians(),
+        targetPose.getRotation().getRadians());
 
-    mDrive.swerveDrive(xSpeed, ySpeed, tethaSpeed, true); 
+    mDrive.swerveDrive(xSpeed, ySpeed, tethaSpeed, true);
 
   }
 

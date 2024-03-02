@@ -20,6 +20,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathShared;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.Angle;
@@ -285,9 +286,16 @@ public class ArmSubsystem extends SubsystemBase {
     poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(target.getTranslation());
 
-    double optimizedAngle = ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(poseDifference, 2)
-        + ArmConstants.COEFFICIENT_LINEAR * poseDifference
-        + ArmConstants.COEFFICIENT_CONSTANT;
+    double optimizedAngle = ArmConstants.G_COEFFICENT_A
+        * Math.pow(Math.E,
+            -(Math.pow(poseDifference - ArmConstants.G_COEFFICENT_B, 2) / Math.pow(ArmConstants.G_COEFFICENT_C, 2)))
+        + ArmConstants.G_COEFFICENT_D;
+
+    /*
+     * ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(poseDifference, 2)
+     * + ArmConstants.COEFFICIENT_LINEAR * poseDifference
+     * + ArmConstants.COEFFICIENT_CONSTANT;
+     */
 
     SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
 
