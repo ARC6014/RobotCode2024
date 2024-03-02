@@ -109,6 +109,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final MutableMeasure<Velocity<Angle>> m_velocity = mutable(RotationsPerSecond.of(0));
 
   private SysIdRoutine m_sysid;
+  InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
 
   public enum ArmControlState {
     /** open-loop control */
@@ -154,6 +155,11 @@ public class ArmSubsystem extends SubsystemBase {
     // new Config(),
     // new SysIdRoutine.Mechanism(mInstance::setArmVoltage,
     // mInstance::logArmVoltage, mInstance));
+
+    for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
+      map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
+          new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][2]));
+    }
   }
 
   public static ArmSubsystem getInstance() {
@@ -321,24 +327,18 @@ public class ArmSubsystem extends SubsystemBase {
       speaker = FieldConstants.RED_SPEAKER;
     }
 
-    return getAngleFromPoseTable(speaker);
+    return getAngleFromLookUp(speaker);
 
   }
 
   private double getAngleFromLookUp(Pose2d target) {
-
-    InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
-    for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
-      map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
-          new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][1]));
-    }
-
     poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(target.getTranslation());
 
     double optimizedAngle = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
     SmartDashboard.putNumber("LookUp OAngle", optimizedAngle);
-    return optimizedAngle;
+
+    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
   }
 
   /** @return true if within angle tolerance - BORE */

@@ -13,7 +13,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 
-public class AllignWithLL extends Command {
+public class AlignWithPoseEstimator extends Command {
   /** Creates a new AllignWithLL. */
   private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
   // private LoggedTunableNumber x_distance = new LoggedTunableNumber("x
@@ -31,7 +31,7 @@ public class AllignWithLL extends Command {
 
   private Pose2d targetPose = FieldConstants.BLUE_SPEAKER; // blue speakerish
 
-  public AllignWithLL() {
+  public AlignWithPoseEstimator() {
     addRequirements(mDrive);
 
     x_pid.setTolerance(0.015);

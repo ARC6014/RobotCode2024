@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import Jama.util.Maths;
@@ -12,15 +14,22 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.team6014.lib.decorators.Assign;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.LoggedTunableNumber;
+import frc.team6014.lib.util.Interpolating.InterpolatingDouble;
+import frc.team6014.lib.util.Interpolating.InterpolatingTreeMap;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -47,14 +56,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private LoggedTunableNumber<Boolean> isShooterVoltage = new LoggedTunableNumber<Boolean>("Shooter Is Voltage Mode",
       ShooterConstants.IS_VOLTAGE_MODE);
-  private LoggedTunableNumber<Number> speakerShortSpeed = new LoggedTunableNumber<Number>("SP Short Speed", ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+  private LoggedTunableNumber<Number> speakerShortSpeed = new LoggedTunableNumber<Number>("SP Short Speed",
+      ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+
+  InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
 
   public enum ShooterState {
     OPEN_LOOP,
     CLOSED,
     AMP,
     SPEAKER_LONG,
-    SPEAKER_SHORT
+    SPEAKER_SHORT,
+    LOOKUP
   }
 
   public enum FeederState {
@@ -63,7 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
     STOP_WAIT_A_SEC,
     OPEN,
     // feeder from intake
-    INTAKECEPTION
+    INTAKECEPTION,
   }
 
   public ShooterSubsystem() {
@@ -112,6 +125,11 @@ public class ShooterSubsystem extends SubsystemBase {
     m_slave.burnFlash();
     m_feeder.burnFlash();
 
+    for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
+      map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
+          new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][2]));
+    }
+
   }
 
   public boolean isShooterStopped() {
@@ -137,11 +155,15 @@ public class ShooterSubsystem extends SubsystemBase {
       case AMP:
         setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);
         break;
+      case LOOKUP:
+        setShooterOut(getVoltageFromLookUp());
+        break;
       case SPEAKER_LONG:
         setShooterOut(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
         break;
       case SPEAKER_SHORT:
-        setShooterOut(Constants.isTuning ? speakerShortSpeed.get().doubleValue() : ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+        setShooterOut(
+            Constants.isTuning ? speakerShortSpeed.get().doubleValue() : ShooterConstants.SPEAKER_SHORT_VOLTAGE);
         break;
       case OPEN_LOOP:
         break;
@@ -289,6 +311,30 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public void stopFeederMotor() {
     m_feeder.stopMotor();
+  }
+
+  private double getVoltageFromLookUp() {
+
+    Pose2d speaker = FieldConstants.BLUE_SPEAKER;
+
+    Optional<Alliance> alliance = DriverStation.getAlliance();
+
+    if (alliance.get() == Alliance.Red) {
+      speaker = FieldConstants.RED_SPEAKER;
+    }
+
+    return getVoltageFromLookUp(speaker);
+
+  }
+
+  private double getVoltageFromLookUp(Pose2d target) {
+    double poseDifference = DriveSubsystem.getInstance().getPose().getTranslation()
+        .getDistance(target.getTranslation());
+
+    double optimizedAngle = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
+    SmartDashboard.putNumber("LookUp OAngle", optimizedAngle);
+
+    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
   }
 
   public static ShooterSubsystem getInstance() {

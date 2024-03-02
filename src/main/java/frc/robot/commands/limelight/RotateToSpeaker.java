@@ -78,9 +78,6 @@ public class RotateToSpeaker extends Command {
     if (RobotY < Constants.FieldConstants.BLUE_SPEAKER.getY())
       tAngle = -tAngle;
 
-    if (tAngle < 0) {
-      tAngle += 360;
-    }
     return tAngle;
   }
 
