@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -406,15 +407,64 @@ public class Constants implements Loggable {
     }
 
     public static final class FieldConstants {
-        public static final Pose2d BLUE_SPEAKER = new Pose2d(0, 5.52, new Rotation2d(Math.PI));
-        public static final Pose2d BLUE_AMP = new Pose2d(1.79, 7.60, new Rotation2d(Math.PI / 2));
-        public static final Pose2d BLUE_SOURCE = new Pose2d(15.3, 1.11, Rotation2d.fromDegrees(-55));
-        public static final Pose2d RED_SPEAKER = new Pose2d(15.1, 5.6, new Rotation2d(Math.PI));
-        public static final Pose2d RED_AMP = new Pose2d(14.68, 7.52, new Rotation2d(Math.PI / 2));
-        public static final Pose2d RED_SOURCE = new Pose2d(1.14, 1.00, Rotation2d.fromDegrees(-120));
 
-        public static final double FieldX = 16.54;
-        public static final double FieldY = 8.21;
+        public static final double FieldX = Units.inchesToMeters(651.223);
+        public static final double FieldY = Units.inchesToMeters(323.277);
+        public static final double WING_X = Units.inchesToMeters(229.201);
+        public static final double PODIUM_X = Units.inchesToMeters(126.75);
+        public static final double STARTING_LINE_X = Units.inchesToMeters(74.111);
+
+        public static final Pose2d BLUE_SPEAKER = new Pose2d(
+                0,
+                FieldY - Units.inchesToMeters(104.0),
+                new Rotation2d(Math.PI));
+        public static final Pose2d BLUE_AMP = new Pose2d(
+                Units.inchesToMeters(72.455),
+                Units.inchesToMeters(322.996),
+                Rotation2d.fromDegrees(-90));
+        public static final Pose2d BLUE_SOURCE = new Pose2d(15.331, 1, Rotation2d.fromDegrees(-60));
+
+        public static final Pose2d RED_SPEAKER = new Pose2d(
+                0,
+                BLUE_SPEAKER.getY(),
+                new Rotation2d(Math.PI));
+        public static final Pose2d RED_AMP = new Pose2d(
+                FieldX - BLUE_AMP.getX(),
+                BLUE_AMP.getY(),
+                BLUE_AMP.getRotation());
+        public static final Pose2d RED_SOURCE = new Pose2d(
+                FieldX - BLUE_AMP.getX(),
+                BLUE_AMP.getY(),
+                Rotation2d.fromDegrees(-120));
+
+        public static final Translation3d BLUE_TOP_RIGHT_SPEAKER = new Translation3d(
+                Units.inchesToMeters(18.055),
+                Units.inchesToMeters(238.815),
+                Units.inchesToMeters(13.091));
+
+        public static final Translation3d BLUE_TOP_LEFT_SPEAKER = new Translation3d(
+                Units.inchesToMeters(18.055),
+                Units.inchesToMeters(197.765),
+                Units.inchesToMeters(83.091));
+
+        public static final Pose2d[] NOTE_POSITIONS = new Pose2d[] {
+                new Pose2d(2.90, 6.68, Rotation2d.fromDegrees(0)),
+                new Pose2d(2.90, 5.55, Rotation2d.fromDegrees(0)),
+                new Pose2d(2.90, 4.09, Rotation2d.fromDegrees(0)),
+                new Pose2d(8.29, 7.44, Rotation2d.fromDegrees(0)),
+                new Pose2d(8.29, 5.78, Rotation2d.fromDegrees(0)),
+                new Pose2d(8.29, 4.12, Rotation2d.fromDegrees(0)),
+                new Pose2d(8.29, 2.45, Rotation2d.fromDegrees(0)),
+                new Pose2d(8.29, 0.77, Rotation2d.fromDegrees(0)),
+        };
+
+        public static final Pose2d[] START_POSITIONS = new Pose2d[] {
+                new Pose2d(0.73, 6.74, Rotation2d.fromDegrees(0)),
+                new Pose2d(1.51, 5.57, Rotation2d.fromDegrees(0)),
+                new Pose2d(0.73, 4.43, Rotation2d.fromDegrees(0)),
+                new Pose2d(0.73, 3.25, Rotation2d.fromDegrees(0)),
+                new Pose2d(0.73, 2.27, Rotation2d.fromDegrees(0)),
+        };
     }
 
 }

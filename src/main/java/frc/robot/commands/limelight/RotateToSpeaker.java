@@ -35,7 +35,7 @@ public class RotateToSpeaker extends Command {
 
   /** Creates a new RotateToSpeaker. */
   public RotateToSpeaker() {
-    m_thetaController.setTolerance(3);
+    m_thetaController.setTolerance(Math.toRadians(3));
     addRequirements(mDrive);
   }
 
