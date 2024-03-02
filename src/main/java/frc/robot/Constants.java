@@ -251,9 +251,9 @@ public class Constants implements Loggable {
         public static final double FEEDER_VELOCITY = -3000 / 60;
 
         /** unit: percent */
-        public static final double FORWARD_PERCENT = 9;
+        public static final double FORWARD_PERCENT = 9.75;
         /** unit: percent */
-        public static final double REVERSE_PERCENT = -9;
+        public static final double REVERSE_PERCENT = -9.75;
         /** unit: percent */
         public static final double FEED_PERCENT = -5;
 

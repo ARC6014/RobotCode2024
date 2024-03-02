@@ -34,7 +34,7 @@ public class OperatorTab extends ShuffleboardTabBase {
 
         /* TELESCOPIC SUBSYSTEM */
         private TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
-        private GenericEntry telescopAtZero, telescopState, telescopHeight;
+        // private GenericEntry telescopAtZero, telescopState, telescopHeight;
         /* LEDS */
         // private CANdleLed mLed = CANdleLed.getInstance();
         private GenericEntry currentAnimation;
@@ -186,21 +186,7 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withSize(1, 1)
                                 .getEntry();
                 // ------------------------------------------------------------------------ //
-                telescopAtZero = mTab
-                                .add("Teles-Zero", false)
-                                .withPosition(0, 3)
-                                .withSize(1, 1)
-                                .getEntry();
-                telescopHeight = mTab
-                                .add("Teles-Height", 0)
-                                .withPosition(1, 3)
-                                .withSize(1, 1)
-                                .getEntry();
-                telescopState = mTab
-                                .add("Teles-State", "NaS")
-                                .withPosition(2, 3)
-                                .withSize(1, 1)
-                                .getEntry();
+                
 
                 // currentAnimation = mTab
                 // .add("Current Anim", "NONE")
@@ -246,9 +232,9 @@ public class OperatorTab extends ShuffleboardTabBase {
                 feederState.setString(mShooter.getFeederState().toString());
 
                 /* TELESCOPIC */
-                telescopAtZero.setBoolean(mTelescopic.isAtZero());
-                telescopHeight.setDouble(mTelescopic.getHeight());
-                telescopState.setString(mTelescopic.getTelescopicState().toString());
+                // telescopAtZero.setBoolean(mTelescopic.isAtZero());
+                // telescopHeight.setDouble(mTelescopic.getHeight());
+                // telescopState.setString(mTelescopic.getTelescopicState().toString());
 
                 /* LEDS */
                 // currentAnimation.setString(mLed.getCurrentAnimation().toString());

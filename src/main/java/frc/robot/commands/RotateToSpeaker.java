@@ -17,12 +17,12 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RotateToSpeaker extends Command {
   private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
 
-  private final ProfiledPIDController m_thetaController = new ProfiledPIDController(DriveConstants.anglekP, DriveConstants.anglekI,
-  DriveConstants.anglekD, DriveConstants.rotPIDconstraints);
-  private double tethaSpeed = 0; 
+  private final ProfiledPIDController m_thetaController = new ProfiledPIDController(DriveConstants.anglekP,
+      DriveConstants.anglekI,
+      DriveConstants.anglekD, DriveConstants.rotPIDconstraints);
+  private double tethaSpeed = 0;
 
   private double targetAngle;
-  
 
   /** Creates a new RotateToSpeaker. */
   public RotateToSpeaker() {
@@ -42,33 +42,33 @@ public class RotateToSpeaker extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    tethaSpeed = m_thetaController.calculate(mDrive.getPose().getRotation().getRadians(), Units.degreesToRadians(targetAngle));
-    mDrive.swerveDrive(0,0, tethaSpeed, true);
+    tethaSpeed = m_thetaController.calculate(mDrive.getPose().getRotation().getRadians(),
+        Units.degreesToRadians(targetAngle));
+    mDrive.swerveDrive(0, 0, tethaSpeed, true);
   }
 
-  public double calcTargetAngle(){
+  public double calcTargetAngle() {
     double tAngle = mDrive.getPose().getRotation().getDegrees();
-    if (DriverStation.getAlliance().get() == Alliance.Blue){
-      tAngle = 180 - 
-        Math.acos(mDrive.getPose().getX()/
-        mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.BLUE_SPEAKER.getTranslation()));
-      if (mDrive.getPose().getY() < Constants.FieldConstants.BLUE_SPEAKER.getY()){
-        tAngle = tAngle * -1;
-      } else {
-      tAngle = Math.acos((Constants.FieldConstants.FieldX - mDrive.getPose().getX())/
-        mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER.getTranslation()));
-        if (mDrive.getPose().getY() < Constants.FieldConstants.BLUE_SPEAKER.getY()){
-          tAngle = tAngle * -1;
-        }
-      } 
+    if (DriverStation.getAlliance().get() == Alliance.Blue) {
+      tAngle = 180 -
+          Math.acos(mDrive.getPose().getX() /
+              mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.BLUE_SPEAKER.getTranslation()));
     }
+    else {
+        tAngle = Math.acos((Constants.FieldConstants.FieldX - mDrive.getPose().getX()) /
+            mDrive.getPose().getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER.getTranslation()));
+        
+      }
+
+      if (mDrive.getPose().getY() < Constants.FieldConstants.BLUE_SPEAKER.getY()) tAngle = tAngle * -1;
+        
     return tAngle;
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    mDrive.swerveDrive(0, 0, 0, true); 
+    mDrive.swerveDrive(0, 0, 0, true);
   }
 
   // Returns true when the command should end.

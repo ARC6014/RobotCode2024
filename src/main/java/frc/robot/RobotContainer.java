@@ -76,7 +76,7 @@ import io.github.oblarg.oblog.Loggable;
 public class RobotContainer implements Loggable {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
-        private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
+        // private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
         private final ArmSubsystem mArm = ArmSubsystem.getInstance();
         private final ShooterSubsystem mShooter = ShooterSubsystem.getInstance();
         private final WristSubsystem mWrist = WristSubsystem.getInstance();
@@ -96,8 +96,8 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
-                        () -> mOperator.getRightY());
+        // private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
+        //                 () -> mOperator.getRightY());
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
@@ -106,6 +106,12 @@ public class RobotContainer implements Loggable {
         // ---------------------- TELEOP COMMANDS ---------------------- //
 
         private final ParallelCommandGroup openWristStartIntake = new ParallelCommandGroup(
+                        new ArmStateSet(mArm, ArmControlState.INTAKE),
+                        new ParallelCommandGroup(
+                                        new WristSetState(mWrist, Position.OPEN),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT).withTimeout(2.25)));
+
+        private final ParallelCommandGroup openWristStartIntakeBeamBreak = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
                                         new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
@@ -263,13 +269,13 @@ public class RobotContainer implements Loggable {
                 // TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
                 // mDriver.povUp().whileTrue(new
                 // TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
-                mOperator.rightStick().onTrue(telescopicOpenLoop);
+                // mOperator.rightStick().onTrue(telescopicOpenLoop);
 
                 /* COMMAND GROUPS */
                 // Intake
-                mOperator.rightBumper().onTrue(openWristStartIntake);
+                mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
                 // Feed
-                mOperator.leftBumper().onTrue(
+                mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
                                                 .andThen(new WaitCommand(0.5))
                                                 .andThen(startStopFeederBeamBreak));
