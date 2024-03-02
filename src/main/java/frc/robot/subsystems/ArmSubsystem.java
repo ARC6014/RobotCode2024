@@ -104,9 +104,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final MutableMeasure<Angle> m_angle = mutable(Rotations.of(0));
   private final MutableMeasure<Velocity<Angle>> m_velocity = mutable(RotationsPerSecond.of(0));
 
-  private SysIdRoutine m_sysid = new SysIdRoutine(
-      new Config(),
-      new SysIdRoutine.Mechanism(mInstance::setArmVoltage, mInstance::logArmVoltage, mInstance));
+  private SysIdRoutine m_sysid;
 
   public enum ArmControlState {
     /** open-loop control */
@@ -145,6 +143,10 @@ public class ArmSubsystem extends SubsystemBase {
     // this.zeroTest = mDriveSubsystem.getPose();
     setInterpolatedPoint(mDriveSubsystem.getPose());
 
+    // m_sysid = new SysIdRoutine(
+    // new Config(),
+    // new SysIdRoutine.Mechanism(mInstance::setArmVoltage,
+    // mInstance::logArmVoltage, mInstance));
   }
 
   public static ArmSubsystem getInstance() {
