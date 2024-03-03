@@ -309,7 +309,7 @@ public class RobotContainer implements Loggable {
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
 
                 /* LIMELIGHT */
-                mOperator.a().onTrue(new AlignToAmp());
+                mOperator.a().whileTrue(new AlignToAmp());
                 mDriver.povUp().onTrue(new RotateToSpeaker(mDrive));
                 mDriver.povDown().whileTrue(
                                 mDrive.driveToPose(FieldConstants.NOTE_POSITIONS[1]));

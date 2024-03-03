@@ -420,6 +420,10 @@ public class Constants implements Loggable {
                                 0,
                                 FieldY - Units.inchesToMeters(104.0),
                                 new Rotation2d(Math.PI));
+                public static final Pose2d BLUE_SPEAKER_CENTER = new Pose2d(
+                                0,
+                                FieldY - Units.inchesToMeters(104.0) - 0.5,
+                                new Rotation2d(Math.PI));
                 public static final Pose2d BLUE_AMP = new Pose2d(
                                 Units.inchesToMeters(72.455),
                                 Units.inchesToMeters(322.996),

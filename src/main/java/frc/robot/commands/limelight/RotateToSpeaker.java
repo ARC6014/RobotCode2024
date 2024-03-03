@@ -39,7 +39,7 @@ public class RotateToSpeaker extends Command {
   /** Creates a new RotateToSpeaker. */
   public RotateToSpeaker(DriveSubsystem mDrive) {
     this.mDrive = mDrive;
-    m_thetaController.setTolerance(Math.toRadians(1));
+    m_thetaController.setTolerance(Math.toRadians(2));
     addRequirements(this.mDrive);
   }
 
@@ -61,7 +61,7 @@ public class RotateToSpeaker extends Command {
         Units.degreesToRadians(targetAngle));
 
     tethaSpeed = mSlewRot.calculate(inputTransform(tethaSpeed) *
-        DriveConstants.maxAngularSpeedRadPerSec) * 5.0;
+        DriveConstants.maxAngularSpeedRadPerSec) * 50.0;
 
     mDrive.swerveDrive(0, 0, tethaSpeed, true);
     SmartDashboard.putNumber("LL Target Angle", targetAngle);
@@ -78,7 +78,7 @@ public class RotateToSpeaker extends Command {
 
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
       tetha = Units.radiansToDegrees(Math.acos(RobotX
-          / currPose.getTranslation().getDistance(Constants.FieldConstants.BLUE_SPEAKER.getTranslation())));
+          / currPose.getTranslation().getDistance(Constants.FieldConstants.BLUE_SPEAKER_CENTER.getTranslation())));
       tAngle = 180 - tetha;
     } else {
       tetha = Units.radiansToDegrees(
@@ -90,7 +90,7 @@ public class RotateToSpeaker extends Command {
     if (RobotY < Constants.FieldConstants.BLUE_SPEAKER.getY())
       tAngle = -tAngle;
 
-    return tAngle;
+    return -tAngle;
   }
 
   // Called once the command ends or is interrupted.
