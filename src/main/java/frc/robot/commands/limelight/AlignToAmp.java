@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class AlignToAmp extends Command {
@@ -57,13 +58,9 @@ public class AlignToAmp extends Command {
   private Pose2d calcTarget() {
     Pose2d tPose = new Pose2d();
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tPose = new Pose2d(
-          new Translation2d(Constants.FieldConstants.BLUE_AMP.getX(), 0.44),
-          new Rotation2d(Units.degreesToRadians(90)));
+      tPose = FieldConstants.BLUE_AMP;
     } else {
-      tPose = new Pose2d(
-          new Translation2d(Constants.FieldConstants.RED_AMP.getY(), 0.44),
-          new Rotation2d(Units.degreesToRadians(90)));
+      tPose = FieldConstants.RED_AMP;
     }
     return tPose;
   }
