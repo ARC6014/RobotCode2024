@@ -42,7 +42,6 @@ import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
 import frc.robot.commands.limelight.AlignToAmp;
 import frc.robot.commands.limelight.RotateToSpeaker;
-import frc.robot.commands.limelight.TurnToSpeaker;
 import frc.robot.commands.shooter.FeederCommand;
 import frc.robot.commands.shooter.FeederStopAtBeambreak;
 import frc.robot.commands.shooter.ShooterCommand;
@@ -287,10 +286,6 @@ public class RobotContainer implements Loggable {
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
-                mDriver.povUp().onTrue(new TurnToSpeaker(mDrive));
-                mDriver.povDown().whileTrue(
-                                mDrive.driveToPose(FieldConstants.NOTE_POSITIONS[1]));
-
                 // Telescopic
                 // mDriver.povDown().whileTrue(new
                 // TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
@@ -315,6 +310,9 @@ public class RobotContainer implements Loggable {
 
                 /* LIMELIGHT */
                 mOperator.a().onTrue(new AlignToAmp());
+                mDriver.povUp().onTrue(new RotateToSpeaker(mDrive));
+                mDriver.povDown().whileTrue(
+                                mDrive.driveToPose(FieldConstants.NOTE_POSITIONS[1]));
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());

@@ -37,7 +37,7 @@ public class AlignToAmp extends Command {
 
   private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
-  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 4.0);
+  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 10.0);
 
   private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX);
   private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY);
@@ -45,8 +45,8 @@ public class AlignToAmp extends Command {
 
   /** Creates a new AlignToAmp. */
   public AlignToAmp() {
-    x_pid.setTolerance(0.015);
-    y_pid.setTolerance(0.015);
+    x_pid.setTolerance(0.12);
+    y_pid.setTolerance(0.12);
     m_thetaController.setTolerance(Math.toRadians(1));
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mDrive);
@@ -69,7 +69,8 @@ public class AlignToAmp extends Command {
       tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX(), FieldConstants.BLUE_AMP.getY() - 0.44),
           Rotation2d.fromDegrees(90));
     } else {
-      tPose = FieldConstants.RED_AMP;
+      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX(), FieldConstants.RED_AMP.getY() - 0.44),
+          Rotation2d.fromDegrees(-90));
     }
     return tPose;
   }
@@ -83,20 +84,18 @@ public class AlignToAmp extends Command {
     ySpeed = y_pid.calculate(currPose.getY(), targetPose.getY());
     tethaSpeed = m_thetaController.calculate(currPose.getRotation().getRadians(),
         targetPose.getRotation().getRadians());
-
-    SmartDashboard.putNumber("Align Amp xSpeed", xSpeed);
-    SmartDashboard.putNumber("Align Amp ySpeed", ySpeed);
-    SmartDashboard.putString("Align Amp Target", targetPose.toString());
-
     xSpeed = mSlewX.calculate(inputTransform(xSpeed) * DriveConstants.maxSpeed) *
         scalar.get().doubleValue();
     ySpeed = mSlewY.calculate(inputTransform(ySpeed) * DriveConstants.maxSpeed) *
         scalar.get().doubleValue();
     tethaSpeed = mSlewRot.calculate(inputTransform(tethaSpeed) *
-        DriveConstants.maxAngularSpeedRadPerSec) * scalar.get().doubleValue();
+        DriveConstants.maxAngularSpeedRadPerSec) * scalar.get().doubleValue() / 2.0;
+
+    SmartDashboard.putNumber("Align Amp xSpeed", xSpeed);
+    SmartDashboard.putNumber("Align Amp ySpeed", ySpeed);
+    SmartDashboard.putString("Align Amp Target", targetPose.toString());
 
     mDrive.swerveDrive(xSpeed, ySpeed, tethaSpeed, true);
-
   }
 
   // Called once the command ends or is interrupted.
