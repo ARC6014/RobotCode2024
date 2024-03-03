@@ -41,7 +41,6 @@ import frc.robot.commands.intake.IntakeStopAtBeambreak;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
 import frc.robot.commands.limelight.AlignToAmp;
-import frc.robot.commands.limelight.AllignWithLL;
 import frc.robot.commands.limelight.RotateToSpeaker;
 import frc.robot.commands.limelight.TurnToSpeaker;
 import frc.robot.commands.shooter.FeederCommand;
@@ -294,6 +293,7 @@ public class RobotContainer implements Loggable {
                 /* COMMAND GROUPS */
                 // Intake
                 mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
+                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
                 // Feed
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
@@ -303,11 +303,10 @@ public class RobotContainer implements Loggable {
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
-                // mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
 
                 /* LIMELIGHT */
-                // mOperator.a().onTrue(new AlignToAmp());
+                mOperator.a().onTrue(new AlignToAmp());
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
