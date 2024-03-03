@@ -155,6 +155,14 @@ public class RobotContainer implements Loggable {
                                                         .withTimeout(0.5)),
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG).withTimeout(1.75));
 
+        private final ParallelCommandGroup setArmFeedAndShootSpeakerLOOKUP = new ParallelCommandGroup(
+                        new ArmStateSet(mArm, ArmControlState.LOOKUP),
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.5),
+                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                        .withTimeout(0.5)),
+                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.75));
+
         private final ParallelCommandGroup setArmFeedAndShootAmp = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.AMP),
                         new SequentialCommandGroup(
@@ -188,12 +196,12 @@ public class RobotContainer implements Loggable {
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
-                        new ArmStateSet(mArm, ArmControlState.POSE_T), // interpolation shooting
+                        new ArmStateSet(mArm, ArmControlState.LOOKUP), // interpolation shooting
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(0.5)),
-                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG).withTimeout(1.75));
+                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.75));
 
         private final ParallelDeadlineGroup AUTOstartStopFeederBeamBreak = new ParallelDeadlineGroup(
                         new FeederStopAtBeambreak().withTimeout(1), // this is the deadline
@@ -260,12 +268,12 @@ public class RobotContainer implements Loggable {
 
                 // Arm
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.LOOKUP));
+                                ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.POSE_T));
+                                ArmControlState.LOOKUP));
 
                 // Wrist
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
@@ -294,10 +302,11 @@ public class RobotContainer implements Loggable {
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
-                mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
+                // mOperator.y().onTrue(setArmFeedAndShootSpeakerLong);
+                mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
 
                 /* LIMELIGHT */
-                mOperator.a().onTrue(new AllignWithLL());
+                // mOperator.a().onTrue(new AllignWithLL());
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());

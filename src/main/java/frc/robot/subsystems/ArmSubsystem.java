@@ -158,7 +158,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
       map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
-          new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][2]));
+          new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][1]));
     }
   }
 
