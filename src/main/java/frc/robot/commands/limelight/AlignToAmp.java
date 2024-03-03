@@ -37,7 +37,7 @@ public class AlignToAmp extends Command {
 
   private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
-  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 10.0);
+  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 25.0);
 
   private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX);
   private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY);
@@ -45,7 +45,7 @@ public class AlignToAmp extends Command {
 
   /** Creates a new AlignToAmp. */
   public AlignToAmp() {
-    x_pid.setTolerance(0.12);
+    x_pid.setTolerance(0.11971);
     y_pid.setTolerance(0.12);
     m_thetaController.setTolerance(Math.toRadians(1));
     // Use addRequirements() here to declare subsystem dependencies.
@@ -66,10 +66,10 @@ public class AlignToAmp extends Command {
   private Pose2d calcTarget() {
     Pose2d tPose = new Pose2d();
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX(), FieldConstants.BLUE_AMP.getY() - 0.44),
+      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX() - .3, FieldConstants.BLUE_AMP.getY() - 0.44),
           Rotation2d.fromDegrees(90));
     } else {
-      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX(), FieldConstants.RED_AMP.getY() - 0.44),
+      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX() - .3, FieldConstants.RED_AMP.getY() - 0.44),
           Rotation2d.fromDegrees(-90));
     }
     return tPose;
@@ -89,7 +89,7 @@ public class AlignToAmp extends Command {
     ySpeed = mSlewY.calculate(inputTransform(ySpeed) * DriveConstants.maxSpeed) *
         scalar.get().doubleValue();
     tethaSpeed = mSlewRot.calculate(inputTransform(tethaSpeed) *
-        DriveConstants.maxAngularSpeedRadPerSec) * scalar.get().doubleValue() / 2.0;
+        DriveConstants.maxAngularSpeedRadPerSec) * scalar.get().doubleValue() / 3.0;
 
     SmartDashboard.putNumber("Align Amp xSpeed", xSpeed);
     SmartDashboard.putNumber("Align Amp ySpeed", ySpeed);
