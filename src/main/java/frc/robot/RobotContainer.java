@@ -131,13 +131,17 @@ public class RobotContainer implements Loggable {
                         new ArmStateSet(mArm, ArmControlState.INTAKE));
 
         private final ParallelCommandGroup startStopFeeder = new ParallelCommandGroup(
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT).withTimeout(0.3),
-                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.2));
+                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION).withTimeout(0.4),
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.2),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT).withTimeout(0.2)));
 
         private final ParallelDeadlineGroup startStopFeederBeamBreak = new ParallelDeadlineGroup(
-                        new FeederStopAtBeambreak().withTimeout(2), // this is the deadline
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT),
-                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION));
+                        new FeederStopAtBeambreak().withTimeout(1.5), // this is the deadline
+                        new FeederCommand().withFeederState(FeederState.INTAKECEPTION),
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.2),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FEED_PERCENT)));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
@@ -176,7 +180,7 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup AUTOopenWristStartIntake = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
+                                        new IntakeStopAtBeambreak().withTimeout(2.0), // this is the deadline
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, 10)));
 
@@ -190,18 +194,18 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new SequentialCommandGroup(
-                                        new WaitCommand(0.55),
+                                        new WaitCommand(0.35),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.4)),
-                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.25));
+                                                        .withTimeout(0.2)),
+                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(0.6));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLongLOOKUP = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.LOOKUP), // interpolation shooting
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.5)),
-                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.75));
+                                                        .withTimeout(0.4)),
+                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.0));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG), // setpoint shooting
@@ -209,7 +213,7 @@ public class RobotContainer implements Loggable {
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(0.5)),
-                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.75));
+                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.3));
 
         private final ParallelDeadlineGroup AUTOstartStopFeederBeamBreak = new ParallelDeadlineGroup(
                         new FeederStopAtBeambreak().withTimeout(1), // this is the deadline
@@ -306,7 +310,7 @@ public class RobotContainer implements Loggable {
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
                                                 .andThen(new WaitCommand(0.5))
-                                                .andThen(startStopFeederBeamBreak));
+                                                .andThen(startStopFeeder));
 
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
@@ -390,7 +394,7 @@ public class RobotContainer implements Loggable {
                 NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
                 NamedCommands.registerCommand("ReadyIntakingLong", AUTOopenWristStartIntakeLong);
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
-                NamedCommands.registerCommand("Feed", AUTOstartStopFeederBeamBreak);
+                NamedCommands.registerCommand("Feed", startStopFeeder);
 
                 NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLongLOOKUP);
                 NamedCommands.registerCommand("ShootSpeakerLongSetpoint", AUTOsetArmFeedAndShootSpeakerLong);

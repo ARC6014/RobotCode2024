@@ -49,7 +49,7 @@ public class Constants implements Loggable {
     public static final double maxModuleSpeed = 4.0;
 
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-            new PIDConstants(1.0, 0, 0), // TODO: kP to be 2.5 @akakaa.25
+            new PIDConstants(4, 0, 0), // TODO: kP to be 2.5 @akakaa.25
             new PIDConstants(5, 0, 0),
             maxModuleSpeed,
             drivebaseRadius,
@@ -108,12 +108,12 @@ public class Constants implements Loggable {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        public static final double drivekP = 0.12; // Prev: 0.3
+        public static final double drivekP = 0.1; // Prev: 0.12
         public static final double drivekI = 0;
         public static final double drivekD = 0;
-        public static final double drivekS = 0.73; // Beşiktaş: 0.32
-        public static final double drivekV = 0.0004; // Beşiktaş: 1.51
-        public static final double drivekA = 0; // Beşiktaş: 0.27
+        public static final double drivekS = 0.016; // Beşiktaş: 0.73
+        public static final double drivekV = 0.19; // Prev: 1.51
+        public static final double drivekA = 0.02; // Prev: 0.00
 
         public static final double anglekP = 0.27;
         public static final double anglekI = 0;
@@ -478,7 +478,7 @@ public class Constants implements Loggable {
                 { 2.60, 51, 9.75 },
                 { 2.69, 51, 9.75 },
                 { 2.94, 53.75, 9.75 },
-                { 3.00, 54, 9.75 },
+                { 3.00, 53.9, 9.75 },
                 { 3.19, 55.5, 9.75 },
                 { 3.44, 57.25, 9.75 },
                 { 3.69, 58.5, 9.75 },
