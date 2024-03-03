@@ -5,7 +5,9 @@
 package frc.robot.commands.idlemodes;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 
@@ -14,7 +16,9 @@ public class SetIdleModeInvert extends Command {
   private boolean isFinished = false;
   private final IntakeSubsystem m_intakeSubsystem = IntakeSubsystem.getInstance();
   private final WristSubsystem m_wristSubsystem = WristSubsystem.getInstance();
-  // private final TelescopicSubsystem m_telescopicSubsystem = TelescopicSubsystem.getInstance();
+  private final ArmSubsystem m_armSubsystem = ArmSubsystem.getInstance();
+  // private final TelescopicSubsystem m_telescopicSubsystem =
+  // TelescopicSubsystem.getInstance();
 
   public SetIdleModeInvert() {
   }
@@ -23,6 +27,8 @@ public class SetIdleModeInvert extends Command {
   public void initialize() {
     m_intakeSubsystem.setNeutralMode();
     m_wristSubsystem.setNeutralMode();
+    m_armSubsystem.setNeutralMode();
+
     // m_telescopicSubsystem.setNeutralMode();
     isFinished = true;
 

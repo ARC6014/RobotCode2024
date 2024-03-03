@@ -9,6 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -91,11 +92,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        //if ((!mBeamBreakSensor.get()) && (mRunning != Running.REVERSE)) {
-        //    setState(Running.S_DOWN);
-        //    mTalonFX.stopMotor();
-        //    return;
-        //}
+        // if ((!mBeamBreakSensor.get()) && (mRunning != Running.REVERSE)) {
+        // setState(Running.S_DOWN);
+        // mTalonFX.stopMotor();
+        // return;
+        // }
 
         switch (mRunning) {
             case FORWARD:
@@ -133,6 +134,8 @@ public class IntakeSubsystem extends SubsystemBase {
             mTalonFX.setControl(mRunningVelocityControl);
 
         }
+
+        SmartDashboard.putString("Idle Mode", this.kNeutralMode.toString());
     }
 
     public boolean getBeambreak() {
