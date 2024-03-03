@@ -7,8 +7,6 @@ package frc.robot.commands.idlemodes;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 
 public class SetIdleModeInvert extends Command {
@@ -29,7 +27,6 @@ public class SetIdleModeInvert extends Command {
     m_wristSubsystem.setNeutralMode();
     m_armSubsystem.setNeutralMode();
 
-    // m_telescopicSubsystem.setNeutralMode();
     isFinished = true;
 
   }

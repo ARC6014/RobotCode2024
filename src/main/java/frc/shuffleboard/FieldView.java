@@ -1,7 +1,5 @@
 package frc.shuffleboard;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,7 +26,6 @@ public class FieldView {
             robotPose = mSwerve.getPoseMeters();
         else
             robotPose = new Pose2d();
-            
 
         SwerveModuleState[] moduleStates = mSwerve.getModuleStates();
 

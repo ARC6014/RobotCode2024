@@ -33,8 +33,6 @@ public class OperatorTab extends ShuffleboardTabBase {
         private GenericEntry shooterBeamBreak, shooterActualPercent, shooterState, feederActualPercent, feederState;
 
         /* TELESCOPIC SUBSYSTEM */
-        private TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
-        // private GenericEntry telescopAtZero, telescopState, telescopHeight;
         /* LEDS */
         // private CANdleLed mLed = CANdleLed.getInstance();
         private GenericEntry currentAnimation;
@@ -186,7 +184,6 @@ public class OperatorTab extends ShuffleboardTabBase {
                                 .withSize(1, 1)
                                 .getEntry();
                 // ------------------------------------------------------------------------ //
-                
 
                 // currentAnimation = mTab
                 // .add("Current Anim", "NONE")

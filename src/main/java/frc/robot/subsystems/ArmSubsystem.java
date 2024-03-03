@@ -4,10 +4,7 @@
 
 package frc.robot.subsystems;
 
-import java.lang.reflect.Field;
 import java.util.Optional;
-import java.util.function.Supplier;
-
 import static edu.wpi.first.units.MutableMeasure.mutable;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -18,10 +15,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.mechanisms.swerve.SwerveModule;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.math.MathShared;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.units.Angle;
@@ -39,7 +33,6 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
@@ -54,12 +47,6 @@ public class ArmSubsystem extends SubsystemBase {
   private static final LoggedTunableNumber<Number> tunableaAngle = new LoggedTunableNumber<Number>("ARM/tunableAngle",
       ArmConstants.SPEAKER_SHORT,
       Constants.isTuning);
-  private static final LoggedTunableNumber<Number> armFF = new LoggedTunableNumber<Number>("ARM/FF",
-      ArmConstants.kF,
-      Constants.isTuning);
-
-  private static final LoggedTunableNumber<Number> armVelocity = new LoggedTunableNumber<Number>("ARM/Vel",
-      ArmConstants.ARM_VELOCITY);
 
   private static ArmSubsystem mInstance;
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
@@ -99,9 +86,11 @@ public class ArmSubsystem extends SubsystemBase {
   /** unit: rotations */
   private final MotionMagicVoltage motionMagicVoltage = new MotionMagicVoltage(0);
 
+  // difference of current robot pose to speaker using limelight
+  /* unit: meters */
   private double poseDifference = 0;
 
-  /** stores interpolated setpoint */
+  /** stores interpolated setpoint for POSE_T */
   private Pose2d zeroTest;
 
   private final MutableMeasure<Voltage> m_appliedVoltage = mutable(Volts.of(0));
@@ -115,24 +104,32 @@ public class ArmSubsystem extends SubsystemBase {
   public enum ArmControlState {
     /** open-loop control */
     OPEN_LOOP,
+
     /** intaking position */
     INTAKE,
-    /** near speaker shooting position */
+
+    /** near speaker shooting position - tunable */
     SPEAKER_SHORT,
-    /** far from speaker shooting position */
+
+    /** far from speaker shooting position - NOT tunable */
     SPEAKER_LONG,
+
     /** amp shooting position */
     AMP,
+
     /** neutral - in brake */
     HOLD,
+
     /** zero position with respect to hard stop */
     ZERO,
+
     /** interpolation */
     POSE_T,
 
-    // ** look up table setup **/
+    /** look up table setup **/
     LOOKUP,
 
+    /** FF characterization test */
     CHARACTERIZATION
 
   }
@@ -149,13 +146,7 @@ public class ArmSubsystem extends SubsystemBase {
     m_timer.start();
 
     lastAbsoluteTime = m_timer.get();
-    // this.zeroTest = mDriveSubsystem.getPose();
     setInterpolatedPoint(mDriveSubsystem.getPose());
-
-    // m_sysid = new SysIdRoutine(
-    // new Config(),
-    // new SysIdRoutine.Mechanism(mInstance::setArmVoltage,
-    // mInstance::logArmVoltage, mInstance));
 
     for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
       map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
@@ -176,8 +167,6 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.setNeutralMode(this.kNeutralMode);
   }
 
-  // @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE
-  // (with feedformard ).")
   private void motorConfig() {
     armMotor.getConfigurator().apply(new TalonFXConfiguration());
     configs = new TalonFXConfiguration();
@@ -195,7 +184,7 @@ public class ArmSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
 
     configs.MotionMagic.MotionMagicAcceleration = ArmConstants.ARM_ACCELERATION;
-    configs.MotionMagic.MotionMagicCruiseVelocity = armVelocity.get().doubleValue();
+    configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.ARM_VELOCITY;
 
     armMotor.getConfigurator().apply(configs);
     armMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -391,7 +380,7 @@ public class ArmSubsystem extends SubsystemBase {
     setpoint = target;
     armMotor.setControl(motionMagicVoltage.withPosition(
         armGearbox.drivenToDriving(Conversions.degreesToRevolutions(setpoint)))
-        .withFeedForward((Constants.isTuning ? armFF.get().doubleValue() : ArmConstants.kF)
+        .withFeedForward((ArmConstants.kF)
             * Math.cos(Math.toRadians(setpoint))));
   }
 

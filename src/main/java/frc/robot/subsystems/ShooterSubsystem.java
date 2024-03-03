@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import com.revrobotics.CANSparkMax;
@@ -21,10 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.team6014.lib.decorators.Assign;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.util.LoggedTunableNumber;
 import frc.team6014.lib.util.Interpolating.InterpolatingDouble;
@@ -53,28 +50,47 @@ public class ShooterSubsystem extends SubsystemBase {
   double shooter_slave_out;
   double shooter_master_out;
 
-  private LoggedTunableNumber<Boolean> isShooterVoltage = new LoggedTunableNumber<Boolean>("Shooter Is Voltage Mode",
-      ShooterConstants.IS_VOLTAGE_MODE);
+  // private LoggedTunableNumber<Boolean> isShooterVoltage = new
+  // LoggedTunableNumber<Boolean>("Shooter Is Voltage Mode",
+  // ShooterConstants.IS_VOLTAGE_MODE);
   private LoggedTunableNumber<Number> speakerShortSpeed = new LoggedTunableNumber<Number>("SP Short Speed",
       ShooterConstants.SPEAKER_SHORT_VOLTAGE);
 
   InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
 
   public enum ShooterState {
+    /* open-loop */
     OPEN_LOOP,
+
+    /* stopped */
     CLOSED,
+
+    /* amp voltage */
     AMP,
+
+    /* speaker long voltage (not tunable) */
     SPEAKER_LONG,
+
+    /* speaker short a.k.a tunable voltage */
     SPEAKER_SHORT,
-    LOOKUP
+
+    /* interpolated voltage from lookup */
+    LOOKUP,
   }
 
   public enum FeederState {
+    /* feed to shooter */
     LET_HIM_COOK,
+
+    /* eject */
     UPSI,
+
+    /* stop feeder */
     STOP_WAIT_A_SEC,
+
     OPEN,
-    // feeder from intake
+
+    /* feeder from intake */
     INTAKECEPTION,
   }
 
@@ -96,8 +112,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_master.setSmartCurrentLimit(65);
     m_slave.setSmartCurrentLimit(65);
     // m_feeder.setSmartCurrentLimit(25);
-    m_master.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
-    m_slave.setOpenLoopRampRate(0.2); // reduce this if it slows down shooter
+    m_master.setOpenLoopRampRate(0.2);
+    m_slave.setOpenLoopRampRate(0.2);
 
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
@@ -146,9 +162,9 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("SH-Master RPM",
         m_master.getEncoder().getVelocity());
     SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
-    SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
-    SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
-    SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
+    // SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
+    // SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
+    // SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
 
     switch (m_shootState) {
       case AMP:
@@ -197,25 +213,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // Setters
   public void setShooterState(ShooterState newState) {
-    if (isShooterVoltage.get()) {
-      switch (m_shootState) {
-        case AMP:
-          setShooterVoltage(Constants.ShooterConstants.AMP_VOLTAGE);
-          break;
-        case SPEAKER_LONG:
-          setShooterVoltage(Constants.ShooterConstants.SPEAKER_LONG_VOLTAGE);
-          break;
-        case SPEAKER_SHORT:
-          setShooterVoltage(Constants.ShooterConstants.SPEAKER_SHORT_VOLTAGE);
-          break;
-        case OPEN_LOOP:
-          break;
-        case CLOSED:
-        default:
-          setShooterVoltage(0);
-          break;
-      }
-    }
     m_shootState = newState;
   }
 
@@ -234,7 +231,6 @@ public class ShooterSubsystem extends SubsystemBase {
     this.feeder_out = optimalOut;
   }
 
-  // TODO: Add scalar here to adjust slave output to master
   public void setShooterOut(double voltage) {
     var optimalOutMaster = Conversions.getSmartVoltage(voltage,
         MathUtil.clamp(RobotContainer.mPDH.getVoltage(), 11, 13));

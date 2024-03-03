@@ -13,7 +13,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.WristConstants;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
-import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class WristSubsystem extends SubsystemBase {
     private static WristSubsystem mInstance;
@@ -23,13 +22,6 @@ public class WristSubsystem extends SubsystemBase {
     private final DutyCycleEncoder mBoreEncoder = new DutyCycleEncoder(WristConstants.BORE_ID);
 
     private Gearbox mGearbox = WristConstants.gearbox;
-
-    private static final LoggedTunableNumber<Number> kWristP = new LoggedTunableNumber<Number>("Wrist/kP",
-            WristConstants.ANGLE_kP);
-    private static final LoggedTunableNumber<Number> kWristI = new LoggedTunableNumber<Number>("Wrist/kI",
-            WristConstants.ANGLE_kI);
-    private static final LoggedTunableNumber<Number> kWristD = new LoggedTunableNumber<Number>("Wrist/kD",
-            WristConstants.ANGLE_kD);
 
     /** WRIST ANGLE POSITION */
     private Position mPosition;

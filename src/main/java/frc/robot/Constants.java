@@ -38,7 +38,7 @@ import io.github.oblarg.oblog.Loggable;
 public class Constants implements Loggable {
     public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    public static final boolean isTuning = false; // tuning mode for tunable numbers
+    public static final boolean isTuning = true; // tuning mode for tunable numbers
 
     public static int Pigeon2CanID = 60;
 
@@ -49,7 +49,7 @@ public class Constants implements Loggable {
     public static final double maxModuleSpeed = 4.0;
 
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-            new PIDConstants(4, 0, 0), // TODO: kP to be 2.5 @akakaa.25
+            new PIDConstants(4, 0, 0),
             new PIDConstants(5, 0, 0),
             maxModuleSpeed,
             drivebaseRadius,
@@ -108,12 +108,12 @@ public class Constants implements Loggable {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        public static final double drivekP = 0.1; // Prev: 0.12
+        public static final double drivekP = 0.1;
         public static final double drivekI = 0;
         public static final double drivekD = 0;
-        public static final double drivekS = 0.016; // Beşiktaş: 0.73
-        public static final double drivekV = 0.19; // Prev: 1.51
-        public static final double drivekA = 0.02; // Prev: 0.00
+        public static final double drivekS = 0.016;
+        public static final double drivekV = 0.19;
+        public static final double drivekA = 0.02;
 
         public static final double anglekP = 0.27;
         public static final double anglekI = 0;
@@ -125,7 +125,7 @@ public class Constants implements Loggable {
         public static final double snapkD = 0.0;
 
         /** will be used for FieldOrientedTurn */
-        public static final double kRotControllerP = 0.225; // prev: 0.15
+        public static final double kRotControllerP = 0.225;
         public static final double kRotControllerD = 0.28;
         public static final double kRotControllerMaxVel = 5;
         public static final double kRotControllerTolerance = 5;
@@ -133,7 +133,7 @@ public class Constants implements Loggable {
         public static final double maxSpeed = 5;
 
         public static final double maxTransSpeedMetersPerSecond = 3.3; // translation speed (x/y)
-        public static final double maxAngularSpeedRadPerSec = 2 * Math.PI; // angular speed (omega)
+        public static final double maxAngularSpeedRadPerSec = 2 * Math.PI; // angular speed
         public static final double maxAngularAccelRadPerSecSq = Math.pow(maxAngularSpeedRadPerSec, 2); // angular
                                                                                                        // acceleration
 
@@ -228,18 +228,19 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double SPEAKER_SHORT = 38; // 22.5 31.5 36
         /** unit: degrees */
-        public static final double AMP = 90 + 15 + 5;
+        public static final double AMP = 110;
 
         /** unit: degrees */
         public static final double LAST_RESORT_ANGLE_CUTOFF = 150;
 
-        // interpolation
-        // -1.770x^2 + 17.05x + 21.47
-        public static final double COEFFICIENT_QUADRATIC = 0.6545;
+        // interpolation - currently using lookup tables
+        // quadratic fit
+        public static final double COEFFICIENT_QUADRATIC = -1.770;
         public static final double COEFFICIENT_LINEAR = 17.05;
-        public static final double COEFFICIENT_CONSTANT = 61.28;
+        public static final double COEFFICIENT_CONSTANT = 21.47;
         public static final boolean IS_ON_FIELD = true;
 
+        // gaussian fit
         public static final double G_COEFFICENT_A = -24.19;
         public static final double G_COEFFICENT_B = 0.6545;
         public static final double G_COEFFICENT_C = -1.741;
@@ -248,7 +249,6 @@ public class Constants implements Loggable {
     }
 
     public static final class IntakeConstants {
-
         public static final int RUNNING_MOTOR_ID = 10;
         public static final int BEAM_BREAK_ID = 2;
 
@@ -308,9 +308,9 @@ public class Constants implements Loggable {
         public static final double ANGLE_kV = 0;
 
         /** unit: rev/s */
-        public static final double WRIST_VELOCITY = 150; // 100
+        public static final double WRIST_VELOCITY = 150;
         /** unit: rev/s^2 */
-        public static final double WRIST_ACCELERATION = 300; // 80
+        public static final double WRIST_ACCELERATION = 300;
 
     }
 
@@ -362,18 +362,19 @@ public class Constants implements Loggable {
     }
 
     public static final class TelescopicConstants {
-        public static final int MASTER_MOTOR_ID = 17; // TODO: Config
-        public static final int SLAVE_MOTOR_ID = 18; // TODO: Config
+        public static final int MASTER_MOTOR_ID = 17;
+        public static final int SLAVE_MOTOR_ID = 18;
 
         public static final double TELESCOPIC_GEAR_RATIO = 13.08;
 
-        public static final double TELESCOPIC_CONTROLLER_KD = 0;
-        public static final double TELESCOPIC_CONTROLLER_KI = 0;
         public static final double TELESCOPIC_CONTROLLER_KP = 0.5;
+        public static final double TELESCOPIC_CONTROLLER_KI = 0;
+        public static final double TELESCOPIC_CONTROLLER_KD = 0;
+
         /** units: r/s */
-        public static final double TELESCOPIC_MOTION_ACCEL = 50;
-        /** units: r/s^2 */
         public static final double TELESCOPIC_MOTION_VEL = 70;
+        /** units: r/s^2 */
+        public static final double TELESCOPIC_MOTION_ACCEL = 50;
         public static final double TELESCOPIC_MOTION_TIMEOUT = 3;
         public static final double TELESCOPIC_RESET = 0;
         public static final double TELESCOPIC_TOLERANCE = 2;
@@ -396,7 +397,6 @@ public class Constants implements Loggable {
     }
 
     public static class PVConstants {
-
         public static final String PV_CAMERA_NAME = "photonvision";
         public static final String APRIL_TAG_LAYOUT = "tagMap.json";
         public static final double[][] CAM_POSE = { { 0, 0, 0 }, { 0, 0, 0 } };// x, y, z, roll, pitch, yaw
@@ -409,7 +409,6 @@ public class Constants implements Loggable {
     }
 
     public static final class FieldConstants {
-
         public static final double FieldX = Units.inchesToMeters(651.223);
         public static final double FieldY = Units.inchesToMeters(323.277);
         public static final double WING_X = Units.inchesToMeters(229.201);
@@ -422,7 +421,7 @@ public class Constants implements Loggable {
                 new Rotation2d(Math.PI));
         public static final Pose2d BLUE_SPEAKER_CENTER = new Pose2d(
                 0,
-                FieldY - Units.inchesToMeters(104.0) - 0.5,
+                FieldY - Units.inchesToMeters(104.0) - 0.22,
                 new Rotation2d(Math.PI));
         public static final Pose2d BLUE_AMP = new Pose2d(
                 Units.inchesToMeters(72.455),
@@ -472,7 +471,8 @@ public class Constants implements Loggable {
                 new Pose2d(0.73, 2.27, Rotation2d.fromDegrees(0)),
         };
 
-        // Meters - Angle
+        // Setpoints for LookUp Table interpolation
+        /** Distance(m), Arm Angle(degrees), Shooter Speed(volts) */
         public static final double[][] SHOOT_POSITIONS = {
                 { 1.44, 38, 9.75 },
                 { 1.69, 40, 9.75 },

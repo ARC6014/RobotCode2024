@@ -4,19 +4,15 @@
 
 package frc.robot.commands.limelight;
 
-import javax.swing.text.TabSet;
-
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveSubsystem;
@@ -37,7 +33,7 @@ public class AlignToAmp extends Command {
 
   private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
-  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 25.0);
+  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 100.0);
 
   private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX);
   private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY);

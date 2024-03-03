@@ -3,13 +3,11 @@
   "robotLength": 0.56,
   "holonomicMode": true,
   "pathFolders": [
-    "1",
     "2Note",
+    "3Note",
     "4NoteCloseSideSecondLine",
     "4NoteFarSide",
-    "4NoteFirstLine",
-    "5NoteCloseSide",
-    "3Note"
+    "4NoteFirstLine"
   ],
   "autoFolders": [
     "1Note",
