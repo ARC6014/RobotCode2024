@@ -20,6 +20,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.team6014.lib.util.LoggedTunableNumber;
 
 public class AlignToAmp extends Command {
   private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
@@ -36,6 +37,7 @@ public class AlignToAmp extends Command {
 
   private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
+  LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 4.0);
 
   private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX);
   private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY);
@@ -64,7 +66,8 @@ public class AlignToAmp extends Command {
   private Pose2d calcTarget() {
     Pose2d tPose = new Pose2d();
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tPose = FieldConstants.BLUE_AMP;
+      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX(), FieldConstants.BLUE_AMP.getY() - 0.44),
+          Rotation2d.fromDegrees(90));
     } else {
       tPose = FieldConstants.RED_AMP;
     }
@@ -81,14 +84,16 @@ public class AlignToAmp extends Command {
     tethaSpeed = m_thetaController.calculate(currPose.getRotation().getRadians(),
         targetPose.getRotation().getRadians());
 
-    xSpeed = mSlewX.calculate(inputTransform(xSpeed) * DriveConstants.maxSpeed) * .3;
-    ySpeed = mSlewY.calculate(inputTransform(ySpeed) * DriveConstants.maxSpeed) * .3;
-    tethaSpeed = mSlewRot.calculate(inputTransform(tethaSpeed) * DriveConstants.maxAngularSpeedRadPerSec) * .3;
-
-    tethaSpeed = 0;
-
     SmartDashboard.putNumber("Align Amp xSpeed", xSpeed);
     SmartDashboard.putNumber("Align Amp ySpeed", ySpeed);
+    SmartDashboard.putString("Align Amp Target", targetPose.toString());
+
+    xSpeed = mSlewX.calculate(inputTransform(xSpeed) * DriveConstants.maxSpeed) *
+        scalar.get().doubleValue();
+    ySpeed = mSlewY.calculate(inputTransform(ySpeed) * DriveConstants.maxSpeed) *
+        scalar.get().doubleValue();
+    tethaSpeed = mSlewRot.calculate(inputTransform(tethaSpeed) *
+        DriveConstants.maxAngularSpeedRadPerSec) * scalar.get().doubleValue();
 
     mDrive.swerveDrive(xSpeed, ySpeed, tethaSpeed, true);
 

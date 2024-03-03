@@ -288,7 +288,7 @@ public class RobotContainer implements Loggable {
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
                 mDriver.povUp().onTrue(new TurnToSpeaker(mDrive));
-                mDriver.povDown().onTrue(
+                mDriver.povDown().whileTrue(
                                 mDrive.driveToPose(FieldConstants.NOTE_POSITIONS[1]));
 
                 // Telescopic

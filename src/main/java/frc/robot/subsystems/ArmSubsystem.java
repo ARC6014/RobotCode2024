@@ -110,6 +110,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private SysIdRoutine m_sysid;
   InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
+  private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
   public enum ArmControlState {
     /** open-loop control */
@@ -167,6 +168,12 @@ public class ArmSubsystem extends SubsystemBase {
       mInstance = new ArmSubsystem();
     }
     return mInstance;
+  }
+
+  /** toggles neutral mode of motor */
+  public void setNeutralMode() {
+    this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+    armMotor.setNeutralMode(this.kNeutralMode);
   }
 
   // @Assign(user = Assign.Prog.CAN, message = "Tune kS and kV for arm UNDER HERE
