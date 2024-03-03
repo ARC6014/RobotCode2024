@@ -121,7 +121,7 @@ public class RobotContainer implements Loggable {
         private final ParallelCommandGroup openWristStartIntakeBeamBreak = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
+                                        new IntakeStopAtBeambreak().withTimeout(4.0), // this is the deadline
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
@@ -177,23 +177,23 @@ public class RobotContainer implements Loggable {
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
                                         new IntakeStopAtBeambreak().withTimeout(3.0), // this is the deadline
-                                        new WristSetState(mWrist, Position.OPEN)),
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                                        new WristSetState(mWrist, Position.OPEN),
+                                        new IntakeSetOpenLoop(mIntake, 10)));
 
         private final ParallelCommandGroup AUTOopenWristStartIntakeLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
                                         new IntakeStopAtBeambreak().withTimeout(5.0), // this is the deadline
-                                        new WristSetState(mWrist, Position.OPEN)),
-                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                                        new WristSetState(mWrist, Position.OPEN),
+                                        new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new SequentialCommandGroup(
-                                        new WaitCommand(0.5),
+                                        new WaitCommand(0.55),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                        .withTimeout(0.5)),
-                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
+                                                        .withTimeout(0.4)),
+                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.25));
 
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.LOOKUP), // interpolation shooting

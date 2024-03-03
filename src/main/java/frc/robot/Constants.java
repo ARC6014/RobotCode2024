@@ -108,7 +108,7 @@ public class Constants implements Loggable {
         public static final double wheelCircumference = Units.inchesToMeters(4) * Math.PI;
 
         // PID and Feedforward
-        public static final double drivekP = 0.30; // Beşiktaş: 0.12
+        public static final double drivekP = 0.12; // Prev: 0.3
         public static final double drivekI = 0;
         public static final double drivekD = 0;
         public static final double drivekS = 0.73; // Beşiktaş: 0.32
