@@ -78,7 +78,7 @@ public class AlignToAmp extends Command {
     tethaSpeed = m_thetaController.calculate(currPose.getRotation().getRadians(),
         targetPose.getRotation().getRadians());
 
-    mDrive.swerveDrive(xSpeed, ySpeed, tethaSpeed, true);
+    mDrive.swerveDrive(xSpeed, ySpeed, 0, true);
 
   }
 
