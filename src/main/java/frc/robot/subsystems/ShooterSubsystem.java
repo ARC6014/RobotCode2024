@@ -8,8 +8,6 @@ import java.util.Optional;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-import Jama.util.Maths;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
 
@@ -331,10 +329,10 @@ public class ShooterSubsystem extends SubsystemBase {
     double poseDifference = DriveSubsystem.getInstance().getPose().getTranslation()
         .getDistance(target.getTranslation());
 
-    double optimizedAngle = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
-    SmartDashboard.putNumber("LookUp OAngle", optimizedAngle);
+    double optimizedVoltage = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
+    SmartDashboard.putNumber("LookUp OVoltage", optimizedVoltage);
 
-    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
+    return MathUtil.clamp(optimizedVoltage, 7, 11);
   }
 
   public static ShooterSubsystem getInstance() {
