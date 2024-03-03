@@ -38,7 +38,7 @@ import io.github.oblarg.oblog.Loggable;
 public class Constants implements Loggable {
     public static final String CANIVORE_CANBUS = "CANivore";
     public static final String RIO_CANBUS = "rio";
-    public static final boolean isTuning = true; // tuning mode for tunable numbers
+    public static final boolean isTuning = false; // tuning mode for tunable numbers
 
     public static int Pigeon2CanID = 60;
 
@@ -224,7 +224,7 @@ public class Constants implements Loggable {
         /** unit: degrees */
         public static final double INTAKE = 10.5;
         /** unit: degrees */
-        public static final double SPEAKER_LONG = 50;
+        public static final double SPEAKER_LONG = 54;
         /** unit: degrees */
         public static final double SPEAKER_SHORT = 38; // 22.5 31.5 36
         /** unit: degrees */
@@ -478,6 +478,7 @@ public class Constants implements Loggable {
                 { 2.60, 51, 9.75 },
                 { 2.69, 51, 9.75 },
                 { 2.94, 53.75, 9.75 },
+                { 3.00, 54, 9.75 },
                 { 3.19, 55.5, 9.75 },
                 { 3.44, 57.25, 9.75 },
                 { 3.69, 58.5, 9.75 },

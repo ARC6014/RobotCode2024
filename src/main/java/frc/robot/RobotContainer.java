@@ -195,8 +195,16 @@ public class RobotContainer implements Loggable {
                                                         .withTimeout(0.4)),
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.25));
 
-        private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
+        private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLongLOOKUP = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.LOOKUP), // interpolation shooting
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.5),
+                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                        .withTimeout(0.5)),
+                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.75));
+
+        private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLong = new ParallelCommandGroup(
+                        new ArmStateSet(mArm, ArmControlState.SPEAKER_LONG), // setpoint shooting
                         new SequentialCommandGroup(
                                         new WaitCommand(0.5),
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
@@ -384,7 +392,8 @@ public class RobotContainer implements Loggable {
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
                 NamedCommands.registerCommand("Feed", AUTOstartStopFeederBeamBreak);
 
-                NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLong);
+                NamedCommands.registerCommand("ShootSpeakerLong", AUTOsetArmFeedAndShootSpeakerLongLOOKUP);
+                NamedCommands.registerCommand("ShootSpeakerLongSetpoint", AUTOsetArmFeedAndShootSpeakerLong);
                 NamedCommands.registerCommand("ShootSpeakerShort", AUTOsetArmFeedAndShootSpeakerShort);
                 NamedCommands.registerCommand("ArmToIntaking", new ArmStateSet(mArm, ArmControlState.INTAKE));
         }
