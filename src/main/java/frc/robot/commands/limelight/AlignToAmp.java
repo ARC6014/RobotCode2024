@@ -7,12 +7,14 @@ package frc.robot.commands.limelight;
 import javax.swing.text.TabSet;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
@@ -34,6 +36,10 @@ public class AlignToAmp extends Command {
 
   private Pose2d targetPose = new Pose2d();
   private Pose2d currPose = new Pose2d();
+
+  private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX);
+  private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY);
+  private final SlewRateLimiter mSlewRot = new SlewRateLimiter(DriveConstants.driveSlewRateLimitRot);
 
   /** Creates a new AlignToAmp. */
   public AlignToAmp() {
@@ -75,7 +81,16 @@ public class AlignToAmp extends Command {
     tethaSpeed = m_thetaController.calculate(currPose.getRotation().getRadians(),
         targetPose.getRotation().getRadians());
 
-    mDrive.swerveDrive(xSpeed, ySpeed, 0, true);
+    xSpeed = mSlewX.calculate(inputTransform(xSpeed) * DriveConstants.maxSpeed) * .3;
+    ySpeed = mSlewY.calculate(inputTransform(ySpeed) * DriveConstants.maxSpeed) * .3;
+    tethaSpeed = mSlewRot.calculate(inputTransform(tethaSpeed) * DriveConstants.maxAngularSpeedRadPerSec) * .3;
+
+    tethaSpeed = 0;
+
+    SmartDashboard.putNumber("Align Amp xSpeed", xSpeed);
+    SmartDashboard.putNumber("Align Amp ySpeed", ySpeed);
+
+    mDrive.swerveDrive(xSpeed, ySpeed, tethaSpeed, true);
 
   }
 
@@ -89,5 +104,13 @@ public class AlignToAmp extends Command {
   @Override
   public boolean isFinished() {
     return x_pid.atGoal() && y_pid.atGoal() && m_thetaController.atGoal();
+  }
+
+  private double inputTransform(double input) {
+    if (input < 0) {
+      return -Math.pow(input, 2);
+    } else {
+      return Math.pow(input, 2);
+    }
   }
 }
