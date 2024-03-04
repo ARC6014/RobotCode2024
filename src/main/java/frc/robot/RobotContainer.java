@@ -215,15 +215,15 @@ public class RobotContainer implements Loggable {
                                         () -> -mDriver.getLeftX(),
                                         () -> -mDriver.getRightX(),
                                         () -> mDriver.R2().getAsBoolean(),
-                                        () -> mDriver.L1().getAsBoolean(),
-                                        () -> mDriver.R1().getAsBoolean());
+                                        () -> mDriver.R1().getAsBoolean(),
+                                        () -> mDriver.L1().getAsBoolean());
                 } else if (DriverStation.getAlliance().get() == Alliance.Red) {
                         driveByJoystick = new DriveByJoystick(() -> mDriver.getLeftY(),
                                         () -> mDriver.getLeftX(),
                                         () -> -mDriver.getRightX(),
                                         () -> mDriver.R2().getAsBoolean(),
-                                        () -> mDriver.L1().getAsBoolean(),
-                                        () -> mDriver.R1().getAsBoolean());
+                                        () -> mDriver.R1().getAsBoolean(),
+                                        () -> mDriver.L1().getAsBoolean());
                 }
 
                 mDrive.setDefaultCommand(driveByJoystick);
@@ -310,7 +310,7 @@ public class RobotContainer implements Loggable {
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
-                mDriver.L2().toggleOnTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
+                mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
                                 () -> DriveSubsystem.getInstance().setSnapActive(false)));
 
         }
