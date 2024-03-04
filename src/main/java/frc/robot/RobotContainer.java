@@ -249,6 +249,9 @@ public class RobotContainer implements Loggable {
          * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
          */
         private void configureButtonBindings() {
+                // UNUSED:
+                // driver: two little buttons near touchpad
+                // operator: A and left stick
 
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
@@ -302,10 +305,8 @@ public class RobotContainer implements Loggable {
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
 
                 /* LIMELIGHT */
-                mOperator.a().whileTrue(new AlignToAmp());
+                mDriver.povDown().whileTrue(new AlignToAmp());
                 mDriver.povUp().whileTrue(new RotateToSpeaker(mDrive));
-                mDriver.povDown().whileTrue(
-                                mDrive.driveToPose(FieldConstants.NOTE_POSITIONS[1]));
 
                 /* MISC */
                 mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
