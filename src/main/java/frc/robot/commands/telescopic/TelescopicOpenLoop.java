@@ -14,12 +14,14 @@ import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 
 public class TelescopicOpenLoop extends Command {
   private TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
-  private DoubleSupplier joystick;
+  private DoubleSupplier joystick1;
+  private DoubleSupplier joystick2;
 
   /** Creates a new TelescopicDeneme. */
-  public TelescopicOpenLoop(TelescopicSubsystem mTelescopic, DoubleSupplier output) {
+  public TelescopicOpenLoop(TelescopicSubsystem mTelescopic, DoubleSupplier masterOutput, DoubleSupplier slaveOutput) {
     this.mTelescopic = mTelescopic;
-    joystick = output;
+    joystick1 = masterOutput;
+    joystick2 = slaveOutput;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(mTelescopic);
   }
@@ -27,14 +29,20 @@ public class TelescopicOpenLoop extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mTelescopic.setTelescopicState(TelescopicState.OPEN_LOOP);
+    // mTelescopic.setTelescopicState(TelescopicState.OPEN_LOOP);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (joystick.getAsDouble() >= 0.04 || joystick.getAsDouble() <= -0.04) {
-      mTelescopic.openLoop((joystick.getAsDouble()) / 5);
+    if (joystick1.getAsDouble() >= 0.04 || joystick1.getAsDouble() <= -0.04) {
+      mTelescopic.openLoopMaster((joystick1.getAsDouble()) / 2.5);
+    } else {
+      mTelescopic.setTelescopicState(TelescopicState.HOLD);
+    }
+
+    if (joystick2.getAsDouble() >= 0.04 || joystick2.getAsDouble() <= -0.04) {
+      mTelescopic.openLoopSlave((joystick2.getAsDouble()) / 2.5);
     } else {
       mTelescopic.setTelescopicState(TelescopicState.HOLD);
     }

@@ -92,7 +92,9 @@ public class RobotContainer implements Loggable {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
+        // TODO: axes might be switched for telescpics
         private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
+                        () -> mOperator.getLeftY(),
                         () -> mOperator.getRightY());
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());

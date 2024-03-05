@@ -27,6 +27,9 @@ public class TelescopicSubsystem extends SubsystemBase {
   private final DutyCycleOut m_percentOut = new DutyCycleOut(0, false, false, false, false);
   private double targetOutput = 0;
 
+  private double masterOutput = 0;
+  private double slaveOutput = 0;
+
   /** units: cm */
   private double setpoint = 0;
 
@@ -121,11 +124,34 @@ public class TelescopicSubsystem extends SubsystemBase {
     m_slave.setControl(m_percentOut.withOutput(targetOutput));
   }
 
+  public void setMasterOutput() {
+    m_master.setControl(m_percentOut.withOutput(masterOutput));
+  }
+
+  public void setSlaveOutput() {
+    m_slave.setControl(m_percentOut.withOutput(slaveOutput));
+  }
+
   public void openLoop(double percent) {
     if (telescopicState != TelescopicState.OPEN_LOOP) {
       telescopicState = TelescopicState.OPEN_LOOP;
     }
     targetOutput = percent;
+
+  }
+
+  public void openLoopMaster(double percent) {
+    if (telescopicState != TelescopicState.OPEN_LOOP) {
+      telescopicState = TelescopicState.OPEN_LOOP;
+    }
+    masterOutput = percent;
+  }
+
+  public void openLoopSlave(double percent) {
+    if (telescopicState != TelescopicState.OPEN_LOOP) {
+      telescopicState = TelescopicState.OPEN_LOOP;
+    }
+    slaveOutput = percent;
   }
 
   // this is probably wrong double-check
