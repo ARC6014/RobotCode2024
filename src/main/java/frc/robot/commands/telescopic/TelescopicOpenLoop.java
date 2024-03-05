@@ -8,6 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
@@ -29,21 +30,24 @@ public class TelescopicOpenLoop extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // mTelescopic.setTelescopicState(TelescopicState.OPEN_LOOP);
+    mTelescopic.setTelescopicState(TelescopicState.OPEN_LOOP_SEPARATE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (joystick1.getAsDouble() >= 0.04 || joystick1.getAsDouble() <= -0.04) {
-      mTelescopic.openLoopMaster((joystick1.getAsDouble()) / 2.5);
-    } else {
-      mTelescopic.setTelescopicState(TelescopicState.HOLD);
-    }
+    double masterOut = MathUtil.applyDeadband(joystick1.getAsDouble()/5, 0.04);
+    double slaveOut = MathUtil.applyDeadband(joystick2.getAsDouble()/5, 0.04);
 
-    if (joystick2.getAsDouble() >= 0.04 || joystick2.getAsDouble() <= -0.04) {
-      mTelescopic.openLoopSlave((joystick2.getAsDouble()) / 2.5);
-    } else {
+    mTelescopic.openLoop(masterOut, slaveOut);
+    if (masterOut == 0) {
+      mTelescopic.setTelescopicState(TelescopicState.HOLD_MASTER);
+    } 
+    if (slaveOut == 0) {
+      mTelescopic.setTelescopicState(TelescopicState.HOLD_SLAVE);
+    } 
+
+    if (slaveOut == 0 && masterOut == 0) {
       mTelescopic.setTelescopicState(TelescopicState.HOLD);
     }
 

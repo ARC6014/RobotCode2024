@@ -11,6 +11,8 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
@@ -38,8 +40,12 @@ public class TelescopicSubsystem extends SubsystemBase {
   public enum TelescopicState {
     /* neutral - in brake */
     HOLD,
+    HOLD_MASTER,
+    HOLD_SLAVE,
     /* open loop control */
     OPEN_LOOP,
+    /* alternative separate open-loop */
+    OPEN_LOOP_SEPARATE,
     /* closed-loop motion magic */
     CLIMB,
     /* stop motors */
@@ -69,7 +75,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
-    m_slave.setControl(new Follower(m_master.getDeviceID(), true));
+    // m_slave.setControl(new Follower(m_master.getDeviceID(), true));
 
     zeroEncoder();
     setNeutralMode(NeutralModeValue.Brake);
@@ -82,12 +88,25 @@ public class TelescopicSubsystem extends SubsystemBase {
     switch (telescopicState) {
       case HOLD:
         m_master.setControl(new NeutralOut());
+        m_slave.setControl(new NeutralOut());
+        break;
+      case HOLD_MASTER:
+        m_master.setControl(new NeutralOut());
+        setSlaveOutput();
+        break;
+      case HOLD_SLAVE:
+        m_slave.setControl(new NeutralOut());
+        setMasterOutput();
         break;
       case CLIMB:
         setHeightMotionMagic();
         break;
       case OPEN_LOOP:
         setMotorOutput();
+        break;
+      case OPEN_LOOP_SEPARATE:
+        setSlaveOutput();
+        setMasterOutput();
         break;
       case STOP:
         stop();
@@ -96,6 +115,15 @@ public class TelescopicSubsystem extends SubsystemBase {
         break;
     }
 
+    if(this.getCurrentCommand() != null) {
+      SmartDashboard.putString("Scheduled", this.getCurrentCommand().toString());
+    } else {
+      SmartDashboard.putString("Scheduled", "No command");
+    }
+
+    SmartDashboard.putNumber("Telesc Master", masterOutput);
+    SmartDashboard.putNumber("Teles Slave", slaveOutput);
+    
   }
 
   public double getSetpoint() {
@@ -132,24 +160,26 @@ public class TelescopicSubsystem extends SubsystemBase {
     m_slave.setControl(m_percentOut.withOutput(slaveOutput));
   }
 
-  public void openLoop(double percent) {
-    if (telescopicState != TelescopicState.OPEN_LOOP) {
-      telescopicState = TelescopicState.OPEN_LOOP;
+  public void openLoop(double masterOut, double slaveOut) {
+    if (telescopicState != TelescopicState.OPEN_LOOP_SEPARATE) {
+      telescopicState = TelescopicState.OPEN_LOOP_SEPARATE;
     }
-    targetOutput = percent;
+    // targetOutput = percent;
+    masterOutput = masterOut;
+    slaveOutput = slaveOut;
 
   }
 
   public void openLoopMaster(double percent) {
-    if (telescopicState != TelescopicState.OPEN_LOOP) {
-      telescopicState = TelescopicState.OPEN_LOOP;
+    if (telescopicState != TelescopicState.OPEN_LOOP_SEPARATE) {
+      telescopicState = TelescopicState.OPEN_LOOP_SEPARATE;
     }
     masterOutput = percent;
   }
 
   public void openLoopSlave(double percent) {
-    if (telescopicState != TelescopicState.OPEN_LOOP) {
-      telescopicState = TelescopicState.OPEN_LOOP;
+    if (telescopicState != TelescopicState.OPEN_LOOP_SEPARATE) {
+      telescopicState = TelescopicState.OPEN_LOOP_SEPARATE;
     }
     slaveOutput = percent;
   }
