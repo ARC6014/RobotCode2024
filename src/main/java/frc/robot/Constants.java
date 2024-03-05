@@ -236,6 +236,8 @@ public class Constants implements Loggable {
                 public static final double SPEAKER_SHORT = 38; // 22.5 31.5 36
                 /** unit: degrees */
                 public static final double AMP = 110;
+                /** unit degrees */
+                public static final double CLIMB = 45;
 
                 /** unit: degrees */
                 public static final double LAST_RESORT_ANGLE_CUTOFF = 120;
@@ -390,6 +392,11 @@ public class Constants implements Loggable {
                 public static final double DENEME = 0.5;
                 /** units: cm */
                 public static final double SPROCKET_CIRCUMFERENCE = 3.2 * Math.PI;
+                /** units: cm */
+                public static final double MAX_EXTENSION = 32; // theoretical max 34 cm
+                // TODO: check value
+                /** units: A */
+                public static final int STATOR_CURRENT_LIMIT = 80;
 
         }
 

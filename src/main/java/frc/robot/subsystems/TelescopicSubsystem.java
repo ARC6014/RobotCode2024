@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.TelescopicConstants;
+import frc.team6014.lib.util.Util;
 
 public class TelescopicSubsystem extends SubsystemBase {
 
@@ -31,28 +32,25 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   private double masterOutput = 0;
   private double slaveOutput = 0;
+  private TelescopicState masterState = TelescopicState.HOLD;
+  private TelescopicState slaveState = TelescopicState.HOLD;
 
   /** units: cm */
-  private double setpoint = 0;
+  private double masterSetpoint = 0;
+  private double slaveSetpoint = 0;
 
   NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
   public enum TelescopicState {
     /* neutral - in brake */
     HOLD,
-    HOLD_MASTER,
-    HOLD_SLAVE,
     /* open loop control */
     OPEN_LOOP,
-    /* alternative separate open-loop */
-    OPEN_LOOP_SEPARATE,
     /* closed-loop motion magic */
     CLIMB,
     /* stop motors */
     STOP,
   }
-
-  private TelescopicState telescopicState = TelescopicState.HOLD;
 
   /** Creates a new TelescopicSubsystem. */
   public TelescopicSubsystem() {
@@ -75,43 +73,73 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
 
-    // m_slave.setControl(new Follower(m_master.getDeviceID(), true));
-
-    zeroEncoder();
+    zeroEncoders();
     setNeutralMode(NeutralModeValue.Brake);
   }
+
+  public void maybeHoldCurrentPosition() {
+    if (Util.epsilonEquals(m_master.getVelocity().getValueAsDouble(), 0, 0.5)
+            && (m_master.getStatorCurrent().getValueAsDouble() > TelescopicConstants.STATOR_CURRENT_LIMIT)) {
+        m_master.stopMotor();
+        masterState = TelescopicState.HOLD;
+    }
+
+    if (Util.epsilonEquals(m_slave.getVelocity().getValueAsDouble(), 0, 0.5)
+            && (m_slave.getStatorCurrent().getValueAsDouble() > TelescopicConstants.STATOR_CURRENT_LIMIT)) {
+        m_slave.stopMotor();
+        slaveState = TelescopicState.HOLD;
+    }
+}
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    boolean masterExtensionLimit = getMasterHeight() >= TelescopicConstants.MAX_EXTENSION;
+    boolean slaveExtensionLimit = getSlaveHeight() >= TelescopicConstants.MAX_EXTENSION;
+   
+    if (masterExtensionLimit) {
+      m_master.stopMotor();
+      masterState = TelescopicState.HOLD;
+    }
 
-    switch (telescopicState) {
+    if (slaveExtensionLimit) {
+      m_slave.stopMotor();
+      slaveState = TelescopicState.HOLD;
+    }
+
+    maybeHoldCurrentPosition();
+
+    switch (masterState) {
       case HOLD:
         m_master.setControl(new NeutralOut());
-        m_slave.setControl(new NeutralOut());
-        break;
-      case HOLD_MASTER:
-        m_master.setControl(new NeutralOut());
-        setSlaveOutput();
-        break;
-      case HOLD_SLAVE:
-        m_slave.setControl(new NeutralOut());
-        setMasterOutput();
         break;
       case CLIMB:
-        setHeightMotionMagic();
+        setHeightMotionMagicMaster();
         break;
       case OPEN_LOOP:
-        setMotorOutput();
-        break;
-      case OPEN_LOOP_SEPARATE:
-        setSlaveOutput();
         setMasterOutput();
         break;
       case STOP:
-        stop();
+        stopMaster();
       default:
-        stop();
+        stopMaster();
+        break;
+    }
+
+    switch (slaveState) {
+      case HOLD:
+        m_slave.setControl(new NeutralOut());
+        break;
+      case CLIMB:
+        setHeightMotionMagicSlave();
+        break;
+      case OPEN_LOOP:
+        setSlaveOutput();
+        break;
+      case STOP:
+        stopSlave();
+      default:
+        stopSlave();
         break;
     }
 
@@ -126,25 +154,49 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   }
 
-  public double getSetpoint() {
-    return setpoint;
+  public double getSetpointMaster() {
+    return masterSetpoint;
   }
 
-  public void zeroTelescopicArm() {
-    setpoint = 0;
+  public double getSetpointSlave() {
+    return slaveSetpoint;
   }
 
-  public void zeroEncoder() {
+  public void zeroTelescopicArmMaster() {
+    masterSetpoint = 0;
+  }
+
+  public void zeroTelescopicArmSlave() {
+    slaveSetpoint = 0;
+  }
+
+  public void zeroEncoders() {
     m_master.setPosition(0);
     m_slave.setPosition(0);
   }
 
   public boolean isAtSetpoint() {
-    return Math.abs(setpoint - getHeight()) < TelescopicConstants.TELESCOPIC_TOLERANCE;
+    return isAtSetpointMaster() && isAtSetpointSlave();
+  }
+
+  public boolean isAtSetpointMaster() {
+    return Math.abs(masterSetpoint - getMasterHeight()) < TelescopicConstants.TELESCOPIC_TOLERANCE;
+  }
+
+  public boolean isAtSetpointSlave() {
+    return Math.abs(slaveSetpoint - getSlaveHeight()) < TelescopicConstants.TELESCOPIC_TOLERANCE;
   }
 
   public boolean isAtZero() {
+    return isAtZeroMaster() && isAtZeroSlave();
+  }
+
+  public boolean isAtZeroMaster() {
     return m_master.getRotorPosition().getValue() < TelescopicConstants.TELESCOPIC_TOLERANCE;
+  }
+
+  public boolean isAtZeroSlave() {
+    return m_slave.getRotorPosition().getValue() < TelescopicConstants.TELESCOPIC_TOLERANCE;
   }
 
   public void setMotorOutput() {
@@ -160,58 +212,88 @@ public class TelescopicSubsystem extends SubsystemBase {
     m_slave.setControl(m_percentOut.withOutput(slaveOutput));
   }
 
-  public void openLoop(double masterOut, double slaveOut) {
-    if (telescopicState != TelescopicState.OPEN_LOOP_SEPARATE) {
-      telescopicState = TelescopicState.OPEN_LOOP_SEPARATE;
-    }
-    // targetOutput = percent;
-    masterOutput = masterOut;
-    slaveOutput = slaveOut;
-
-  }
-
   public void openLoopMaster(double percent) {
-    if (telescopicState != TelescopicState.OPEN_LOOP_SEPARATE) {
-      telescopicState = TelescopicState.OPEN_LOOP_SEPARATE;
+    if (masterState != TelescopicState.OPEN_LOOP) {
+      masterState = TelescopicState.OPEN_LOOP;
     }
     masterOutput = percent;
   }
 
   public void openLoopSlave(double percent) {
-    if (telescopicState != TelescopicState.OPEN_LOOP_SEPARATE) {
-      telescopicState = TelescopicState.OPEN_LOOP_SEPARATE;
+    if (slaveState != TelescopicState.OPEN_LOOP) {
+      slaveState = TelescopicState.OPEN_LOOP;
     }
     slaveOutput = percent;
   }
 
-  // this is probably wrong double-check
-  public double getHeight() {
+  /** units: cm */
+  public double getMasterHeight() {
     double sprocketRotation = (m_master.getRotorPosition().getValueAsDouble()) // +m_slave.getRotorPosition().getValueAsDouble())
                                                                                // / 2
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
     return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
   }
 
+  /** units: cm */
+  public double getSlaveHeight() {
+    double sprocketRotation = (m_slave.getRotorPosition().getValueAsDouble()) // +m_slave.getRotorPosition().getValueAsDouble())
+                                                                               // / 2
+        / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
+    return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
+  }
+
   public void setTelescopicPosition(double target) {
-    if (telescopicState != TelescopicState.CLIMB) {
-      telescopicState = TelescopicState.CLIMB;
+    setTelescopicPositionMaster(target);
+    setTelescopicPositionSlave(target);
+  }
+
+  public void setTelescopicPositionMaster(double target) {
+    if (masterState != TelescopicState.CLIMB) {
+      masterState = TelescopicState.CLIMB;
     }
-    setpoint = target;
+    masterSetpoint = target;
+  }
+
+  public void setTelescopicPositionSlave(double target) {
+    if (slaveState != TelescopicState.CLIMB) {
+      slaveState = TelescopicState.CLIMB;
+    }
+    slaveSetpoint = target;
   }
 
   // double check
-  private void setHeightMotionMagic() {
+  private void setHeightMotionMagicMaster() {
     m_master.setControl(
         motionMagic.withPosition(
-            setpoint / TelescopicConstants.SPROCKET_CIRCUMFERENCE * TelescopicConstants.TELESCOPIC_GEAR_RATIO));
+            masterSetpoint / TelescopicConstants.SPROCKET_CIRCUMFERENCE * TelescopicConstants.TELESCOPIC_GEAR_RATIO));
+  }
+
+  // double check
+  private void setHeightMotionMagicSlave() {
+    m_master.setControl(
+        motionMagic.withPosition(
+            slaveSetpoint / TelescopicConstants.SPROCKET_CIRCUMFERENCE * TelescopicConstants.TELESCOPIC_GEAR_RATIO));
   }
 
   public void setTelescopicState(TelescopicState state) {
-    telescopicState = state;
+    setTelescopicStateMaster(state);
+    setTelescopicStateSlave(state);
   }
 
-  public TelescopicState getTelescopicState() {
-    return telescopicState;
+  public void setTelescopicStateMaster(TelescopicState state) {
+    masterState = state;
+  }
+
+  public void setTelescopicStateSlave(TelescopicState state) {
+    slaveState = state;
+  }
+
+  public TelescopicState getTelescopicStateMaster() {
+    return masterState;
+  }
+
+  public TelescopicState getTelescopicStateSlave() {
+    return slaveState;
   }
 
   public void setNeutralMode() {
@@ -227,10 +309,21 @@ public class TelescopicSubsystem extends SubsystemBase {
   }
 
   public void stop() {
-    if (telescopicState != TelescopicState.STOP) {
-      telescopicState = TelescopicState.STOP;
+    stopMaster();
+    stopSlave();
+  }
+
+  public void stopMaster() {
+    if (masterState != TelescopicState.STOP) {
+      masterState = TelescopicState.STOP;
     }
     m_master.stopMotor();
+  }
+
+  public void stopSlave() {
+    if (slaveState != TelescopicState.STOP) {
+      slaveState = TelescopicState.STOP;
+    }
     m_slave.stopMotor();
   }
 

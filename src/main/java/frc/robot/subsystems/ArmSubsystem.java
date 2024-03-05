@@ -131,6 +131,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     /** FF characterization test */
     CHARACTERIZATION,
+    
+    /** CLIMBING CLOSED POSITION */
+    CLIMB,
   }
 
   public ArmSubsystem() {
@@ -183,14 +186,36 @@ public class ArmSubsystem extends SubsystemBase {
     armMotor.setNeutralMode(NeutralModeValue.Brake);
   }
 
+  public boolean isBoreEncoderAlive() {
+    return boreEncoder.isConnected();
+  }
+
+  public double getAngle() {
+    if (isBoreEncoderAlive()) {
+      return getArmAngleBore();
+    } else {
+      return getArmAngleFalcon();
+    }
+  }
+
+  public boolean isAtSetpoint() {
+    if (isBoreEncoderAlive()) {
+      return isAtSetpointBore();
+    } else {
+      return isAtSetpointFalcon();
+    }
+  }
+
   @Override
   public void periodic() {
-    if (getArmAngleBore() > ArmConstants.LAST_RESORT_ANGLE_CUTOFF) {
+    if (getAngle() > ArmConstants.LAST_RESORT_ANGLE_CUTOFF) {
       armMotor.stopMotor();
       armControlState = ArmControlState.INTAKE;
     }
 
-    if (isAtSetpointBore() && !isAtSetpointFalcon()) {
+    boolean shouldStopResetAccordingToBore = isBoreEncoderAlive() && isAtSetpointBore() && !isAtSetpointFalcon();
+
+    if (shouldStopResetAccordingToBore) {
       armMotor.stopMotor();
       resetToAbsolute();
     }
@@ -225,19 +250,22 @@ public class ArmSubsystem extends SubsystemBase {
       case ZERO:
         setArmAngleMotionMagic(ArmConstants.ZERO);
         break;
+      case CLIMB:
+        setArmAngleMotionMagic(ArmConstants.CLIMB);
+        break;
       default:
         setArmPercentOutput(0.0);
         break;
-    }
-
-    if (isAtSetpointBore() && !isAtSetpointFalcon()) {
-      return;
     }
 
     lastDemandedRotation = getArmAngleFalcon();
 
     SmartDashboard.putNumber("Pose Difference", poseDifference);
     SmartDashboard.putString("Neutral", kNeutralMode.toString());
+
+    if (shouldStopResetAccordingToBore) {
+      return;
+    }
 
     autoCalibration();
   }
@@ -458,12 +486,14 @@ public class ArmSubsystem extends SubsystemBase {
    * the mechanism isn't moving
    */
   public void autoCalibration() {
-    boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
-    boolean angleCondition = Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(0.5);
-    boolean speedCondition = Math.abs(armMotor.getRotorVelocity().getValueAsDouble()) < 0.005;
-    if ((timerCondition || angleCondition) && speedCondition) {
-      resetToAbsolute();
-      lastAbsoluteTime = m_timer.get();
+    if (isBoreEncoderAlive()) {
+      boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
+      boolean angleCondition = Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(0.5);
+      boolean speedCondition = Math.abs(armMotor.getRotorVelocity().getValueAsDouble()) < 0.005;
+      if ((timerCondition || angleCondition) && speedCondition) {
+        resetToAbsolute();
+        lastAbsoluteTime = m_timer.get();
+      }
     }
   }
 

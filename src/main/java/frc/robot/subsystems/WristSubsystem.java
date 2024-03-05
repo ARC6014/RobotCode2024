@@ -94,30 +94,33 @@ public class WristSubsystem extends SubsystemBase {
         HOLD,
     }
 
+    public boolean isBoreEncoderAlive() {
+      return mBoreEncoder.isConnected();
+    }
+    
+    public double getAngle() {
+      if (isBoreEncoderAlive()) {
+        return getBoreEncoderPosition();
+      } else {
+        return getFalconPosition();
+      }
+    }
+    
+    public boolean isAtSetpoint() {
+      if (isBoreEncoderAlive()) {
+        return isAtSetpointBore();
+      } else {
+        return isAtSetpointFalcon();
+      }
+    }
+
     @Override
     public void periodic() {
-        if (isBoreAtSetpoint() && !isAtSetpoint()) {
+        boolean shouldStopResetAccordingToBore = isBoreEncoderAlive() && isAtSetpointBore() && !isAtSetpointFalcon();
+
+        if (shouldStopResetAccordingToBore) {
             mTalonFX.stopMotor();
             resetToAbsolute();
-
-            switch (mPosition) {
-                case OPENLOOP:
-                    mTalonFX.setControl(mAngleOpenLoopControl);
-                    break;
-                case OPEN:
-                    setWristAngleMotionMagic(WristConstants.OPEN_POSITION);
-                    break;
-                case CLOSED:
-                    setWristAngleMotionMagic(WristConstants.CLOSED_POSITION);
-                    break;
-                case HOLD:
-                    mTalonFX.setControl(new NeutralOut());
-                    break;
-                default:
-                    setOpenLoop(0.0);
-                    break;
-            }
-            return;
         }
 
         switch (mPosition) {
@@ -138,9 +141,9 @@ public class WristSubsystem extends SubsystemBase {
                 break;
         }
 
-        // configs.Slot0.withKP(kWristP.get().doubleValue());
-        // configs.Slot0.withKI(kWristI.get().doubleValue());
-        // configs.Slot0.withKD(kWristD.get().doubleValue());
+        if (shouldStopResetAccordingToBore) {
+            return;
+        }
 
         autoCalibration();
     }
@@ -181,7 +184,7 @@ public class WristSubsystem extends SubsystemBase {
         lastAbsoluteTime = m_timer.get();
     }
 
-    public boolean isAtSetpoint() {
+    public boolean isAtSetpointFalcon() {
         if (mPosition == Position.OPENLOOP) {
             return false;
         }
@@ -193,7 +196,7 @@ public class WristSubsystem extends SubsystemBase {
         return getFalconPosition() < WristConstants.POSITION_EQUALITY_TOLERANCE;
     }
 
-    public boolean isBoreAtSetpoint() {
+    public boolean isAtSetpointBore() {
         if (mPosition == Position.OPENLOOP) {
             return false;
         }
@@ -245,13 +248,15 @@ public class WristSubsystem extends SubsystemBase {
      * the mechanism isn't moving
      */
     public void autoCalibration() {
-        boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
-        boolean angleCondition = Math.abs(getBoreEncoderPosition() - getFalconPosition()) >= Conversions
-                .degreesToRevolutions(2);
-        boolean speedCondition = Math.abs(mTalonFX.getRotorVelocity().getValueAsDouble()) < 0.005;
-        if ((timerCondition || angleCondition) && speedCondition) {
-            resetToAbsolute();
-            lastAbsoluteTime = m_timer.get();
+        if (isBoreEncoderAlive()) {
+            boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
+            boolean angleCondition = Math.abs(getBoreEncoderPosition() - getFalconPosition()) >= Conversions
+                    .degreesToRevolutions(2);
+            boolean speedCondition = Math.abs(mTalonFX.getRotorVelocity().getValueAsDouble()) < 0.005;
+            if ((timerCondition || angleCondition) && speedCondition) {
+                resetToAbsolute();
+                lastAbsoluteTime = m_timer.get();
+            }
         }
     }
 
