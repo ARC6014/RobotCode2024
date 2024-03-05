@@ -46,7 +46,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private static final LoggedTunableNumber<Number> tunableaAngle = new LoggedTunableNumber<Number>("ARM/tunableAngle",
       ArmConstants.SPEAKER_SHORT,
-      Constants.isTuning);
+      true);
 
   private static ArmSubsystem mInstance;
   private final DriveSubsystem mDriveSubsystem = DriveSubsystem.getInstance();
@@ -130,8 +130,7 @@ public class ArmSubsystem extends SubsystemBase {
     LOOKUP,
 
     /** FF characterization test */
-    CHARACTERIZATION
-
+    CHARACTERIZATION,
   }
 
   public ArmSubsystem() {
@@ -159,12 +158,6 @@ public class ArmSubsystem extends SubsystemBase {
       mInstance = new ArmSubsystem();
     }
     return mInstance;
-  }
-
-  /** toggles neutral mode of motor */
-  public void setNeutralMode() {
-    this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
-    armMotor.setNeutralMode(this.kNeutralMode);
   }
 
   private void motorConfig() {
@@ -244,8 +237,15 @@ public class ArmSubsystem extends SubsystemBase {
     lastDemandedRotation = getArmAngleFalcon();
 
     SmartDashboard.putNumber("Pose Difference", poseDifference);
+    SmartDashboard.putString("Neutral", kNeutralMode.toString());
 
     autoCalibration();
+  }
+
+  /** toggles neutral mode of motor */
+  public void setNeutralMode() {
+    this.kNeutralMode = (kNeutralMode == NeutralModeValue.Brake) ? NeutralModeValue.Coast : NeutralModeValue.Brake;
+    armMotor.setNeutralMode(this.kNeutralMode);
   }
 
   /** resets Falcon encoder to zero */

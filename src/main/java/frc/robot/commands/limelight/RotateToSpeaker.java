@@ -85,6 +85,10 @@ public class RotateToSpeaker extends Command {
     if (RobotY < Constants.FieldConstants.BLUE_SPEAKER.getY())
       tAngle = -tAngle;
 
+    if (DriverStation.getAlliance().get() == Alliance.Red) {
+      tAngle = -tAngle;
+    }
+
     return -tAngle;
   }
 

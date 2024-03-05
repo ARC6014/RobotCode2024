@@ -35,8 +35,8 @@ public class AlignToAmp extends Command {
   private Pose2d currPose = new Pose2d();
   LoggedTunableNumber<Number> scalar = new LoggedTunableNumber<Number>("Align Scalar", 100.0);
 
-  private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX);
-  private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY);
+  private final SlewRateLimiter mSlewX = new SlewRateLimiter(DriveConstants.driveSlewRateLimitX * 3 / 2);
+  private final SlewRateLimiter mSlewY = new SlewRateLimiter(DriveConstants.driveSlewRateLimitY * 3 / 2);
   private final SlewRateLimiter mSlewRot = new SlewRateLimiter(DriveConstants.driveSlewRateLimitRot);
 
   /** Creates a new AlignToAmp. */
@@ -62,11 +62,11 @@ public class AlignToAmp extends Command {
   private Pose2d calcTarget() {
     Pose2d tPose = new Pose2d();
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX() - .3, FieldConstants.BLUE_AMP.getY() - 0.44),
-          Rotation2d.fromDegrees(90));
+      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX() - .3, FieldConstants.BLUE_AMP.getY() - 0.30),
+          FieldConstants.BLUE_AMP.getRotation().unaryMinus());
     } else {
-      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX() - .3, FieldConstants.RED_AMP.getY() - 0.44),
-          Rotation2d.fromDegrees(-90));
+      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX() - .3, FieldConstants.RED_AMP.getY() - 0.30),
+          FieldConstants.BLUE_AMP.getRotation().unaryMinus());
     }
     return tPose;
   }
