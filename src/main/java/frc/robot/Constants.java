@@ -213,7 +213,8 @@ public class Constants implements Loggable {
         public static final double kF = 0.4;
 
         /** unit: rotations */
-        public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(13.34);
+        public static final double POSITION_OFFSET_OLD = Conversions.degreesToRevolutions(13.34); /* before arm bore broke down */
+        public static final double POSITION_OFFSET = Conversions.degreesToRevolutions(13.34 + 164.71 - 0.37);
 
         /** unit: rotations */
         public static final double ANGLE_TOLERANCE = Conversions.degreesToRevolutions(0.5);
