@@ -396,8 +396,7 @@ public class Constants implements Loggable {
                 public static final double MAX_EXTENSION = 32; // theoretical max 34 cm
                 // TODO: check value
                 /** units: A */
-                public static final int STATOR_CURRENT_LIMIT = 80;
-
+                public static final int STATOR_CURRENT_LIMIT = 80;             
         }
 
         public static final class LEDConstants {
