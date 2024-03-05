@@ -78,7 +78,7 @@ public class RotateToSpeaker extends Command {
     } else {
       tetha = Units.radiansToDegrees(
           Math.acos((Constants.FieldConstants.FieldX - RobotX)
-              / currPose.getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER.getTranslation())));
+              / currPose.getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER_CENTER.getTranslation())));
       tAngle = -tetha;
     }
 

@@ -49,8 +49,8 @@ public class Constants implements Loggable {
     public static final double maxModuleSpeed = 4.0;
 
     public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-            new PIDConstants(4, 0, 0),
-            new PIDConstants(5, 0, 0),
+            new PIDConstants(4.2, 0, 0),
+            new PIDConstants(4.5, 0, 0),
             maxModuleSpeed,
             drivebaseRadius,
             new ReplanningConfig(),
@@ -420,9 +420,9 @@ public class Constants implements Loggable {
                 FieldY - Units.inchesToMeters(104.0),
                 new Rotation2d(Math.PI));
         public static final Pose2d BLUE_SPEAKER_CENTER = new Pose2d(
-                0,
-                FieldY - Units.inchesToMeters(104.0) - 0.22,
-                new Rotation2d(Math.PI));
+                BLUE_SPEAKER.getX(),
+                BLUE_SPEAKER.getY() - 0.22,
+                BLUE_SPEAKER.getRotation());
         public static final Pose2d BLUE_AMP = new Pose2d(
                 Units.inchesToMeters(72.455),
                 Units.inchesToMeters(322.996),
@@ -430,9 +430,13 @@ public class Constants implements Loggable {
         public static final Pose2d BLUE_SOURCE = new Pose2d(15.331, 1, Rotation2d.fromDegrees(-60));
 
         public static final Pose2d RED_SPEAKER = new Pose2d(
-                0,
+                FieldX,
                 BLUE_SPEAKER.getY(),
-                new Rotation2d(Math.PI));
+                new Rotation2d(-Math.PI));
+        public static final Pose2d RED_SPEAKER_CENTER = new Pose2d(
+                RED_SPEAKER.getX(),
+                RED_SPEAKER.getY() - 0.22,
+                RED_SPEAKER.getRotation());
         public static final Pose2d RED_AMP = new Pose2d(
                 FieldX - BLUE_AMP.getX(),
                 BLUE_AMP.getY(),

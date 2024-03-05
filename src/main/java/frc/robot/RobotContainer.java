@@ -229,7 +229,7 @@ public class RobotContainer implements Loggable {
                 }
 
                 mDrive.setDefaultCommand(driveByJoystick);
-                mTelescopic.setDefaultCommand(telescopicOpenLoop);
+                // mTelescopic.setDefaultCommand(telescopicOpenLoop);
 
                 DriverStation.silenceJoystickConnectionWarning(true);
                 LiveWindow.disableAllTelemetry();

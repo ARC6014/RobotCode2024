@@ -194,7 +194,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void periodic() {
     if (getArmAngleBore() > ArmConstants.LAST_RESORT_ANGLE_CUTOFF) {
       armMotor.stopMotor();
-      return;
+      armControlState = ArmControlState.INTAKE;
     }
 
     if (isAtSetpointBore() && !isAtSetpointFalcon()) {
