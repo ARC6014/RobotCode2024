@@ -115,7 +115,7 @@ public class TelescopicSubsystem extends SubsystemBase {
         break;
     }
 
-    if(this.getCurrentCommand() != null) {
+    if (this.getCurrentCommand() != null) {
       SmartDashboard.putString("Scheduled", this.getCurrentCommand().toString());
     } else {
       SmartDashboard.putString("Scheduled", "No command");
@@ -123,7 +123,7 @@ public class TelescopicSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Telesc Master", masterOutput);
     SmartDashboard.putNumber("Teles Slave", slaveOutput);
-    
+
   }
 
   public double getSetpoint() {
