@@ -50,7 +50,7 @@ public class Constants implements Loggable {
         public static final double maxModuleSpeed = 4.0;
 
         public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-                        new PIDConstants(4.2, 0, 0),
+                        new PIDConstants(4.25, 0, 0),
                         new PIDConstants(4.5, 0, 0),
                         maxModuleSpeed,
                         drivebaseRadius,
