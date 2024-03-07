@@ -40,6 +40,7 @@ public class Constants implements Loggable {
         public static final String CANIVORE_CANBUS = "CANivore";
         public static final String RIO_CANBUS = "rio";
         public static final boolean isTuning = false; // tuning mode for tunable numbers
+        public static final boolean DEVELOPER_LOGGING = false;
 
         public static int Pigeon2CanID = 60;
 
