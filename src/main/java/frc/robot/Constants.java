@@ -114,7 +114,7 @@ public class Constants implements Loggable {
                 public static final double drivekD = 0;
                 public static final double drivekS = 0.016;
                 public static final double drivekV = 0.19;
-                public static final double drivekA = 0.02;
+                public static final double drivekA = 0.05;
 
                 public static final double anglekP = 0.27;
                 public static final double anglekI = 0;
@@ -142,7 +142,7 @@ public class Constants implements Loggable {
                                 maxAngularSpeedRadPerSec, maxAngularAccelRadPerSecSq);
 
                 // added these two for LLalignment not sure if it makes sense
-                private static final double maxTransAccelMetersPerSecSq = 2;
+                private static final double maxTransAccelMetersPerSecSq = 2.5;
                 public static final TrapezoidProfile.Constraints transPIDconstraints = new TrapezoidProfile.Constraints(
                                 maxTransSpeedMetersPerSecond, maxTransAccelMetersPerSecSq);
 
@@ -229,7 +229,7 @@ public class Constants implements Loggable {
                 /** unit: degrees */
                 public static final double ZERO = 0;
                 /** unit: degrees */
-                public static final double INTAKE = 10.5;
+                public static final double INTAKE = 12; // 10.5
                 /** unit: degrees */
                 public static final double SPEAKER_LONG = 54;
                 /** unit: degrees */
@@ -391,12 +391,14 @@ public class Constants implements Loggable {
                 public static final boolean IS_INVERTED = true;
                 public static final double DENEME = 0.5;
                 /** units: cm */
-                public static final double SPROCKET_CIRCUMFERENCE = 3.2 * Math.PI;
+                public static final double SPROCKET_CIRCUMFERENCE = 2.5 * Math.PI;
                 /** units: cm */
-                public static final double MAX_EXTENSION = 32; // theoretical max 34 cm
+                public static final double MAX_EXTENSION = 28.5; // theoretical max 34 cm
+                /** units: cm */
+                public static final double MAX_RETRACTION = 1.5;
                 // TODO: check value
                 /** units: A */
-                public static final int STATOR_CURRENT_LIMIT = 80;             
+                public static final int STATOR_CURRENT_LIMIT = 80;
         }
 
         public static final class LEDConstants {
@@ -436,7 +438,7 @@ public class Constants implements Loggable {
                                 new Rotation2d(Math.PI));
                 public static final Pose2d BLUE_SPEAKER_CENTER = new Pose2d(
                                 BLUE_SPEAKER.getX(),
-                                BLUE_SPEAKER.getY() - 0.22,
+                                BLUE_SPEAKER.getY() - 0.15,
                                 BLUE_SPEAKER.getRotation());
                 public static final Pose2d BLUE_AMP = new Pose2d(
                                 (126 + 30.5) / 100,
@@ -450,7 +452,7 @@ public class Constants implements Loggable {
                                 BLUE_SPEAKER.getRotation().unaryMinus());
                 public static final Pose2d RED_SPEAKER_CENTER = new Pose2d(
                                 RED_SPEAKER.getX(),
-                                RED_SPEAKER.getY() - 0.22,
+                                RED_SPEAKER.getY() + 0.22,
                                 RED_SPEAKER.getRotation());
                 public static final Pose2d RED_AMP = new Pose2d(
                                 FieldX - BLUE_AMP.getX(),
@@ -493,7 +495,7 @@ public class Constants implements Loggable {
                 // Setpoints for LookUp Table interpolation
                 /** Distance(m), Arm Angle(degrees), Shooter Speed(volts) */
                 public static final double[][] SHOOT_POSITIONS = {
-                                { 1.44, 38, 9.75 },
+                                { 1.44, 37.5, 9.75 },
                                 { 1.69, 40, 9.75 },
                                 { 1.94, 42, 9.75 },
                                 { 2.19, 44.5, 9.75 },
@@ -503,7 +505,8 @@ public class Constants implements Loggable {
                                 { 2.94, 53.75, 9.75 },
                                 { 3.00, 53.9, 9.75 },
                                 { 3.19, 55.5, 9.75 },
-                                { 3.44, 57.25, 9.75 },
+
+                                { 3.56, 56, 9.75 },
                                 { 3.69, 58.5, 9.75 },
                                 { 3.94, 59, 9.75 },
                                 { 4.19, 60.5, 10 },

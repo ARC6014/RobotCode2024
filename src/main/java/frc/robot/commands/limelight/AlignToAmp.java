@@ -23,10 +23,12 @@ public class AlignToAmp extends Command {
 
   private double ySpeed = 0, xSpeed = 0, tethaSpeed = 0;
 
-  private final ProfiledPIDController x_pid = new ProfiledPIDController(DriveConstants.drivekP, DriveConstants.drivekI,
-      DriveConstants.drivekD, DriveConstants.transPIDconstraints);
-  private final ProfiledPIDController y_pid = new ProfiledPIDController(DriveConstants.drivekP, DriveConstants.drivekI,
-      DriveConstants.drivekD, DriveConstants.transPIDconstraints);
+  private final ProfiledPIDController x_pid = new ProfiledPIDController(DriveConstants.drivekP * 3 / 2,
+      DriveConstants.drivekI,
+      DriveConstants.drivekD + 0.01, DriveConstants.transPIDconstraints);
+  private final ProfiledPIDController y_pid = new ProfiledPIDController(DriveConstants.drivekP * 3 / 2,
+      DriveConstants.drivekI,
+      DriveConstants.drivekD + 0.01, DriveConstants.transPIDconstraints);
   private final ProfiledPIDController m_thetaController = new ProfiledPIDController(DriveConstants.anglekP,
       DriveConstants.anglekI,
       DriveConstants.anglekD, DriveConstants.rotPIDconstraints);
@@ -60,12 +62,12 @@ public class AlignToAmp extends Command {
   }
 
   private Pose2d calcTarget() {
-    Pose2d tPose = new Pose2d();
+    Pose2d tPose;
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX() - .3, FieldConstants.BLUE_AMP.getY() - 0.30),
+      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_AMP.getX(), FieldConstants.BLUE_AMP.getY() - 0.45),
           FieldConstants.BLUE_AMP.getRotation().unaryMinus());
     } else {
-      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX() - .3, FieldConstants.RED_AMP.getY() - 0.30),
+      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX(), FieldConstants.RED_AMP.getY() - 0.45),
           FieldConstants.BLUE_AMP.getRotation().unaryMinus());
     }
     return tPose;

@@ -34,7 +34,7 @@ public class RotateToSpeaker extends Command {
   /** Creates a new RotateToSpeaker. */
   public RotateToSpeaker(DriveSubsystem mDrive) {
     this.mDrive = mDrive;
-    m_thetaController.setTolerance(Math.toRadians(1));
+    m_thetaController.setTolerance(Math.toRadians(0.5));
     addRequirements(this.mDrive);
   }
 
@@ -79,15 +79,11 @@ public class RotateToSpeaker extends Command {
       tetha = Units.radiansToDegrees(
           Math.acos((Constants.FieldConstants.FieldX - RobotX)
               / currPose.getTranslation().getDistance(Constants.FieldConstants.RED_SPEAKER_CENTER.getTranslation())));
-      tAngle = -tetha;
+      tAngle = tetha;
     }
 
     if (RobotY < Constants.FieldConstants.BLUE_SPEAKER.getY())
       tAngle = -tAngle;
-
-    if (DriverStation.getAlliance().get() == Alliance.Red) {
-      tAngle = -tAngle;
-    }
 
     return -tAngle;
   }

@@ -59,12 +59,14 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   private void configureTelescopicMotors() {
     m_master.getConfigurator().apply(new TalonFXConfiguration());
+    m_slave.getConfigurator().apply(new TalonFXConfiguration());
+
     TalonFXConfiguration configs = new TalonFXConfiguration();
     configs.Slot0.kP = TelescopicConstants.TELESCOPIC_CONTROLLER_KP;
     configs.Slot0.kI = TelescopicConstants.TELESCOPIC_CONTROLLER_KI;
     configs.Slot0.kD = TelescopicConstants.TELESCOPIC_CONTROLLER_KD;
 
-    configs.Slot0.kS = 0.32;
+    configs.Slot0.kS = 0.1; // prev 0.32
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
@@ -72,6 +74,7 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.MotionMagic.MotionMagicAcceleration = TelescopicConstants.TELESCOPIC_MOTION_ACCEL;
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
     m_master.getConfigurator().apply(configs);
+    m_slave.getConfigurator().apply(configs);
 
     zeroEncoders();
     setNeutralMode(NeutralModeValue.Brake);
@@ -79,33 +82,21 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   public void maybeHoldCurrentPosition() {
     if (Util.epsilonEquals(m_master.getVelocity().getValueAsDouble(), 0, 0.5)
-            && (m_master.getStatorCurrent().getValueAsDouble() > TelescopicConstants.STATOR_CURRENT_LIMIT)) {
-        m_master.stopMotor();
-        masterState = TelescopicState.HOLD;
-    }
-
-    if (Util.epsilonEquals(m_slave.getVelocity().getValueAsDouble(), 0, 0.5)
-            && (m_slave.getStatorCurrent().getValueAsDouble() > TelescopicConstants.STATOR_CURRENT_LIMIT)) {
-        m_slave.stopMotor();
-        slaveState = TelescopicState.HOLD;
-    }
-}
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-    boolean masterExtensionLimit = getMasterHeight() >= TelescopicConstants.MAX_EXTENSION;
-    boolean slaveExtensionLimit = getSlaveHeight() >= TelescopicConstants.MAX_EXTENSION;
-   
-    if (masterExtensionLimit) {
+        && (m_master.getStatorCurrent().getValueAsDouble() > TelescopicConstants.STATOR_CURRENT_LIMIT)) {
       m_master.stopMotor();
       masterState = TelescopicState.HOLD;
     }
 
-    if (slaveExtensionLimit) {
+    if (Util.epsilonEquals(m_slave.getVelocity().getValueAsDouble(), 0, 0.5)
+        && (m_slave.getStatorCurrent().getValueAsDouble() > TelescopicConstants.STATOR_CURRENT_LIMIT)) {
       m_slave.stopMotor();
       slaveState = TelescopicState.HOLD;
     }
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
 
     maybeHoldCurrentPosition();
 
@@ -149,8 +140,10 @@ public class TelescopicSubsystem extends SubsystemBase {
       SmartDashboard.putString("Scheduled", "No command");
     }
 
-    SmartDashboard.putNumber("Telesc Master", masterOutput);
-    SmartDashboard.putNumber("Teles Slave", slaveOutput);
+    SmartDashboard.putNumber("Teles Master Out", masterOutput);
+    SmartDashboard.putNumber("Tele Slave Out", slaveOutput);
+    SmartDashboard.putNumber("Tele Master Height", getMasterHeight());
+    SmartDashboard.putNumber("Tele Slave Height", getSlaveHeight());
 
   }
 
@@ -205,11 +198,29 @@ public class TelescopicSubsystem extends SubsystemBase {
   }
 
   public void setMasterOutput() {
-    m_master.setControl(m_percentOut.withOutput(masterOutput));
+    boolean masterExtensionLimit = getMasterHeight() >= TelescopicConstants.MAX_EXTENSION;
+    boolean masterRetractionLimit = getMasterHeight() <= TelescopicConstants.MAX_RETRACTION;
+
+    if (masterExtensionLimit && masterOutput > 0) {
+      m_master.setControl(new NeutralOut());
+    } else if (masterRetractionLimit && masterOutput < 0) {
+      m_master.setControl(new NeutralOut());
+    } else {
+      m_master.setControl(m_percentOut.withOutput(masterOutput));
+    }
   }
 
   public void setSlaveOutput() {
-    m_slave.setControl(m_percentOut.withOutput(slaveOutput));
+    boolean slaveExtensionLimit = getSlaveHeight() >= TelescopicConstants.MAX_EXTENSION;
+    boolean slaveRetractionLimit = getSlaveHeight() <= TelescopicConstants.MAX_RETRACTION;
+
+    if (slaveExtensionLimit && slaveOutput > 0) {
+      m_slave.setControl(new NeutralOut());
+    } else if (slaveRetractionLimit && slaveOutput < 0) {
+      m_slave.setControl(new NeutralOut());
+    } else {
+      m_slave.setControl(m_percentOut.withOutput(slaveOutput));
+    }
   }
 
   public void openLoopMaster(double percent) {
@@ -237,7 +248,7 @@ public class TelescopicSubsystem extends SubsystemBase {
   /** units: cm */
   public double getSlaveHeight() {
     double sprocketRotation = (m_slave.getRotorPosition().getValueAsDouble()) // +m_slave.getRotorPosition().getValueAsDouble())
-                                                                               // / 2
+                                                                              // / 2
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
     return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
   }

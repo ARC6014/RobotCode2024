@@ -131,7 +131,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     /** FF characterization test */
     CHARACTERIZATION,
-    
+
     /** CLIMBING CLOSED POSITION */
     CLIMB,
   }
@@ -191,11 +191,16 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getAngle() {
+    double angle = 0;
+
     if (isBoreEncoderAlive()) {
-      return getArmAngleBore();
+      angle = getArmAngleBore();
     } else {
-      return getArmAngleFalcon();
+      angle = getArmAngleFalcon();
     }
+
+    angle = DriverStation.isAutonomous() ? angle + 0.8 : angle;
+    return angle;
   }
 
   public boolean isAtSetpoint() {
@@ -488,7 +493,8 @@ public class ArmSubsystem extends SubsystemBase {
   public void autoCalibration() {
     if (isBoreEncoderAlive()) {
       boolean timerCondition = m_timer.get() - lastAbsoluteTime > 10;
-      boolean angleCondition = Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions.degreesToRevolutions(0.5);
+      boolean angleCondition = Math.abs(getArmAngleBore() - getArmAngleFalcon()) >= Conversions
+          .degreesToRevolutions(0.5);
       boolean speedCondition = Math.abs(armMotor.getRotorVelocity().getValueAsDouble()) < 0.005;
       if ((timerCondition || angleCondition) && speedCondition) {
         resetToAbsolute();

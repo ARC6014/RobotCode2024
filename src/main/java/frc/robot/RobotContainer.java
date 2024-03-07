@@ -95,7 +95,7 @@ public class RobotContainer implements Loggable {
         // TODO: axes might be switched for telescpics
         private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
                         () -> -mOperator.getLeftY(),
-                        () -> mOperator.getRightY());
+                        () -> -mOperator.getRightY());
         private DriveByJoystick driveByJoystick;
         private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
         private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
@@ -108,7 +108,7 @@ public class RobotContainer implements Loggable {
                         new ParallelCommandGroup(
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)
-                                                        .withTimeout(2.25)));
+                                                        .withTimeout(2)));
 
         private final ParallelCommandGroup openWristStartIntakeBeamBreak = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
@@ -282,7 +282,8 @@ public class RobotContainer implements Loggable {
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
                 // Intake - outtake
-                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                // mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake,
+                // IntakeConstants.FORWARD_PERCENT));
                 mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
 
                 // Telescopic
@@ -295,6 +296,7 @@ public class RobotContainer implements Loggable {
                 /* COMMAND GROUPS */
                 // Intake
                 mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
+                mOperator.rightBumper().onTrue(openWristStartIntake);
                 // Feed
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
