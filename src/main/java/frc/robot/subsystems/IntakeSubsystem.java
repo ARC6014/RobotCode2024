@@ -135,7 +135,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         }
 
-        SmartDashboard.putString("Idle Mode", this.kNeutralMode.toString());
+        // SmartDashboard.putString("Idle Mode", this.kNeutralMode.toString());
     }
 
     public boolean getBeambreak() {

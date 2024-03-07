@@ -159,9 +159,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // m_feederState = FeederState.STOP_WAIT_A_SEC;
     // }
 
-    SmartDashboard.putNumber("SH-Master RPM",
-        m_master.getEncoder().getVelocity());
-    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
     // SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
     // SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
     // SmartDashboard.putBoolean("Beam Break Reading", getSensorState());

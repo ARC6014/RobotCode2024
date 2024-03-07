@@ -23,12 +23,12 @@ public class ShuffleBoardInteractions {
     private ArrayList<ShuffleboardTabBase> mTabs = new ArrayList<ShuffleboardTabBase>();
 
     public FieldView mFieldView = new FieldView();
-    private SwerveTab mSwerveTab = new SwerveTab();
+    // private SwerveTab mSwerveTab = new SwerveTab();
     private OperatorTab mOperatorTab = new OperatorTab();
 
     // instantiate subsystems, tabs, and widgets
     public ShuffleBoardInteractions() {
-        mTabs.add(mSwerveTab);
+        // mTabs.add(mSwerveTab);
         mTabs.add(mOperatorTab);
         for (ShuffleboardTabBase tab : mTabs) {
             tab.createEntries();

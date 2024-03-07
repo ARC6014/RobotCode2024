@@ -134,17 +134,6 @@ public class TelescopicSubsystem extends SubsystemBase {
         break;
     }
 
-    if (this.getCurrentCommand() != null) {
-      SmartDashboard.putString("Scheduled", this.getCurrentCommand().toString());
-    } else {
-      SmartDashboard.putString("Scheduled", "No command");
-    }
-
-    SmartDashboard.putNumber("Teles Master Out", masterOutput);
-    SmartDashboard.putNumber("Tele Slave Out", slaveOutput);
-    SmartDashboard.putNumber("Tele Master Height", getMasterHeight());
-    SmartDashboard.putNumber("Tele Slave Height", getSlaveHeight());
-
   }
 
   public double getSetpointMaster() {

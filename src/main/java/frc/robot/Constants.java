@@ -447,7 +447,7 @@ public class Constants implements Loggable {
                 public static final Pose2d BLUE_SOURCE = new Pose2d(15.331, 1, Rotation2d.fromDegrees(-60));
 
                 public static final Pose2d RED_SPEAKER = new Pose2d(
-                                FieldX,
+                                FieldX - 0.1,
                                 BLUE_SPEAKER.getY(),
                                 BLUE_SPEAKER.getRotation().unaryMinus());
                 public static final Pose2d RED_SPEAKER_CENTER = new Pose2d(
