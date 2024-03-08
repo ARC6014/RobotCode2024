@@ -47,14 +47,14 @@ public class TelescopicOpenLoop extends Command {
     double slaveOut = slaveDirection
         * MathUtil.applyDeadband(MathUtil.clamp(Math.abs(joystick2.getAsDouble()), 0, 0.5), 0.04);
 
-    mTelescopic.openLoopMaster(limiterMaster.calculate(masterOut));
-    mTelescopic.openLoopSlave(limiterSlave.calculate(slaveOut));
+    mTelescopic.openLoopLeft(limiterMaster.calculate(masterOut));
+    mTelescopic.openLoopRight(limiterSlave.calculate(slaveOut));
 
     if (masterOut == 0) {
-      mTelescopic.setTelescopicStateMaster(TelescopicState.HOLD);
+      mTelescopic.setTelescopicStateLeft(TelescopicState.HOLD);
     }
     if (slaveOut == 0) {
-      mTelescopic.setTelescopicStateSlave(TelescopicState.HOLD);
+      mTelescopic.setTelescopicStateRight(TelescopicState.HOLD);
     }
   }
 

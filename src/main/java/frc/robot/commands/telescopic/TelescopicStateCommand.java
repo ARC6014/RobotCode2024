@@ -35,8 +35,8 @@ public class TelescopicStateCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mTelescopic.setTelescopicStateMaster(state);
-    mTelescopic.setTelescopicStateSlave(state);
+    mTelescopic.setTelescopicStateLeft(state);
+    mTelescopic.setTelescopicStateRight(state);
 
     if (state == TelescopicState.CLIMB) {
       mTelescopic.setTelescopicPosition(target);
