@@ -58,7 +58,6 @@ import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 import frc.robot.subsystems.UsbCam;
 import frc.robot.subsystems.WristSubsystem.Position;
-import io.github.oblarg.oblog.Loggable;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -69,7 +68,7 @@ import io.github.oblarg.oblog.Loggable;
  * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer implements Loggable {
+public class RobotContainer {
         // The robot's subsystems and commands are defined here...
         private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
         private final TelescopicSubsystem mTelescopic = TelescopicSubsystem.getInstance();
@@ -80,7 +79,7 @@ public class RobotContainer implements Loggable {
         private final LimelightSubsystem mLL = LimelightSubsystem.getInstance();
 
         public static PowerDistribution mPDH = new PowerDistribution();
-        private final UsbCam mCamera = new UsbCam();
+        // private final UsbCam mCamera = new UsbCam();
         // private final AddressableLEDSubsystem mLED = new
         // AddressableLEDSubsystem().getInstance();
 

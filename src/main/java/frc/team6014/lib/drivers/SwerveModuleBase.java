@@ -23,7 +23,6 @@ import frc.team6014.lib.util.SwerveUtils.CTREConfigs;
 import frc.team6014.lib.util.SwerveUtils.CTREModuleState;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
-import io.github.oblarg.oblog.Loggable;
 
 /**
  * Base for constructing any swerve module
@@ -37,7 +36,7 @@ import io.github.oblarg.oblog.Loggable;
  * * 4) apply the states to the modules --> setDesiredState (done with FF and
  * PID)
  */
-public class SwerveModuleBase implements Loggable {
+public class SwerveModuleBase {
 
     private String mId;
     private int mModuleNumber;

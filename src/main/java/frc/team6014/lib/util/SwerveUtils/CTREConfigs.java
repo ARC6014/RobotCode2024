@@ -12,13 +12,8 @@ import com.ctre.phoenix.sensors.SensorInitializationStrategy;
 import com.ctre.phoenix.sensors.WPI_CANCoder;
 
 import frc.robot.Constants.DriveConstants;
-import io.github.oblarg.oblog.Loggable;
-import io.github.oblarg.oblog.annotations.Config;
 
-public class CTREConfigs implements Loggable {
-
-    @Config
-    int a;
+public class CTREConfigs {
 
     public static WPI_TalonFX swerveDriveFXConfig(WPI_TalonFX talon) {
         SupplyCurrentLimitConfiguration driveSupplyLimit = new SupplyCurrentLimitConfiguration(

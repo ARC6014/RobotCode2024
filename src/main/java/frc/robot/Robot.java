@@ -16,7 +16,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.shuffleboard.ShuffleBoardInteractions;
-import io.github.oblarg.oblog.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,9 +45,9 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     DataLogManager.start();
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
 
-    Logger.configureLoggingAndConfig(this, false);
+    // Logger.configureLoggingAndConfig(this, false);
 
   }
 
@@ -74,20 +73,19 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-    Logger.updateEntries();
+    // Logger.updateEntries();
     mShuffleboard.update();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-    CANdleLed.getInstance().setPink();
+    // CANdleLed.getInstance().setPink();
 
   }
 
   @Override
   public void disabledPeriodic() {
-
   }
 
   /**
@@ -127,7 +125,6 @@ public class Robot extends TimedRobot {
     }
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
-    // ArmSubsystem.getInstance().setInterpolatedPoint(DriveSubsystem.getInstance().getPose());
     ArmSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetToAbsolute();
   }

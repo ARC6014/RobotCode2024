@@ -39,9 +39,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.team6014.lib.drivers.SwerveModuleBase;
 import frc.team6014.lib.util.LoggedTunableNumber;
 import frc.team6014.lib.util.SwerveUtils.SwerveModuleConstants;
-import io.github.oblarg.oblog.Loggable;
 
-public class DriveSubsystem extends SubsystemBase implements Loggable {
+public class DriveSubsystem extends SubsystemBase {
   // Swerve numbering:
   // 0 1
   // 2 3
@@ -69,12 +68,6 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
 
   private ProfiledPIDController snapPIDController = new ProfiledPIDController(DriveConstants.snapkP,
       DriveConstants.snapkI, DriveConstants.snapkD, DriveConstants.rotPIDconstraints);
-  private static final LoggedTunableNumber<Number> kSnapP = new LoggedTunableNumber<Number>("Snap/kP",
-      DriveConstants.snapkP);
-  private static final LoggedTunableNumber<Number> kSnapI = new LoggedTunableNumber<Number>("Snap/kI",
-      DriveConstants.snapkI);
-  private static final LoggedTunableNumber<Number> kSnapD = new LoggedTunableNumber<Number>("Snap/kD",
-      DriveConstants.snapkD);
 
   private final Timer snapTimer = new Timer();
 
@@ -182,22 +175,16 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
         getModulePositions());
     brakeModeTrigger.whileTrue(brakeModeCommand);
 
-    snapPIDController.setPID(kSnapP.get().doubleValue(), kSnapI.get().doubleValue(), kSnapD.get().doubleValue());
-    // SmartDashboard.putNumber("Swerve Voltage 0 ",
-    // getDriveMotors().get(0).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Swerve Voltage 1",
-    // getDriveMotors().get(1).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Swerve Voltage 2",
-    // getDriveMotors().get(2).getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Swerve Voltage 3",
-    // getDriveMotors().get(3).getMotorOutputVoltage());
+    // snapPIDController.setPID(kSnapP.get().doubleValue(),
+    // kSnapI.get().doubleValue(), kSnapD.get().doubleValue());
 
-    SmartDashboard.putNumber("Robot X", poseEstimator.getEstimatedPosition().getX());
-    SmartDashboard.putNumber("Robot Y", poseEstimator.getEstimatedPosition().getY());
-    SmartDashboard.putNumber("Robot tetha", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
+    // SmartDashboard.putNumber("Robot X",
+    // poseEstimator.getEstimatedPosition().getX());
+    // SmartDashboard.putNumber("Robot Y",
+    // poseEstimator.getEstimatedPosition().getY());
+    // SmartDashboard.putNumber("Robot tetha",
+    // poseEstimator.getEstimatedPosition().getRotation().getDegrees());
     // SmartDashboard.putBoolean("Snap Active", isSnapActive);
-    SmartDashboard.putNumber("Gyro Reading", getGyroYaw().getDegrees());
-
   }
 
   /*
