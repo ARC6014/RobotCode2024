@@ -78,6 +78,7 @@ public class TelescopicSubsystem extends SubsystemBase {
 
     zeroEncoders();
     setNeutralMode(NeutralModeValue.Brake);
+    m_master.setInverted(true);
   }
 
   public void maybeHoldCurrentPosition() {

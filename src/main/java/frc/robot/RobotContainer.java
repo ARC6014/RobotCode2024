@@ -112,7 +112,7 @@ public class RobotContainer {
         private final ParallelCommandGroup openWristStartIntakeBeamBreak = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(4.0), // this is the deadline
+                                        new IntakeStopAtBeambreak().withTimeout(2.0), // this is the deadline
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT)));
 
@@ -321,39 +321,73 @@ public class RobotContainer {
         }
 
         private void configureButtonBindingsAlper() {
+
+                // UNUSED:
+                // driver: two little buttons near touchpad
+                // operator: A and left stick
+
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
-                /* SHOOTER + FEEDER */
-
+                /**
+                 * MANUAL
+                 * METHODS
+                 */
+                // Shooter - Feeder
                 mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
                 mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
+                mDriver.triangle().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.LOOKUP));
 
-                /* ARM */
-                mOperator.leftBumper().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.ZERO));
+                // Arm
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.INTAKE));
                 mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.SPEAKER_LONG));
-                // mOperator.rightBumper().onTrue(armOpenLoop);
+                                ArmControlState.LOOKUP));
 
-                /* WRIST */
-                mOperator.leftTrigger().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
-                mOperator.rightTrigger().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-                // mOperator.a().onTrue(wristOpenLoop);
+                // Wrist
+                mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
+                mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
-                /* INTAKE */
-                mOperator.rightStick().onTrue(intakeOpenLoop);
-                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.FORWARD_PERCENT));
+                // Intake - outtake
+                // mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake,
+                // IntakeConstants.FORWARD_PERCENT));
                 mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
-                mOperator.y().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_LONG));
-                mOperator.x().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.AMP));
-                mOperator.b().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.CLOSED));
-                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT));
+
+                // Telescopic
+                // mDriver.povDown().whileTrue(new
+                // TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
+                // mDriver.povUp().whileTrue(new
+                // TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
+                // mOperator.rightStick().onTrue(telescopicOpenLoop);
+
+                /* COMMAND GROUPS */
+                // Intake
+                mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
+                mOperator.rightBumper().onTrue(openWristStartIntake);
+                // Feed
+                mOperator.leftTrigger().onTrue(
+                                closeWristStopIntakeArmIntake
+                                                .andThen(new WaitCommand(0.5))
+                                                .andThen(startStopFeeder)); // TODO: Change to beam break if reading
+                                                                            // stable
+
+                // Shoot
+                mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
+                mOperator.x().onTrue(setArmFeedAndShootAmp);
+                mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
+                mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
+
+                /* LIMELIGHT */
+                mDriver.povDown().whileTrue(new AlignToAmp());
+                mDriver.povUp().whileTrue(new RotateToSpeaker(mDrive));
+
+                /* MISC */
+                mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
+                mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
+                                () -> DriveSubsystem.getInstance().setSnapActive(false)));
 
                 // FeedForwardCharacterization example, use this with any subsystem that you
                 // want to characterize
@@ -362,17 +396,18 @@ public class RobotContainer {
                 // .beforeStarting(() ->
                 // mArm.setArmControlState(ArmControlState.CHARACTERIZATION), mArm));
 
-                mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
-                                () -> DriveSubsystem.getInstance().setSnapActive(false)));
+                // mDriver.L2().whileTrue(new StartEndCommand(() ->
+                // DriveSubsystem.getInstance().setSnapActive(true),
+                // () -> DriveSubsystem.getInstance().setSnapActive(false)));
 
-                mOperator.a().and(mOperator.rightBumper())
-                                .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                mOperator.b().and(mOperator.rightBumper())
-                                .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                mOperator.x().and(mOperator.rightBumper())
-                                .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                mOperator.y().and(mOperator.rightBumper())
-                                .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+                // mOperator.a().and(mOperator.rightBumper())
+                // .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                // mOperator.b().and(mOperator.rightBumper())
+                // .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                // mOperator.x().and(mOperator.rightBumper())
+                // .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                // mOperator.y().and(mOperator.rightBumper())
+                // .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         }
 
         /*
@@ -380,8 +415,8 @@ public class RobotContainer {
          */
         private void configureNamedCommands() {
 
-                NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
-                NamedCommands.registerCommand("ReadyIntakingLong", AUTOopenWristStartIntakeLong);
+                NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
+                NamedCommands.registerCommand("ReadyIntakingLong", openWristStartIntake);
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
                 NamedCommands.registerCommand("Feed", startStopFeeder);
 
