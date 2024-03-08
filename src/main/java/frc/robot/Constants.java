@@ -228,7 +228,7 @@ public class Constants {
                 /** unit: degrees */
                 public static final double ZERO = 0;
                 /** unit: degrees */
-                public static final double INTAKE = 12; // 10.5
+                public static final double INTAKE = 10.5; // 12
                 /** unit: degrees */
                 public static final double SPEAKER_LONG = 54;
                 /** unit: degrees */

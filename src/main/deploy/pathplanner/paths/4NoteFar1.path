@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4037002935116982,
-        "y": 4.282088730844128
+        "x": 0.7134190306340287,
+        "y": 4.401663085651201
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0322839349382407,
-        "y": 2.68304558368376
+        "x": 1.3420026720605707,
+        "y": 2.8026199384908326
       },
       "isLocked": false,
       "linkedName": null
@@ -45,7 +45,7 @@
   "reversed": false,
   "folder": "4NoteFarSide",
   "previewStartingState": {
-    "rotation": 145.0,
+    "rotation": 120.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

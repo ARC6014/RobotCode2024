@@ -121,7 +121,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
 
-    m_feeder.setNeutralMode(ShooterConstants.FEEDER_MODE == IdleMode.kBrake ? NeutralMode.Brake : NeutralMode.Coast);
+    m_feeder.setNeutralMode(NeutralMode.Brake);
+    m_feeder.setInverted(true);
 
     // PID coefficients
     kMaxOutput = ShooterConstants.kMaxOutput;
@@ -161,9 +162,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // m_feederState = FeederState.STOP_WAIT_A_SEC;
     // }
 
-    SmartDashboard.putNumber("SH-Master RPM",
-        m_master.getEncoder().getVelocity());
-    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
+    // SmartDashboard.putNumber("SH-Master RPM",
+    // m_master.getEncoder().getVelocity());
+    // SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
     // SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
     // SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
     // SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
@@ -329,7 +330,7 @@ public class ShooterSubsystem extends SubsystemBase {
         .getDistance(target.getTranslation());
 
     double optimizedVoltage = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
-    SmartDashboard.putNumber("LookUp OVoltage", optimizedVoltage);
+    // SmartDashboard.putNumber("LookUp OVoltage", optimizedVoltage);
 
     return MathUtil.clamp(optimizedVoltage, 7, 11);
   }
