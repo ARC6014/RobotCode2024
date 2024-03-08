@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.DoubleSupplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -53,6 +55,7 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
+import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
 import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
@@ -322,10 +325,6 @@ public class RobotContainer {
 
         private void configureButtonBindingsAlper() {
 
-                // UNUSED:
-                // driver: two little buttons near touchpad
-                // operator: A and left stick
-
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
 
@@ -366,7 +365,9 @@ public class RobotContainer {
                 /* COMMAND GROUPS */
                 // Intake
                 mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
-                mOperator.rightBumper().onTrue(openWristStartIntake);
+                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, 0.7));
+                mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, -0.7));
+
                 // Feed
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
