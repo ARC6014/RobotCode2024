@@ -195,7 +195,8 @@ public class DriveSubsystem extends SubsystemBase implements Loggable {
     SmartDashboard.putNumber("Robot X", poseEstimator.getEstimatedPosition().getX());
     SmartDashboard.putNumber("Robot Y", poseEstimator.getEstimatedPosition().getY());
     SmartDashboard.putNumber("Robot tetha", poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-    SmartDashboard.putBoolean("Snap Active", isSnapActive);
+    // SmartDashboard.putBoolean("Snap Active", isSnapActive);
+    SmartDashboard.putNumber("Gyro Reading", getGyroYaw().getDegrees());
 
   }
 

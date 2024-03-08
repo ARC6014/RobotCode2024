@@ -36,36 +36,6 @@ public class SwerveTab extends ShuffleboardTabBase {
         public void createEntries() {
                 mTab = Shuffleboard.getTab("Swerve");
 
-                if (Constants.DEVELOPER_LOGGING) {
-                        for (int i = 0; i < mDriveCANCoders.length; i++) {
-                                mDriveLayouts[i] = mTab
-                                                .getLayout("Module " + i + " Angle", BuiltInLayouts.kGrid)
-                                                .withSize(2, 2)
-                                                .withPosition(i * 2, 0);
-                                mDriveCANCoders[i] = mDriveLayouts[i].add("CANcoder", 0.0)
-                                                .withPosition(0, 0)
-                                                .withSize(5, 1)
-                                                .getEntry();
-                                mDriveLayouts[i].add("Location", kSwervePlacements[i])
-                                                .withPosition(1, 0)
-                                                .withSize(5, 1);
-
-                                mDriveIntegrated[i] = mDriveLayouts[i].add("Integrated", 0.0)
-                                                .withPosition(0, 1)
-                                                .withSize(5, 1)
-                                                .getEntry();
-                                mDriveLayouts[i].add("Offset", mDriveModules[i].getAngleOffset())
-                                                .withPosition(0, 2)
-                                                .withSize(5, 1)
-                                                .getEntry();
-                                mDriveMPS[i] = mTab
-                                                .add("Swerve Module " + i + " MPS ", 0.0)
-                                                .withPosition(i * 2, 2)
-                                                .withSize(2, 1)
-                                                .getEntry();
-                        }
-                }
-
                 mDriveOdometryX = mTab
                                 .add("Odometry X", 0)
                                 .withPosition(0, 3)

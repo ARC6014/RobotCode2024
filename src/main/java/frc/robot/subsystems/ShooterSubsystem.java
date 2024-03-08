@@ -7,9 +7,12 @@ package frc.robot.subsystems;
 import java.util.Optional;
 
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -32,7 +35,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /* MOTORS */
   private CANSparkMax m_master = new CANSparkMax(ShooterConstants.MASTER_MOTOR_ID, MotorType.kBrushless);
   private CANSparkMax m_slave = new CANSparkMax(ShooterConstants.SLAVE_MOTOR_ID, MotorType.kBrushless);
-  private CANSparkMax m_feeder = new CANSparkMax(ShooterConstants.FEEDER_MOTOR_ID, MotorType.kBrushed);
+  private WPI_TalonSRX m_feeder = new WPI_TalonSRX(ShooterConstants.FEEDER_MOTOR_ID);
 
   /* SENSORS */
   private DigitalInput m_beamBreaker;
@@ -107,7 +110,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_master.restoreFactoryDefaults();
     m_slave.restoreFactoryDefaults();
-    m_feeder.restoreFactoryDefaults();
+    m_feeder.configFactoryDefault();
 
     m_master.setSmartCurrentLimit(65);
     m_slave.setSmartCurrentLimit(65);
@@ -118,7 +121,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_masterPIDController = m_master.getPIDController();
     m_slavePIDController = m_slave.getPIDController();
 
-    m_feeder.setIdleMode(ShooterConstants.FEEDER_MODE);
+    m_feeder.setNeutralMode(ShooterConstants.FEEDER_MODE == IdleMode.kBrake ? NeutralMode.Brake : NeutralMode.Coast);
 
     // PID coefficients
     kMaxOutput = ShooterConstants.kMaxOutput;
@@ -138,7 +141,6 @@ public class ShooterSubsystem extends SubsystemBase {
 
     m_master.burnFlash();
     m_slave.burnFlash();
-    m_feeder.burnFlash();
 
     for (int i = 0; i < FieldConstants.SHOOT_POSITIONS.length; i++) {
       map.put(new InterpolatingDouble(FieldConstants.SHOOT_POSITIONS[i][0]),
@@ -159,12 +161,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // m_feederState = FeederState.STOP_WAIT_A_SEC;
     // }
 
-    if (Constants.DEVELOPER_LOGGING) {
-      SmartDashboard.putNumber("SH-Master RPM",
-          m_master.getEncoder().getVelocity());
-      SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
-    }
-
+    SmartDashboard.putNumber("SH-Master RPM",
+        m_master.getEncoder().getVelocity());
+    SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
     // SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
     // SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
     // SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
@@ -224,7 +223,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void setFeederMotorSpeed(double percentOutput) {
-    m_feeder.set(percentOutput);
+    m_feeder.set(ControlMode.PercentOutput, percentOutput);
 
   }
 

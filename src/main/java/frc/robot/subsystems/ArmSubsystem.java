@@ -266,7 +266,7 @@ public class ArmSubsystem extends SubsystemBase {
     lastDemandedRotation = getArmAngleFalcon();
 
     SmartDashboard.putNumber("Pose Difference", poseDifference);
-    SmartDashboard.putString("Neutral", kNeutralMode.toString());
+    // SmartDashboard.putString("Neutral", kNeutralMode.toString());
 
     if (shouldStopResetAccordingToBore) {
       return;
