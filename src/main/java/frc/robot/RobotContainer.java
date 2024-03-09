@@ -39,6 +39,7 @@ import frc.robot.commands.intake.IntakeStopAtBeambreak;
 import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
 import frc.robot.commands.limelight.AlignToAmp;
+import frc.robot.commands.limelight.AlignToSourceMid;
 import frc.robot.commands.limelight.RotateToSpeaker;
 import frc.robot.commands.shooter.FeederCommand;
 import frc.robot.commands.shooter.FeederStopAtBeambreak;
@@ -304,7 +305,7 @@ public class RobotContainer {
                                 .toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
 
                 /* LIMELIGHT */
-                mDriver.povDown().whileTrue(new AlignToAmp());
+                mDriver.povDown().whileTrue(new AlignToSourceMid());
                 mDriver.povUp().whileTrue(new RotateToSpeaker(mDrive));
 
                 /* MISC */

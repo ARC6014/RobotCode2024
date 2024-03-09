@@ -18,6 +18,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
@@ -446,7 +447,8 @@ public class Constants {
                                 (126 + 30.5) / 100,
                                 Units.inchesToMeters(322.996),
                                 Rotation2d.fromDegrees(-90));
-                public static final Pose2d BLUE_SOURCE = new Pose2d(15.331, 1, Rotation2d.fromDegrees(-60));
+                public static final Pose2d BLUE_SOURCE = new Pose2d(FieldX - Units.inchesToMeters(76.1) / 2,
+                                Units.inchesToMeters(60.75), Rotation2d.fromDegrees(120));
 
                 public static final Pose2d RED_SPEAKER = new Pose2d(
                                 FieldX - 0.1,
@@ -463,7 +465,7 @@ public class Constants {
                 public static final Pose2d RED_SOURCE = new Pose2d(
                                 FieldX - BLUE_AMP.getX(),
                                 BLUE_AMP.getY(),
-                                Rotation2d.fromDegrees(-120));
+                                Rotation2d.fromDegrees(180 - BLUE_SOURCE.getRotation().getDegrees()));
 
                 public static final Translation3d BLUE_TOP_RIGHT_SPEAKER = new Translation3d(
                                 Units.inchesToMeters(18.055),

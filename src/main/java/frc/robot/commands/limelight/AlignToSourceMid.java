@@ -18,17 +18,17 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.team6014.lib.util.LoggedTunableNumber;
 
-public class AlignToAmp extends Command {
+public class AlignToSourceMid extends Command {
   private final DriveSubsystem mDrive = DriveSubsystem.getInstance();
 
   private double ySpeed = 0, xSpeed = 0, tethaSpeed = 0;
 
-  private final ProfiledPIDController x_pid = new ProfiledPIDController(DriveConstants.drivekP,
+  private final ProfiledPIDController x_pid = new ProfiledPIDController(DriveConstants.drivekP * 3 / 2,
       DriveConstants.drivekI,
-      DriveConstants.drivekD, DriveConstants.transPIDconstraints);
-  private final ProfiledPIDController y_pid = new ProfiledPIDController(DriveConstants.drivekP,
+      DriveConstants.drivekD + 0.01, DriveConstants.transPIDconstraints);
+  private final ProfiledPIDController y_pid = new ProfiledPIDController(DriveConstants.drivekP * 3 / 2,
       DriveConstants.drivekI,
-      DriveConstants.drivekD, DriveConstants.transPIDconstraints);
+      DriveConstants.drivekD + 0.01, DriveConstants.transPIDconstraints);
   private final ProfiledPIDController m_thetaController = new ProfiledPIDController(DriveConstants.anglekP,
       DriveConstants.anglekI,
       DriveConstants.anglekD, DriveConstants.rotPIDconstraints);
@@ -42,7 +42,7 @@ public class AlignToAmp extends Command {
   private final SlewRateLimiter mSlewRot = new SlewRateLimiter(DriveConstants.driveSlewRateLimitRot);
 
   /** Creates a new AlignToAmp. */
-  public AlignToAmp() {
+  public AlignToSourceMid() {
     x_pid.setTolerance(0.11971);
     y_pid.setTolerance(0.12);
     m_thetaController.setTolerance(Math.toRadians(1));
@@ -64,12 +64,11 @@ public class AlignToAmp extends Command {
   private Pose2d calcTarget() {
     Pose2d tPose;
     if (DriverStation.getAlliance().get() == Alliance.Blue) {
-      tPose = new Pose2d(
-          new Translation2d(FieldConstants.BLUE_AMP.getX() - 0.44, FieldConstants.BLUE_AMP.getY() - 0.44),
-          FieldConstants.BLUE_AMP.getRotation().unaryMinus());
+      tPose = new Pose2d(new Translation2d(FieldConstants.BLUE_SOURCE.getX(), FieldConstants.BLUE_SOURCE.getY() - 0.45),
+          FieldConstants.BLUE_SOURCE.getRotation().unaryMinus());
     } else {
-      tPose = new Pose2d(new Translation2d(FieldConstants.RED_AMP.getX() + 0.44, FieldConstants.RED_AMP.getY() - 0.44),
-          FieldConstants.BLUE_AMP.getRotation().unaryMinus());
+      tPose = new Pose2d(new Translation2d(FieldConstants.RED_SOURCE.getX(), FieldConstants.RED_SOURCE.getY() - 0.45),
+          FieldConstants.RED_SOURCE.getRotation().unaryMinus());
     }
     return tPose;
   }
