@@ -267,6 +267,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Pose Difference", poseDifference);
     // SmartDashboard.putString("Neutral", kNeutralMode.toString());
+    SmartDashboard.putBoolean("Is Bore Connected Arm", isBoreEncoderAlive());
 
     if (shouldStopResetAccordingToBore) {
       return;

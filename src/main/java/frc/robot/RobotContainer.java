@@ -256,7 +256,7 @@ public class RobotContainer {
         private void configureButtonBindings() {
                 // UNUSED:
                 // driver: two little buttons near touchpad
-                // operator: A and left stick
+                // operator: left stick
 
                 /* DRIVE */
                 mDriver.cross().onTrue(new ResetGyro(mDrive));
@@ -310,7 +310,7 @@ public class RobotContainer {
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
-                mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
+                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.INTAKE_FROM_SOURCE));
 
                 /* LIMELIGHT */
                 mDriver.povDown().whileTrue(new AlignToAmp());
@@ -416,8 +416,8 @@ public class RobotContainer {
          */
         private void configureNamedCommands() {
 
-                NamedCommands.registerCommand("ReadyIntaking", openWristStartIntake);
-                NamedCommands.registerCommand("ReadyIntakingLong", openWristStartIntake);
+                NamedCommands.registerCommand("ReadyIntaking", AUTOopenWristStartIntake);
+                NamedCommands.registerCommand("ReadyIntakingLong", AUTOopenWristStartIntakeLong);
                 NamedCommands.registerCommand("CloseIntake", closeWristStopIntakeArmIntake);
                 NamedCommands.registerCommand("Feed", startStopFeeder);
 

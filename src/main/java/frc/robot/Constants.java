@@ -175,7 +175,7 @@ public class Constants {
                 public static final int angleMotorID = 54;
                 public static final int driveMotorID = 55;
                 public static final int cancoderID = 03;
-                public static final double angleOffset = -136.93 - 2;
+                public static final double angleOffset = -136.93 - 3;
                 public static final double modulekS = DriveConstants.drivekS;
                 public static final double modulekV = DriveConstants.drivekV;
         }
@@ -356,6 +356,7 @@ public class Constants {
                 public static final double AMP_VOLTAGE = 5; // Should not exceed 11
                 public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // Should not exceed 11
                 public static final double SPEAKER_LONG_VOLTAGE = 9.75; // Should not exceed 11
+                public static final double INTAKE_FROM_SOURCE = -6; // Should not exceed 11
 
                 public static final double FEEDER_OUT = 10; // Should not exceed 11
                 public static final double FEEDER_AMP = 7.5; // Should not exceed 11

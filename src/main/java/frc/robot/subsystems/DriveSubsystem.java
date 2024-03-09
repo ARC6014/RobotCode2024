@@ -185,6 +185,10 @@ public class DriveSubsystem extends SubsystemBase {
     // SmartDashboard.putNumber("Robot tetha",
     // poseEstimator.getEstimatedPosition().getRotation().getDegrees());
     // SmartDashboard.putBoolean("Snap Active", isSnapActive);
+    SmartDashboard.putNumber("FL", mSwerveModules[0].getCANCoderRotation().getDegrees());
+    SmartDashboard.putNumber("FR", mSwerveModules[1].getCANCoderRotation().getDegrees());
+    SmartDashboard.putNumber("RL", mSwerveModules[2].getCANCoderRotation().getDegrees());
+    SmartDashboard.putNumber("RR", mSwerveModules[3].getCANCoderRotation().getDegrees());
   }
 
   /*

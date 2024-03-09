@@ -79,6 +79,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /* interpolated voltage from lookup */
     LOOKUP,
+
+    /* source intake */
+    INTAKE_FROM_SOURCE,
   }
 
   public enum FeederState {
@@ -182,6 +185,9 @@ public class ShooterSubsystem extends SubsystemBase {
       case SPEAKER_SHORT:
         setShooterOut(
             Constants.isTuning ? speakerShortSpeed.get().doubleValue() : ShooterConstants.SPEAKER_SHORT_VOLTAGE);
+        break;
+      case INTAKE_FROM_SOURCE:
+        setShooterOut(ShooterConstants.INTAKE_FROM_SOURCE);
         break;
       case OPEN_LOOP:
         break;

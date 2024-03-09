@@ -25,7 +25,7 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   private static TelescopicSubsystem m_instance;
 
-  private final DutyCycleOut m_percentOut = new DutyCycleOut(0, false, false, false, false);
+  private final DutyCycleOut m_percentOut = new DutyCycleOut(0);
   private double targetOutput = 0;
 
   private double leftOutput = 0;
@@ -107,8 +107,6 @@ public class TelescopicSubsystem extends SubsystemBase {
       case OPEN_LOOP:
         setLeftOutput();
         break;
-      case STOP:
-        stopLeft();
       default:
         stopLeft();
         break;
@@ -121,8 +119,6 @@ public class TelescopicSubsystem extends SubsystemBase {
       case OPEN_LOOP:
         setRightOutput();
         break;
-      case STOP:
-        stopRight();
       default:
         stopRight();
         break;
@@ -222,16 +218,14 @@ public class TelescopicSubsystem extends SubsystemBase {
 
   /** units: cm */
   public double getLeftHeight() {
-    double sprocketRotation = (m_left_motor.getRotorPosition().getValueAsDouble()) // +m_right_motor.getRotorPosition().getValueAsDouble())
-        // / 2
+    double sprocketRotation = (m_left_motor.getRotorPosition().getValueAsDouble())
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
     return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
   }
 
   /** units: cm */
   public double getRightHeight() {
-    double sprocketRotation = (m_right_motor.getRotorPosition().getValueAsDouble()) // +m_right_motor.getRotorPosition().getValueAsDouble())
-        // / 2
+    double sprocketRotation = (m_right_motor.getRotorPosition().getValueAsDouble())
         / TelescopicConstants.TELESCOPIC_GEAR_RATIO;
     return sprocketRotation * TelescopicConstants.SPROCKET_CIRCUMFERENCE;
   }

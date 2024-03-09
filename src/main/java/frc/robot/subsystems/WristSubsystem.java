@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.WristConstants;
@@ -95,23 +96,23 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public boolean isBoreEncoderAlive() {
-      return mBoreEncoder.isConnected();
+        return mBoreEncoder.isConnected();
     }
-    
+
     public double getAngle() {
-      if (isBoreEncoderAlive()) {
-        return getBoreEncoderPosition();
-      } else {
-        return getFalconPosition();
-      }
+        if (isBoreEncoderAlive()) {
+            return getBoreEncoderPosition();
+        } else {
+            return getFalconPosition();
+        }
     }
-    
+
     public boolean isAtSetpoint() {
-      if (isBoreEncoderAlive()) {
-        return isAtSetpointBore();
-      } else {
-        return isAtSetpointFalcon();
-      }
+        if (isBoreEncoderAlive()) {
+            return isAtSetpointBore();
+        } else {
+            return isAtSetpointFalcon();
+        }
     }
 
     @Override
@@ -146,6 +147,7 @@ public class WristSubsystem extends SubsystemBase {
         }
 
         autoCalibration();
+        SmartDashboard.putBoolean("Is Bore Connected Wrist", isBoreEncoderAlive());
     }
 
     /* ENCODERS */
