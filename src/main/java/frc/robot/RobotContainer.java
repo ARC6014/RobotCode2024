@@ -45,8 +45,6 @@ import frc.robot.commands.shooter.FeederStopAtBeambreak;
 import frc.robot.commands.shooter.ShooterCommand;
 import frc.robot.commands.swerve.DriveByJoystick;
 import frc.robot.commands.telescopic.TelescopicOpenLoop;
-import frc.robot.commands.telescopic.TelescopicStateCommand;
-import frc.robot.subsystems.AddressableLEDSubsystem;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -55,11 +53,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TelescopicSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmControlState;
-import frc.robot.subsystems.IntakeSubsystem.Running;
 import frc.robot.subsystems.ShooterSubsystem.FeederState;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
-import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
-import frc.robot.subsystems.UsbCam;
 import frc.robot.subsystems.WristSubsystem.Position;
 
 /**
@@ -273,7 +268,8 @@ public class RobotContainer {
                 // Arm
                 mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.INTAKE));
-                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
+                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP)); // can toggle between AMP
+                                                                                              // and CLIMB
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.SPEAKER_SHORT));
                 mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
@@ -283,22 +279,15 @@ public class RobotContainer {
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
                 mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
 
-                // Intake - outtake
-                // mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake,
-                // IntakeConstants.FORWARD_PERCENT));
+                // Outtake
                 mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
-
-                // Telescopic
-                // mDriver.povDown().whileTrue(new
-                // TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
-                // mDriver.povUp().whileTrue(new
-                // TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
-                // mOperator.rightStick().onTrue(telescopicOpenLoop);
 
                 /* COMMAND GROUPS */
                 // Intake
                 mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
-                mOperator.rightBumper().onTrue(openWristStartIntake);
+                mOperator.rightBumper()
+                                .whileTrue(new ShooterCommand().withShooterState(ShooterState.INTAKE_FROM_SOURCE));
+
                 // Feed
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
@@ -310,7 +299,9 @@ public class RobotContainer {
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
-                mOperator.a().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.INTAKE_FROM_SOURCE));
+                mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE_FROM_SOURCE));
+                mOperator.leftBumper().and(mOperator.rightBumper())
+                                .toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
 
                 /* LIMELIGHT */
                 mDriver.povDown().whileTrue(new AlignToAmp());

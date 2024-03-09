@@ -22,7 +22,7 @@ public class ShuffleBoardInteractions {
 
     private ArrayList<ShuffleboardTabBase> mTabs = new ArrayList<ShuffleboardTabBase>();
 
-    public FieldView mFieldView = new FieldView();
+    // public FieldView mFieldView = new FieldView();
     // private SwerveTab mSwerveTab = new SwerveTab();
     private OperatorTab mOperatorTab = new OperatorTab();
 
@@ -39,6 +39,6 @@ public class ShuffleBoardInteractions {
         for (ShuffleboardTabBase tab : mTabs) {
             tab.update();
         }
-        mFieldView.update();
+        // mFieldView.update();
     }
 }

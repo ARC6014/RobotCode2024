@@ -96,7 +96,8 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public boolean isBoreEncoderAlive() {
-        return mBoreEncoder.isConnected();
+        // return mBoreEncoder.isConnected();
+        return false;
     }
 
     public double getAngle() {
@@ -146,7 +147,7 @@ public class WristSubsystem extends SubsystemBase {
             return;
         }
 
-        autoCalibration();
+        // autoCalibration();
         SmartDashboard.putBoolean("Is Bore Connected Wrist", isBoreEncoderAlive());
     }
 
@@ -222,6 +223,11 @@ public class WristSubsystem extends SubsystemBase {
     /** basically "zeroes" wrist */
     public double zeroSetpoint() {
         return mPositionSetpoint = 0;
+    }
+
+    public void resetFalconEncoder(double desiredAngle) {
+        var desRot = Conversions.degreesToRevolutions(desiredAngle);
+        mTalonFX.setPosition(desRot);
     }
 
     public void setOverride(double position) {

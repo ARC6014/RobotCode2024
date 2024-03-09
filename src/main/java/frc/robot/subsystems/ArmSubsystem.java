@@ -134,6 +134,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     /** CLIMBING CLOSED POSITION */
     CLIMB,
+
+    INTAKE_FROM_SOURCE
   }
 
   public ArmSubsystem() {
@@ -188,6 +190,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public boolean isBoreEncoderAlive() {
     return boreEncoder.isConnected();
+    // return false;
   }
 
   public double getAngle() {
@@ -255,6 +258,9 @@ public class ArmSubsystem extends SubsystemBase {
       case ZERO:
         setArmAngleMotionMagic(ArmConstants.ZERO);
         break;
+      case INTAKE_FROM_SOURCE:
+        setArmAngleMotionMagic(ArmConstants.FROM_INTAKE);
+        break;
       case CLIMB:
         setArmAngleMotionMagic(ArmConstants.CLIMB);
         break;
@@ -283,8 +289,9 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   /** resets Falcon encoder to zero */
-  public void resetFalconEncoder() {
-    armMotor.setPosition(0);
+  public void resetFalconEncoder(double desiredAngle) {
+    var desPosition = Conversions.degreesToRevolutions(desiredAngle);
+    armMotor.setPosition(desPosition);
   }
 
   // resets falcon encoder to the bore reading so that bore and falcon have the
@@ -327,7 +334,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   private double getAngleFromPoseTable(Pose2d target) {
 
-    SmartDashboard.putString("getSubsystem()", target.getTranslation().toString());
     poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(target.getTranslation());
 

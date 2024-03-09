@@ -25,7 +25,10 @@ public class ArmStateSet extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    mArm.setArmControlState(mTarget);
+    if (mArm.getArmControlState() == ArmControlState.AMP && mTarget == ArmControlState.AMP)
+      mArm.setArmControlState(ArmControlState.CLIMB);
+    else
+      mArm.setArmControlState(mTarget);
     mArm.updateLastDemandedRotation(mArm.getArmAngleFalcon());
   }
 
@@ -35,6 +38,7 @@ public class ArmStateSet extends Command {
 
   @Override
   public void end(boolean interrupted) {
+
   }
 
   @Override

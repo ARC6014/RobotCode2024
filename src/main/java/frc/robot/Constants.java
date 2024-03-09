@@ -49,7 +49,7 @@ public class Constants {
         public static final double maxModuleSpeed = 4.0;
 
         public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-                        new PIDConstants(4.25, 0, 0),
+                        new PIDConstants(4.35, 0, 0),
                         new PIDConstants(4.5, 0, 0),
                         maxModuleSpeed,
                         drivebaseRadius,
@@ -219,7 +219,7 @@ public class Constants {
                                                                                                            * down
                                                                                                            */
                 public static final double POSITION_OFFSET = Conversions
-                                .degreesToRevolutions(13.34 + 164.71 - 0.37 + 10.3 - 1.0);
+                                .degreesToRevolutions(80);
 
                 /** unit: rotations */
                 public static final double ANGLE_TOLERANCE = Conversions.degreesToRevolutions(0.5);
@@ -228,11 +228,13 @@ public class Constants {
                 /** unit: degrees */
                 public static final double ZERO = 0;
                 /** unit: degrees */
-                public static final double INTAKE = 10.5; // 12
+                public static final double INTAKE = 10; // 10.5
                 /** unit: degrees */
                 public static final double SPEAKER_LONG = 54;
                 /** unit: degrees */
                 public static final double SPEAKER_SHORT = 38; // 22.5 31.5 36
+                /** unit: degrees */
+                public static final double FROM_INTAKE = 75;
                 /** unit: degrees */
                 public static final double AMP = 110;
                 /** unit degrees */
@@ -393,7 +395,7 @@ public class Constants {
                 /** units: cm */
                 public static final double SPROCKET_CIRCUMFERENCE = 2.5 * Math.PI;
                 /** units: cm */
-                public static final double MAX_EXTENSION = 28.5; // theoretical max 34 cm
+                public static final double MAX_EXTENSION = 25.7; // theoretical max 34 cm
                 /** units: cm */
                 public static final double MAX_RETRACTION = 1.5;
                 // TODO: check value

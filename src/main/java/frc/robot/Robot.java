@@ -97,7 +97,8 @@ public class Robot extends TimedRobot {
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
-    WristSubsystem.getInstance().resetToAbsolute();
+    // WristSubsystem.getInstance().resetToAbsolute();
+    WristSubsystem.getInstance().resetFalconEncoder(2.0);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -126,7 +127,9 @@ public class Robot extends TimedRobot {
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
-    WristSubsystem.getInstance().resetToAbsolute();
+    // WristSubsystem.getInstance().resetToAbsolute();
+    // ArmSubsystem.getInstance().resetFalconEncoder(-8.5);
+    WristSubsystem.getInstance().resetFalconEncoder(2.0);
   }
 
   /** This function is called periodically during operator control. */

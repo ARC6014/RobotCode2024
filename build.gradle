@@ -36,7 +36,7 @@ deploy {
                     jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
                     jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
                     //jvmArgs.add("-Djava.rmi.server.hostname=10.60.14.2")
-                    jvmArgs.add("-Djava.rmi.server.hostname=172.22.1.2")
+                    jvmArgs.add("-Djava.rmi.server.hostname=172.22.11.2")
                     // 
                     // cd "C:\Users\Public\wpilib\visualvm_216\bin" (VISUALVM file path)
                     // ./visualvm --jdkhome "C:\Users\Public\wpilib\2023\jdk" (wpilib JDK path)

@@ -19,8 +19,8 @@ public class TelescopicOpenLoop extends Command {
   private DoubleSupplier joystick1;
   private DoubleSupplier joystick2;
 
-  private SlewRateLimiter limiterMaster = new SlewRateLimiter(1.2);
-  private SlewRateLimiter limiterSlave = new SlewRateLimiter(1.2);
+  // private SlewRateLimiter limiterMaster = new SlewRateLimiter(1.2);
+  // private SlewRateLimiter limiterSlave = new SlewRateLimiter(1.2);
 
   /** Creates a new TelescopicDeneme. */
   public TelescopicOpenLoop(TelescopicSubsystem mTelescopic, DoubleSupplier masterOutput, DoubleSupplier slaveOutput) {
@@ -42,13 +42,14 @@ public class TelescopicOpenLoop extends Command {
   public void execute() {
     double masterDirection = Math.signum(joystick1.getAsDouble());
     double masterOut = masterDirection
-        * MathUtil.applyDeadband(MathUtil.clamp(Math.abs(joystick1.getAsDouble()), 0, 0.5), 0.04);
+        * MathUtil.applyDeadband(MathUtil.clamp(Math.abs(joystick1.getAsDouble()), 0, 0.7), 0.04);
+
     double slaveDirection = Math.signum(joystick2.getAsDouble());
     double slaveOut = slaveDirection
-        * MathUtil.applyDeadband(MathUtil.clamp(Math.abs(joystick2.getAsDouble()), 0, 0.5), 0.04);
+        * MathUtil.applyDeadband(MathUtil.clamp(Math.abs(joystick2.getAsDouble()), 0, 0.7), 0.04);
 
-    mTelescopic.openLoopLeft(limiterMaster.calculate(masterOut));
-    mTelescopic.openLoopRight(limiterSlave.calculate(slaveOut));
+    mTelescopic.openLoopLeft(masterOut);
+    mTelescopic.openLoopRight(slaveOut); // limiterSlave.calculate
 
     if (masterOut == 0) {
       mTelescopic.setTelescopicStateLeft(TelescopicState.HOLD);
@@ -61,7 +62,7 @@ public class TelescopicOpenLoop extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    mTelescopic.setNeutralMode(NeutralModeValue.Brake);
+    mTelescopic.setTelescopicState(TelescopicState.HOLD);
   }
 
   // Returns true when the command should end.

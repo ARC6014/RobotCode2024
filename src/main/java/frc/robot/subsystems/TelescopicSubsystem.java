@@ -6,8 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -57,6 +55,7 @@ public class TelescopicSubsystem extends SubsystemBase {
   }
 
   private void configureTelescopicMotors() {
+
     m_left_motor.getConfigurator().apply(new TalonFXConfiguration());
     m_right_motor.getConfigurator().apply(new TalonFXConfiguration());
 
@@ -65,19 +64,22 @@ public class TelescopicSubsystem extends SubsystemBase {
     configs.Slot0.kI = TelescopicConstants.TELESCOPIC_CONTROLLER_KI;
     configs.Slot0.kD = TelescopicConstants.TELESCOPIC_CONTROLLER_KD;
 
-    configs.Slot0.kS = 0.1; // prev 0.32
+    configs.Slot0.kS = 0; // prev 0.32
     configs.Voltage.PeakForwardVoltage = 12;
     configs.Voltage.PeakReverseVoltage = -12;
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
     configs.MotionMagic.MotionMagicAcceleration = TelescopicConstants.TELESCOPIC_MOTION_ACCEL;
     configs.MotionMagic.MotionMagicCruiseVelocity = TelescopicConstants.TELESCOPIC_MOTION_VEL;
+
+    zeroEncoders();
+
     m_left_motor.getConfigurator().apply(configs);
     m_right_motor.getConfigurator().apply(configs);
 
-    zeroEncoders();
-    setNeutralMode(NeutralModeValue.Brake);
     m_left_motor.setInverted(true);
+    m_right_motor.setInverted(true);
+    setNeutralMode(NeutralModeValue.Brake);
   }
 
   public void maybeHoldCurrentPosition() {
@@ -123,6 +125,13 @@ public class TelescopicSubsystem extends SubsystemBase {
         stopRight();
         break;
     }
+
+    SmartDashboard.putNumber("Left Teles He", getLeftHeight());
+    SmartDashboard.putNumber("Right Teles He", getRightHeight());
+    SmartDashboard.putString("Teles State götüm", getTelescopicStateLeft().toString());
+    SmartDashboard.putString("Teles State R", getTelescopicStateRight().toString());
+    SmartDashboard.putNumber("Left output", leftOutput);
+    SmartDashboard.putNumber("right output", rightOutput);
 
   }
 
