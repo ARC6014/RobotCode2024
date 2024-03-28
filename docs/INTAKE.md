@@ -1,4 +1,5 @@
-# `IntakeSubsystem`
+# [`Intake Subsystem`](/src/main/java/frc/robot/subsystems/IntakeSubsystem.java)
+CANBUS: rio
 
 ## Class Members
 ```java
@@ -28,53 +29,23 @@ private DutyCycleOut mRunningOpenLoopControl;
 
 ## States
 ```java
-public enum Position {
-    OPEN,
-    CLOSED,
-    /** custom setpoint/position */
-    OVERRIDE, 
-    /** openloop control */
-    OPENLOOP,
-}
 
 public enum Running {
-    /** intake */
-    FORWARD, 
-    /** outtake */
-    REVERSE,
-    /** neutral/idle (coast) */
-    NEUTRAL,
-    /** custom setpoint/position */
-    OVERRIDE,
-    /** openloop control */
-    OPENLOOP,
-}
+        /** intake */
+        FORWARD,
+        /** outtake */
+        REVERSE,
+        /** neutral */
+        NEUTRAL,
+        /** stop motor */
+        S_DOWN,
+        /** custom setpoint/position */
+        OVERRIDE,
+        /** openloop control */
+        OPENLOOP,
+        /** testing when feeder is not assembled */
+        FEEDING_SHOOTER,
+    }
 ```
 
-## Command
-
-```java
-//  Intake control command (open loop for angle only).
-public class IntakeSetState extends Command {
-    
-    // ...instance variables omitted..
-
-    public IntakeSetState(
-        IntakeSubsystem intakeSubsystem, 
-        DoubleSupplier openLoopOutput, 
-        IntakeSubsystem.Position position, 
-        IntakeSubsystem.Running running
-    );
-}
-```
-
-- Set both states with a single command.
-- Closed-loop or intake angle open-loop operation.
-- Command ends when subsystem arrives at setpoint (never for open-loop).
-
-## TODO:
-- [ ] PID constants (both angle & velocity)
-- [ ] Bore encoder position offset
-- [ ] \(Optional) Intake position reset if we ram it into the drivebase
-- [ ] Using the beam break sensor
 

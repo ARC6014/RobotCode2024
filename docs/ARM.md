@@ -1,61 +1,64 @@
-### `ArmSubsystem.java`
+# [`Arm Subsystem`](/src/main/java/frc/robot/subsystems/ArmSubsystem.java)
+CANBUS: CANivore
 - `boreEncoder` as external encoder
-- `MotionMagicTorqueCurrentFOC` for FOC and Motion Magic
-- `PositionTorqueCurrentFOC` for keeping arm in position after reached setpoint
+- `MotionMagicVoltage` for voltage-driven Motion Magic
 
 <br>
 
-`ArmControlState`:
-default state: `OPEN_LOOP`
-- `OPEN_LOOP` for joystick-fed value
-    - `setMotorOutput()` sets motor percent output
+```java
+public enum ArmControlState {
+    /** open-loop control */
+    OPEN_LOOP,
 
-- `TORQUE_CONTROL` for holding position
-    - `holdPosition()` holds the current mechanism angle
+    /** intaking position */
+    INTAKE,
 
-- `MOTION_MAGIC` for reaching setpoint using MM
-    - `setArmAngleMotionMagic()` sets arm angle with MM
-    - Note that MM uses Falcon internal encoder for now!
+    /** near speaker shooting position - tunable */
+    SPEAKER_SHORT,
 
-- default: stops (percent output=0)
+    /** far from speaker shooting position - NOT tunable */
+    SPEAKER_LONG,
 
+    /** amp shooting position */
+    AMP,
+
+    /** neutral - in brake */
+    HOLD,
+
+    /** zero position with respect to hard stop */
+    ZERO,
+
+    /** interpolation */
+    POSE_T,
+
+    /** look up table setup **/
+    LOOKUP,
+
+    /** FF characterization test */
+    CHARACTERIZATION,
+
+    /** CLIMBING CLOSED POSITION */
+    CLIMB,
+
+    /** intake from source zone when intake is broken */
+    INTAKE_FROM_SOURCE,
+  }
+```
 <br>
 
-- `isAtSetpointFalcon` and `isAtZeroFalcon` are currently using only Falcon encoders, implementation with Bore is yet to come.
 
 **State Setters:**
-- `setArmPosition()`
-    - sets current state to `MOTION_MAGIC` 
-    - sets the `setpoint` to given value
-- `holdArmPosition()`
-    - sets current state to `TORQUE_CONTROL`
 - `setArmPercentOutput()`
     - sets current state to `OPEN_LOOP`
     - sets `targetOutput` to given percent output
+- `setArmAngleMotionMagic`
+    - sets `setpoint` to given angle
 
+**Interpolation:**
+Look-up table for interpolation using LimeLight:
+- `getAngleFromLookUp()` returns the calculated angle with respect to robot's current position to the speaker
+
+**Checker:**
+- `isBoreEncoderAlive()`
+    - if bore is not connected, switch to Falcon encoder
 <br>
-
-**TODOS:**
-- [ ] Configure `kP`, `kI`, `kD` for slots 0&1
-- [ ] Configure necessary limits
-- [ ] Check motor inverts
-- [ ] Configure motor IDs & Bore port
-- [ ] Configure angle tolerance&reset angle
-- [ ] Configure arm setpoint angles
-- [ ] Set Bore's `distancePerRotation` and `positionOffset`
-- [ ] Check encoder tick to rotation conversions in all methods!
-
-<br>
-
-## `ArmOpenLoop.java`
-- takes in joystick & one button
-- joystick to move arm up&down, button to test one given setpoint
-
-**TODOS:**
-- [ ] Configure `targetAngle` for the button
-
-<br>
-
-## `ArmClosedLoop.java`
-- closed loop command for arm which takes in a `setpoint` and `finishPoint`.
-- will finish command when current angle is within a tolerance of the `finishPoint`

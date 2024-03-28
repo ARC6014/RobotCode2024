@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -33,7 +31,6 @@ import frc.robot.commands.ResetGyro;
 import frc.robot.commands.idlemodes.SetIdleModeInvert;
 import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.arm.ArmStateSet;
-import frc.robot.commands.intake.IntakeOpenLoop;
 import frc.robot.commands.intake.IntakeSetOpenLoop;
 import frc.robot.commands.intake.IntakeStopAtBeambreak;
 import frc.robot.commands.intake.WristOpenLoop;
@@ -90,14 +87,10 @@ public class RobotContainer {
         private SendableChooser<Command> autoChooser;
 
         /* COMMANDS */
-        // TODO: axes might be switched for telescpics
         private final TelescopicOpenLoop telescopicOpenLoop = new TelescopicOpenLoop(mTelescopic,
                         () -> -mOperator.getLeftY(),
                         () -> -mOperator.getRightY());
         private DriveByJoystick driveByJoystick;
-        private final ArmOpenLoop armOpenLoop = new ArmOpenLoop(mArm, () -> -mOperator.getLeftY());
-        private final WristOpenLoop wristOpenLoop = new WristOpenLoop(mWrist, () -> mOperator.getLeftX());
-        private final IntakeOpenLoop intakeOpenLoop = new IntakeOpenLoop(mIntake, () -> mOperator.getRightX());
 
         // ---------------------- TELEOP COMMANDS ---------------------- //
 
@@ -364,8 +357,7 @@ public class RobotContainer {
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
                                                 .andThen(new WaitCommand(0.5))
-                                                .andThen(startStopFeeder)); // TODO: Change to beam break if reading
-                                                                            // stable
+                                                .andThen(startStopFeeder));
 
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
@@ -382,25 +374,6 @@ public class RobotContainer {
                 mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
                                 () -> DriveSubsystem.getInstance().setSnapActive(false)));
 
-                // FeedForwardCharacterization example, use this with any subsystem that you
-                // want to characterize
-                // mDriver.L2().whileTrue(new FeedForwardCharacterization(mArm,
-                // mArm::setArmVoltage, mArm::getCharacterizationVelocity)
-                // .beforeStarting(() ->
-                // mArm.setArmControlState(ArmControlState.CHARACTERIZATION), mArm));
-
-                // mDriver.L2().whileTrue(new StartEndCommand(() ->
-                // DriveSubsystem.getInstance().setSnapActive(true),
-                // () -> DriveSubsystem.getInstance().setSnapActive(false)));
-
-                // mOperator.a().and(mOperator.rightBumper())
-                // .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                // mOperator.b().and(mOperator.rightBumper())
-                // .whileTrue(mArm.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                // mOperator.x().and(mOperator.rightBumper())
-                // .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                // mOperator.y().and(mOperator.rightBumper())
-                // .whileTrue(mArm.sysIdDynamic(SysIdRoutine.Direction.kReverse));
         }
 
         /*

@@ -1,4 +1,8 @@
-# [`Shooter & Feeder`](/src/main/java/frc/robot/subsystems/ShooterSubsystem.java)
+# [`Shooter Subsystem`](/src/main/java/frc/robot/subsystems/ShooterSubsystem.java) [`Feeder Subsystem `](/src/main/java/frc/robot/subsystems/FeederSubsystem.java)
+CANBUS: rio
+
+Shooter: 2 NEOs controlled by SparkMAX
+Feeder: 1 775pro controlled by TalonSRX
 
 ## Class Members
 ```java

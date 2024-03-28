@@ -7,7 +7,9 @@
 ## Docs
 Explanation of codes can be found under [docs](/docs):
 
-- [Arm & Telescopic](/docs/ARM.md)
+- [Arm](/docs/ARM.md)
+  - Cr: CAN
+- [Telescopic](/docs/TELESCOP.md)
   - Cr: CAN
 - [Intake](/docs/INTAKE.md)
   - Cr: Ouz

@@ -123,10 +123,7 @@ public class ArmSubsystem extends SubsystemBase {
     /** zero position with respect to hard stop */
     ZERO,
 
-    /** interpolation */
-    POSE_T,
-
-    /** look up table setup **/
+    /** look up table setup - interpolation **/
     LOOKUP,
 
     /** FF characterization test */
@@ -135,7 +132,8 @@ public class ArmSubsystem extends SubsystemBase {
     /** CLIMBING CLOSED POSITION */
     CLIMB,
 
-    INTAKE_FROM_SOURCE
+    /** intake from source zone when intake is broken */
+    INTAKE_FROM_SOURCE,
   }
 
   public ArmSubsystem() {
@@ -242,9 +240,6 @@ public class ArmSubsystem extends SubsystemBase {
         break;
       case AMP:
         setArmAngleMotionMagic(ArmConstants.AMP);
-        break;
-      case POSE_T:
-        setArmAngleMotionMagic(ArmConstants.IS_ON_FIELD ? getAngleFromPoseTable() : getAngleFromPoseTable(zeroTest));
         break;
       case LOOKUP:
         setArmAngleMotionMagic(getAngleFromLookUp());
