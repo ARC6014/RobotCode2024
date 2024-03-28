@@ -2,52 +2,69 @@
 
 ## Class Members
 ```java
-//Hardware
+// Hardware
 private CANSparkMax m_master;
 private CANSparkMax m_slave;
 private CANSparkMax m_feeder;
 private DigitalInput m_beamBreaker;
 
-//Constants
+// Constants
 private double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput, maxRPM;
 
-//State and Instances
+// Interpolation
+InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
+
+// State and Instances
 private static ShooterSubsystem m_instance;
 private ShooterState m_shootState;
 private FeederState m_feederState;
 
-//PID Controller
+// PID Controller - not used
 private SparkPIDController m_masterPIDController;
 private SparkPIDController m_slavePIDController;
 ```
 
 ## States
 ```java
-// Position of the shooter
 public enum ShooterState {
+    /* open-loop */
     OPEN_LOOP,
+
+    /* stopped */
     CLOSED,
+
+    /* amp voltage */
     AMP,
-    SPEAKER,
-}
 
-//Self Explanatory Enough
-public enum FeederState {
+    /* speaker long voltage (not tunable) */
+    SPEAKER_LONG,
+
+    /* speaker short a.k.a tunable voltage */
+    SPEAKER_SHORT,
+
+    /* interpolated voltage from lookup */
+    LOOKUP,
+
+    /* source intake */
+    INTAKE_FROM_SOURCE,
+  }
+
+  public enum FeederState {
+    /* feed to shooter */
     LET_HIM_COOK,
+
+    /* eject */
+    UPSI,
+
+    /* stop feeder */
     STOP_WAIT_A_SEC,
-}
+
+    OPEN,
+
+    /* feeder from intake */
+    INTAKECEPTION,
+  }
 ```
 
-## [Commands](/src/main/java/frc/robot/commands/shooter)
 
-```java
-public class SFeederCommand extends Command {
-    //full open loop with default option of 0.5 Out
-}
-
-public class ShooterCommand extends Command {
-    withOpenLoop(double output);
-    withShooterState(ShooterState level);
-}
-```
 
