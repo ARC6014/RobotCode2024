@@ -1,6 +1,9 @@
 ## Official 2024 Robot Code for Crescendo
 [![CI](https://github.com/ARC6014/RobotCode2024/actions/workflows/main.yml/badge.svg)](https://github.com/ARC6014/RobotCode2024/actions/workflows/main.yml)
 
+## Introducing ARC's 2024 Robot: Carabot
+<img title="Carabot" alt="Carabot" src="/images/carabot.jpeg">
+
 ## Docs
 Explanation of codes can be found under [docs](/docs):
 
@@ -12,12 +15,16 @@ Explanation of codes can be found under [docs](/docs):
   - Cr: Alia & Cr
 
 ## Autos
-- Blue4NoteLongAligned
-  - Alignment for shooter with custom swerve turn command (appr. 45 degrees)✅
-  - SDT: around 11s
-- Blue3NoteShort
-  - Bot comes back near the speaker to shoot the notes 
-  - SDT: around 10s
+- 4PAllClosePieces (most used)
+  - Shoot inside + 3 close notes with LL interpolation
+  - approx. %85 precision of shooting 3/4 notes
+- ShootInside
+  - Only shoot and wait
+- 3PFarRight+Far2nd (not optimized)
+  - Shoot inside + get 2 notes from the centerline
+- Disrupter Path
+  - Disrupt the 4 notes in centerline
+
 
 ### Editing Guidelines:
 - Every subsystem should have Open & Closed Loop commands.
