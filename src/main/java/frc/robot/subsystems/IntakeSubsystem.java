@@ -74,10 +74,6 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public enum Running {
-        /** intake */
-        FORWARD,
-        /** outtake */
-        REVERSE,
         /** neutral */
         NEUTRAL,
         /** stop motor */
@@ -86,26 +82,12 @@ public class IntakeSubsystem extends SubsystemBase {
         OVERRIDE,
         /** openloop control */
         OPENLOOP,
-        /** testing when feeder is not assembled */
-        FEEDING_SHOOTER,
     }
 
     @Override
     public void periodic() {
-        // if ((!mBeamBreakSensor.get()) && (mRunning != Running.REVERSE)) {
-        // setState(Running.S_DOWN);
-        // mTalonFX.stopMotor();
-        // return;
-        // }
 
         switch (mRunning) {
-            case FORWARD:
-                mRunningVelocitySetpoint = IntakeConstants.FORWARD_VELOCITY;
-                break;
-
-            case REVERSE:
-                mRunningVelocitySetpoint = IntakeConstants.REVERSE_VELOCITY;
-                break;
 
             case NEUTRAL:
                 mRunningVelocitySetpoint = 0;
@@ -116,10 +98,6 @@ public class IntakeSubsystem extends SubsystemBase {
                 break;
 
             case OVERRIDE:
-                break;
-
-            case FEEDING_SHOOTER:
-                mRunningVelocitySetpoint = IntakeConstants.FEEDER_VELOCITY;
                 break;
 
             default:
@@ -135,7 +113,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         }
 
-        // SmartDashboard.putString("Idle Mode", this.kNeutralMode.toString());
     }
 
     public boolean getBeambreak() {

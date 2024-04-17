@@ -11,9 +11,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.TelescopicConstants;
 import frc.robot.Constants.WristConstants;
+import frc.robot.subsystems.TelescopicSubsystem.TelescopicState;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
+import frc.team6014.lib.util.Util;
 
 public class WristSubsystem extends SubsystemBase {
     private static WristSubsystem mInstance;
@@ -149,6 +152,8 @@ public class WristSubsystem extends SubsystemBase {
 
         // autoCalibration();
         SmartDashboard.putBoolean("Is Bore Connected Wrist", isBoreEncoderAlive());
+
+        maybeHoldCurrentPosition();
     }
 
     /* ENCODERS */
@@ -156,6 +161,14 @@ public class WristSubsystem extends SubsystemBase {
     /** unit: revolutions */
     public double getFalconPosition() {
         return mGearbox.drivingToDriven(mTalonFX.getPosition().getValueAsDouble());
+    }
+
+    public void maybeHoldCurrentPosition() {
+        if (Util.epsilonEquals(mTalonFX.getVelocity().getValueAsDouble(), 0, 0.5)
+                && (mTalonFX.getStatorCurrent().getValueAsDouble() > WristConstants.STATOR_CURRENT_LIMIT)) {
+            mTalonFX.stopMotor();
+            mPosition = Position.HOLD;
+        }
     }
 
     /**

@@ -126,13 +126,6 @@ public class TelescopicSubsystem extends SubsystemBase {
         break;
     }
 
-    SmartDashboard.putNumber("Left Teles He", getLeftHeight());
-    SmartDashboard.putNumber("Right Teles He", getRightHeight());
-    SmartDashboard.putString("Teles State götüm", getTelescopicStateLeft().toString());
-    SmartDashboard.putString("Teles State R", getTelescopicStateRight().toString());
-    SmartDashboard.putNumber("Left output", leftOutput);
-    SmartDashboard.putNumber("right output", rightOutput);
-
   }
 
   public double getSetpointLeft() {

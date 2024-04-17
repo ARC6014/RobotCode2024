@@ -88,8 +88,8 @@ public class Constants {
                 public static final double anglePeakCurrentDuration = 0.1;
                 public static final boolean angleEnableCurrentLimit = true;
 
-                public static final int driveContinuousCurrentLimit = 35;
-                public static final int drivePeakCurrentLimit = 60;
+                public static final int driveContinuousCurrentLimit = 30; // 35
+                public static final int drivePeakCurrentLimit = 55; // 60
                 public static final double drivePeakCurrentDuration = 0.2;
                 public static final boolean driveEnableCurrentLimit = true;
 
@@ -99,7 +99,7 @@ public class Constants {
                 public static final double openLoopRamp = 0;
                 public static final double closedLoopRamp = 0;
 
-                public static final double drivePowerScalar = 0.72; // prev. 0.55
+                public static final double drivePowerScalar = 0.95;
                 public static final double driveSlewRateLimitX = 7;
                 public static final double driveSlewRateLimitY = 7;
                 public static final double driveSlewRateLimitRot = 12;
@@ -124,12 +124,6 @@ public class Constants {
                 public static final double snapkP = 2.0;
                 public static final double snapkI = 0.0;
                 public static final double snapkD = 0.0;
-
-                /** will be used for FieldOrientedTurn */
-                public static final double kRotControllerP = 0.225;
-                public static final double kRotControllerD = 0.28;
-                public static final double kRotControllerMaxVel = 5;
-                public static final double kRotControllerTolerance = 5;
 
                 public static final double maxSpeed = 5;
 
@@ -214,11 +208,9 @@ public class Constants {
                 public static final double kF = 0.4;
 
                 /** unit: rotations */
-                public static final double POSITION_OFFSET_OLD = Conversions.degreesToRevolutions(13.34); /*
-                                                                                                           * before arm
-                                                                                                           * bore broke
-                                                                                                           * down
-                                                                                                           */
+                // before arm broke down
+                public static final double POSITION_OFFSET_OLD = Conversions.degreesToRevolutions(13.34);
+                // final offset used in the regs
                 public static final double POSITION_OFFSET = Conversions
                                 .degreesToRevolutions(80);
 
@@ -262,14 +254,6 @@ public class Constants {
         public static final class IntakeConstants {
                 public static final int RUNNING_MOTOR_ID = 10;
                 public static final int BEAM_BREAK_ID = 2;
-
-                // NOT USED
-                /** unit: rps */
-                public static final double FORWARD_VELOCITY = (2600 / 60) * 1.7;
-                /** unit: rps */
-                public static final double REVERSE_VELOCITY = (-2600 / 60) * 1.7;
-                /** unit: rps */
-                public static final double FEEDER_VELOCITY = -3000 / 60;
 
                 /** unit: percent */
                 public static final double FORWARD_PERCENT = 9.75;
@@ -323,6 +307,8 @@ public class Constants {
                 public static final double WRIST_VELOCITY = 150;
                 /** unit: rev/s^2 */
                 public static final double WRIST_ACCELERATION = 300;
+
+                public static final int STATOR_CURRENT_LIMIT = 80;
 
         }
 

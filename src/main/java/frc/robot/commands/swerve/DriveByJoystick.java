@@ -32,7 +32,8 @@ public class DriveByJoystick extends Command {
   private double driveScalarValue = DriveConstants.drivePowerScalar;
 
   /** Creates a new DriveByJoystick. */
-  public DriveByJoystick(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation, BooleanSupplier isLocked, BooleanSupplier rush, BooleanSupplier steady) {
+  public DriveByJoystick(DoubleSupplier x, DoubleSupplier y, DoubleSupplier rotation, BooleanSupplier isLocked,
+      BooleanSupplier rush, BooleanSupplier steady) {
     mX = x; // forward
     mY = y; // strafe
     mRotation = rotation; // rotation
@@ -53,20 +54,18 @@ public class DriveByJoystick extends Command {
   public void execute() {
     mDrive.lockSwerve(mIsLocked.getAsBoolean());
 
-    double scalar = mRush.getAsBoolean() ? 1 : driveScalarValue;
+    double scalar = driveScalarValue;
     if (WristSubsystem.getInstance().getState() == WristSubsystem.Position.OPEN) {
-      scalar = 0.55;
+      scalar = 0.8;
     } else if (mSteady.getAsBoolean()) {
-      scalar = 0.3;
-    } else if (mRush.getAsBoolean()) {
-      scalar = 1;
+      scalar = 0.45;
     } else {
       scalar = driveScalarValue;
     }
 
-    double xSpeed = mSlewX.calculate(inputTransform(mX.getAsDouble()) * DriveConstants.maxSpeed) * scalar;
-    double ySpeed = mSlewY.calculate(inputTransform(mY.getAsDouble()) * DriveConstants.maxSpeed) * scalar;
-    double rotation = mSlewRot.calculate(inputTransform(mRotation.getAsDouble()) * DriveConstants.maxAngularSpeedRadPerSec) * scalar;
+    double xSpeed = mX.getAsDouble() * DriveConstants.maxSpeed * scalar;
+    double ySpeed = mY.getAsDouble() * DriveConstants.maxSpeed * scalar;
+    double rotation = mRotation.getAsDouble() * DriveConstants.maxAngularSpeedRadPerSec * scalar;
 
     if (mIsLocked.getAsBoolean()) {
       mSlewX.reset(0);

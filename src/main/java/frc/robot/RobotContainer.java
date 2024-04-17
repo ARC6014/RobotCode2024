@@ -286,8 +286,7 @@ public class RobotContainer {
                 mOperator.leftTrigger().onTrue(
                                 closeWristStopIntakeArmIntake
                                                 .andThen(new WaitCommand(0.5))
-                                                .andThen(startStopFeeder)); // TODO: Change to beam break if reading
-                                                                            // stable
+                                                .andThen(startStopFeeder));
 
                 // Shoot
                 mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);

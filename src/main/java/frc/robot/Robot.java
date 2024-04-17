@@ -31,7 +31,8 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  private final ShuffleBoardInteractions mShuffleboard = ShuffleBoardInteractions.getInstance();
+  // private final ShuffleBoardInteractions mShuffleboard =
+  // ShuffleBoardInteractions.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -44,7 +45,7 @@ public class Robot extends TimedRobot {
     // and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    DataLogManager.start();
+    // DataLogManager.start();
     // CameraServer.startAutomaticCapture();
 
     // Logger.configureLoggingAndConfig(this, false);
@@ -74,7 +75,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     // Logger.updateEntries();
-    mShuffleboard.update();
+    // mShuffleboard.update();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -129,7 +130,6 @@ public class Robot extends TimedRobot {
     ArmSubsystem.getInstance().resetToAbsolute();
     // WristSubsystem.getInstance().resetToAbsolute();
     // ArmSubsystem.getInstance().resetFalconEncoder(-8.5);
-    WristSubsystem.getInstance().resetFalconEncoder(2.0);
   }
 
   /** This function is called periodically during operator control. */

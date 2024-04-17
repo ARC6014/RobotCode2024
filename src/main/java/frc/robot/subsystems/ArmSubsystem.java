@@ -30,9 +30,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
@@ -97,7 +95,6 @@ public class ArmSubsystem extends SubsystemBase {
   private final MutableMeasure<Angle> m_angle = mutable(Rotations.of(0));
   private final MutableMeasure<Velocity<Angle>> m_velocity = mutable(RotationsPerSecond.of(0));
 
-  private SysIdRoutine m_sysid;
   InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble> map = new InterpolatingTreeMap<InterpolatingDouble, InterpolatingDouble>();
   private NeutralModeValue kNeutralMode = NeutralModeValue.Brake;
 
@@ -125,9 +122,6 @@ public class ArmSubsystem extends SubsystemBase {
 
     /** look up table setup - interpolation **/
     LOOKUP,
-
-    /** FF characterization test */
-    CHARACTERIZATION,
 
     /** CLIMBING CLOSED POSITION */
     CLIMB,
@@ -227,8 +221,6 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     switch (armControlState) {
-      case CHARACTERIZATION:
-        break;
       case OPEN_LOOP:
         setMotorOutput();
         break;
@@ -266,9 +258,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     lastDemandedRotation = getArmAngleFalcon();
 
-    SmartDashboard.putNumber("Pose Difference", poseDifference);
-    // SmartDashboard.putString("Neutral", kNeutralMode.toString());
     SmartDashboard.putBoolean("Is Bore Connected Arm", isBoreEncoderAlive());
+    SmartDashboard.putNumber("Arm Falcon", Conversions.revolutionsToDegrees(getArmAngleFalcon()));
 
     if (shouldStopResetAccordingToBore) {
       return;
@@ -311,41 +302,6 @@ public class ArmSubsystem extends SubsystemBase {
   /** @return true if 0 is within angle tolerance - FALCON */
   public boolean isAtZeroFalcon() {
     return armGearbox.drivingToDriven(armMotor.getRotorPosition().getValue()) < ArmConstants.ANGLE_TOLERANCE;
-  }
-
-  private double getAngleFromPoseTable() {
-
-    Pose2d speaker = FieldConstants.BLUE_SPEAKER;
-
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-
-    if (alliance.get() == Alliance.Red) {
-      speaker = FieldConstants.RED_SPEAKER;
-    }
-
-    return getAngleFromPoseTable(speaker);
-
-  }
-
-  private double getAngleFromPoseTable(Pose2d target) {
-
-    poseDifference = mDriveSubsystem.getPose().getTranslation()
-        .getDistance(target.getTranslation());
-
-    double optimizedAngle = ArmConstants.G_COEFFICENT_A
-        * Math.pow(Math.E,
-            -(Math.pow(poseDifference - ArmConstants.G_COEFFICENT_B, 2) / Math.pow(ArmConstants.G_COEFFICENT_C, 2)))
-        + ArmConstants.G_COEFFICENT_D;
-
-    /*
-     * ArmConstants.COEFFICIENT_QUADRATIC * Math.pow(poseDifference, 2)
-     * + ArmConstants.COEFFICIENT_LINEAR * poseDifference
-     * + ArmConstants.COEFFICIENT_CONSTANT;
-     */
-
-    SmartDashboard.putNumber("Arm Optimized Angle", optimizedAngle);
-
-    return MathUtil.clamp(optimizedAngle, ArmConstants.ZERO, ArmConstants.AMP);
   }
 
   private double getAngleFromLookUp() {
@@ -505,22 +461,4 @@ public class ArmSubsystem extends SubsystemBase {
     }
   }
 
-  /**
-   * Returns a command that will execute a quasistatic test in the given
-   * direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-    return m_sysid.quasistatic(direction);
-  }
-
-  /**
-   * Returns a command that will execute a dynamic test in the given direction.
-   *
-   * @param direction The direction (forward or reverse) to run the test in
-   */
-  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-    return m_sysid.dynamic(direction);
-  }
 }

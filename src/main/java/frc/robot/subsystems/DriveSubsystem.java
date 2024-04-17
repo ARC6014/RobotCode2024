@@ -134,7 +134,9 @@ public class DriveSubsystem extends SubsystemBase {
         Constants.kinematics,
         getRotation2d(),
         getModulePositions(),
-        new Pose2d());
+        new Pose2d(),
+        VecBuilder.fill(0.02, 0.02, 0.01), // estimator values (x, y, rotation) std-devs
+        VecBuilder.fill(0.1, 0.1, 0.01)); // Vision (x, y, rotation) std-devs);
 
     brakeModeTrigger = new Trigger(RobotState::isEnabled);
 
@@ -184,11 +186,15 @@ public class DriveSubsystem extends SubsystemBase {
     // poseEstimator.getEstimatedPosition().getY());
     // SmartDashboard.putNumber("Robot tetha",
     // poseEstimator.getEstimatedPosition().getRotation().getDegrees());
-    // SmartDashboard.putBoolean("Snap Active", isSnapActive);
-    SmartDashboard.putNumber("FL", mSwerveModules[0].getCANCoderRotation().getDegrees());
-    SmartDashboard.putNumber("FR", mSwerveModules[1].getCANCoderRotation().getDegrees());
-    SmartDashboard.putNumber("RL", mSwerveModules[2].getCANCoderRotation().getDegrees());
-    SmartDashboard.putNumber("RR", mSwerveModules[3].getCANCoderRotation().getDegrees());
+
+    // SmartDashboard.putNumber("FL",
+    // mSwerveModules[0].getCANCoderRotation().getDegrees());
+    // SmartDashboard.putNumber("FR",
+    // mSwerveModules[1].getCANCoderRotation().getDegrees());
+    // SmartDashboard.putNumber("RL",
+    // mSwerveModules[2].getCANCoderRotation().getDegrees());
+    // SmartDashboard.putNumber("RR",
+    // mSwerveModules[3].getCANCoderRotation().getDegrees());
   }
 
   /*
