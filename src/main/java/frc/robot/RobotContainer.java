@@ -130,12 +130,12 @@ public class RobotContainer {
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
 
         private final ParallelCommandGroup setArmFeedAndPass = new ParallelCommandGroup(
-                                new ArmStateSet(mArm, ArmControlState.PASS_NOTE),
-                                new SequentialCommandGroup(
-                                                new WaitCommand(0.5),
-                                                new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
-                                                                .withTimeout(1.5)),
-                                new ShooterCommand().withShooterState(ShooterState.NOTE_PASS).withTimeout(1.0));
+                        new ArmStateSet(mArm, ArmControlState.PASS_NOTE),
+                        new SequentialCommandGroup(
+                                        new WaitCommand(0.5),
+                                        new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                        .withTimeout(1.5)),
+                        new ShooterCommand().withShooterState(ShooterState.NOTE_PASS).withTimeout(1.0));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLOOKUP = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.LOOKUP),
@@ -165,7 +165,7 @@ public class RobotContainer {
         private final ParallelCommandGroup AUTOopenWristStartIntakeLong = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.INTAKE),
                         new ParallelDeadlineGroup(
-                                        new IntakeStopAtBeambreak().withTimeout(5.0), // this is the deadline
+                                        new IntakeStopAtBeambreak().withTimeout(3.5), // this is the deadline
                                         new WristSetState(mWrist, Position.OPEN),
                                         new IntakeSetOpenLoop(mIntake, 10)));
 
@@ -298,7 +298,7 @@ public class RobotContainer {
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
                 mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE_FROM_SOURCE));
                 // mOperator.leftBumper().and(mOperator.rightBumper())
-                                //.toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
+                // .toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
 
                 /* LIMELIGHT */
                 // mDriver.povDown().whileTrue(new AlignToSourceMid());

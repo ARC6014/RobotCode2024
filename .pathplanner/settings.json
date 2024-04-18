@@ -17,7 +17,7 @@
     "3Note"
   ],
   "defaultMaxVel": 4.5,
-  "defaultMaxAccel": 2.5,
+  "defaultMaxAccel": 2.7,
   "defaultMaxAngVel": 750.0,
   "defaultMaxAngAccel": 650.0,
   "maxModuleSpeed": 5.0
