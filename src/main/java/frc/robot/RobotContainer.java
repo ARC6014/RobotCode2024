@@ -21,19 +21,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.LEDConstants;
-import frc.robot.Constants.TelescopicConstants;
 import frc.robot.commands.ResetGyro;
 import frc.robot.commands.idlemodes.SetIdleModeInvert;
-import frc.robot.commands.arm.ArmOpenLoop;
 import frc.robot.commands.arm.ArmStateSet;
 import frc.robot.commands.intake.IntakeSetOpenLoop;
 import frc.robot.commands.intake.IntakeStopAtBeambreak;
-import frc.robot.commands.intake.WristOpenLoop;
 import frc.robot.commands.intake.WristSetState;
 import frc.robot.commands.limelight.AlignToAmp;
 import frc.robot.commands.limelight.AlignToSourceMid;
@@ -80,7 +75,7 @@ public class RobotContainer {
         // AddressableLEDSubsystem().getInstance();
 
         /* CONTROLLERS */
-        private final CommandPS4Controller mDriver = new CommandPS4Controller(0);
+        private final CommandPS5Controller mDriver = new CommandPS5Controller(0);
         private final CommandXboxController mOperator = new CommandXboxController(1);
 
         /* AUTO */
@@ -133,6 +128,14 @@ public class RobotContainer {
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(1.5)),
                         new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.75));
+
+        private final ParallelCommandGroup setArmFeedAndPass = new ParallelCommandGroup(
+                                new ArmStateSet(mArm, ArmControlState.PASS_NOTE),
+                                new SequentialCommandGroup(
+                                                new WaitCommand(0.5),
+                                                new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
+                                                                .withTimeout(1.5)),
+                                new ShooterCommand().withShooterState(ShooterState.NOTE_PASS).withTimeout(1.0));
 
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLOOKUP = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.LOOKUP),
@@ -266,8 +269,9 @@ public class RobotContainer {
                                                                                               // and CLIMB
                 mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
                                 ArmControlState.SPEAKER_SHORT));
-                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.LOOKUP));
+
+                // Pass from source
+                mOperator.povUp().onTrue(setArmFeedAndPass);
 
                 // Wrist
                 mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
@@ -293,79 +297,11 @@ public class RobotContainer {
                 mOperator.x().onTrue(setArmFeedAndShootAmp);
                 mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
                 mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.INTAKE_FROM_SOURCE));
-                mOperator.leftBumper().and(mOperator.rightBumper())
-                                .toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
+                // mOperator.leftBumper().and(mOperator.rightBumper())
+                                //.toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
 
                 /* LIMELIGHT */
-                mDriver.povDown().whileTrue(new AlignToSourceMid());
-                mDriver.povUp().whileTrue(new RotateToSpeaker(mDrive));
-
-                /* MISC */
-                mDriver.touchpad().toggleOnTrue(new SetIdleModeInvert());
-                mDriver.L2().whileTrue(new StartEndCommand(() -> DriveSubsystem.getInstance().setSnapActive(true),
-                                () -> DriveSubsystem.getInstance().setSnapActive(false)));
-
-        }
-
-        private void configureButtonBindingsAlper() {
-
-                /* DRIVE */
-                mDriver.cross().onTrue(new ResetGyro(mDrive));
-
-                /**
-                 * MANUAL
-                 * METHODS
-                 */
-                // Shooter - Feeder
-                mDriver.square().whileTrue(new FeederCommand().withFeederState(FeederState.LET_HIM_COOK));
-                mDriver.circle().whileTrue(new FeederCommand().withFeederState(FeederState.UPSI));
-                mDriver.triangle().toggleOnTrue(new ShooterCommand().withShooterState(ShooterState.LOOKUP));
-
-                // Arm
-                mOperator.povDown().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.INTAKE));
-                mOperator.povLeft().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.AMP));
-                mOperator.povRight().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.SPEAKER_SHORT));
-                mOperator.povUp().toggleOnTrue(new ArmStateSet(mArm,
-                                ArmControlState.LOOKUP));
-
-                // Wrist
-                mDriver.povLeft().toggleOnTrue(new WristSetState(mWrist, Position.CLOSED));
-                mDriver.povRight().toggleOnTrue(new WristSetState(mWrist, Position.OPEN));
-
-                // Intake - outtake
-                // mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake,
-                // IntakeConstants.FORWARD_PERCENT));
-                mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, IntakeConstants.REVERSE_PERCENT));
-
-                // Telescopic
-                // mDriver.povDown().whileTrue(new
-                // TelescopicStateCommand().withArbitrarySet(TelescopicConstants.DENEME));
-                // mDriver.povUp().whileTrue(new
-                // TelescopicStateCommand().withTelescopicState(TelescopicState.STOP));
-                // mOperator.rightStick().onTrue(telescopicOpenLoop);
-
-                /* COMMAND GROUPS */
-                // Intake
-                mOperator.rightTrigger().onTrue(openWristStartIntakeBeamBreak);
-                mOperator.rightBumper().whileTrue(new IntakeSetOpenLoop(mIntake, 0.7));
-                mOperator.leftBumper().whileTrue(new IntakeSetOpenLoop(mIntake, -0.7));
-
-                // Feed
-                mOperator.leftTrigger().onTrue(
-                                closeWristStopIntakeArmIntake
-                                                .andThen(new WaitCommand(0.5))
-                                                .andThen(startStopFeeder));
-
-                // Shoot
-                mOperator.b().onTrue(setArmFeedAndShootSpeakerShort);
-                mOperator.x().onTrue(setArmFeedAndShootAmp);
-                mOperator.y().onTrue(setArmFeedAndShootSpeakerLOOKUP);
-                mOperator.a().toggleOnTrue(new ArmStateSet(mArm, ArmControlState.CLIMB));
-
-                /* LIMELIGHT */
-                mDriver.povDown().whileTrue(new AlignToAmp());
+                // mDriver.povDown().whileTrue(new AlignToSourceMid());
                 mDriver.povUp().whileTrue(new RotateToSpeaker(mDrive));
 
                 /* MISC */

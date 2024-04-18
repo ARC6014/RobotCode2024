@@ -128,6 +128,9 @@ public class ArmSubsystem extends SubsystemBase {
 
     /** intake from source zone when intake is broken */
     INTAKE_FROM_SOURCE,
+
+    /** note pass */
+    PASS_NOTE,
   }
 
   public ArmSubsystem() {
@@ -173,7 +176,7 @@ public class ArmSubsystem extends SubsystemBase {
     configs.TorqueCurrent.PeakForwardTorqueCurrent = 180;
     configs.TorqueCurrent.PeakReverseTorqueCurrent = 180;
 
-    configs.MotionMagic.MotionMagicAcceleration = ArmConstants.ARM_ACCELERATION;
+    configs.MotionMagic.MotionMagicAcceleration = 200;
     configs.MotionMagic.MotionMagicCruiseVelocity = ArmConstants.ARM_VELOCITY;
 
     armMotor.getConfigurator().apply(configs);
@@ -251,6 +254,9 @@ public class ArmSubsystem extends SubsystemBase {
       case CLIMB:
         setArmAngleMotionMagic(ArmConstants.CLIMB);
         break;
+      case PASS_NOTE:
+        setArmAngleMotionMagic(ArmConstants.NOTE_PASS);
+        break;
       default:
         setArmPercentOutput(0.0);
         break;
@@ -264,6 +270,8 @@ public class ArmSubsystem extends SubsystemBase {
     if (shouldStopResetAccordingToBore) {
       return;
     }
+
+    // System.out.println(getAngleFromLookUp(FieldConstants.BLUE_SPEAKER));
 
     autoCalibration();
   }
@@ -321,6 +329,7 @@ public class ArmSubsystem extends SubsystemBase {
   private double getAngleFromLookUp(Pose2d target) {
     poseDifference = mDriveSubsystem.getPose().getTranslation()
         .getDistance(target.getTranslation());
+    // poseDifference = mDriveSubsystem.getTrans().getY() / 2; 
 
     double optimizedAngle = map.getInterpolated(new InterpolatingDouble(poseDifference)).value;
     SmartDashboard.putNumber("LookUp OAngle", optimizedAngle);

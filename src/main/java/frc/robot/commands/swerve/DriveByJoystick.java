@@ -7,6 +7,7 @@ package frc.robot.commands.swerve;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -63,9 +64,12 @@ public class DriveByJoystick extends Command {
       scalar = driveScalarValue;
     }
 
-    double xSpeed = mX.getAsDouble() * DriveConstants.maxSpeed * scalar;
-    double ySpeed = mY.getAsDouble() * DriveConstants.maxSpeed * scalar;
-    double rotation = mRotation.getAsDouble() * DriveConstants.maxAngularSpeedRadPerSec * scalar;
+
+    double xSpeed = mSlewX.calculate(inputTransform(mX.getAsDouble()) * DriveConstants.maxSpeed) * scalar;
+    double ySpeed = mSlewY.calculate(inputTransform(mY.getAsDouble()) * DriveConstants.maxSpeed) * scalar;
+    double rotation = mSlewRot.calculate(inputTransform(mRotation.getAsDouble()) * DriveConstants.maxAngularSpeedRadPerSec) * scalar;
+
+
 
     if (mIsLocked.getAsBoolean()) {
       mSlewX.reset(0);

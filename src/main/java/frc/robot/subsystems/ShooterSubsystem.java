@@ -80,6 +80,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /* source intake */
     INTAKE_FROM_SOURCE,
+
+    NOTE_PASS,
   }
 
   public enum FeederState {
@@ -186,6 +188,9 @@ public class ShooterSubsystem extends SubsystemBase {
         break;
       case INTAKE_FROM_SOURCE:
         setShooterOut(ShooterConstants.INTAKE_FROM_SOURCE);
+        break;
+      case NOTE_PASS:
+        setShooterOut(ShooterConstants.PASS_NOTE);
         break;
       case OPEN_LOOP:
         break;

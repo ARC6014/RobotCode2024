@@ -18,7 +18,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
 import frc.team6014.lib.math.Conversions;
 import frc.team6014.lib.math.Gearbox;
 import frc.team6014.lib.util.SwerveUtils.SwerveDriveConstants;
@@ -192,12 +191,12 @@ public class Constants {
                 public static final Gearbox gearRatio = new Gearbox(1, 115.77);
                 public static final boolean ARM_MOTOR_INVERTED = false;
 
-                public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Brake;
+                public static final NeutralModeValue NEUTRAL_MODE = NeutralModeValue.Coast;
 
                 /** unit: rev/s */
                 public static final double ARM_VELOCITY = 200;
                 /** unit: rev/s^2 */
-                public static final double ARM_ACCELERATION = 170;
+                public static final double ARM_ACCyELERATION = 170;
 
                 public static final double kP = 1.2;
                 public static final double kD = 0.0;
@@ -212,7 +211,7 @@ public class Constants {
                 public static final double POSITION_OFFSET_OLD = Conversions.degreesToRevolutions(13.34);
                 // final offset used in the regs
                 public static final double POSITION_OFFSET = Conversions
-                                .degreesToRevolutions(80);
+                                .degreesToRevolutions(80 - 4 + 2 + 2);
 
                 /** unit: rotations */
                 public static final double ANGLE_TOLERANCE = Conversions.degreesToRevolutions(0.5);
@@ -232,6 +231,8 @@ public class Constants {
                 public static final double AMP = 110;
                 /** unit degrees */
                 public static final double CLIMB = 45;
+                /** unit: degrees */
+                public static final double NOTE_PASS = 23;
 
                 /** unit: degrees */
                 public static final double LAST_RESORT_ANGLE_CUTOFF = 120;
@@ -283,7 +284,7 @@ public class Constants {
                 public static final double POSITION_OFFSET = Conversions
                                 .degreesToRevolutions(156 - 3);
                 /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
-                public static final double OPEN_POSITION = 167;
+                public static final double OPEN_POSITION = 152;
                 /** REV Bore Encoder position, with the closed position as 0, unit: degrees */
                 public static final double CLOSED_POSITION = 3.2;
                 /** unit: degrees */
@@ -346,6 +347,8 @@ public class Constants {
                 public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // Should not exceed 11
                 public static final double SPEAKER_LONG_VOLTAGE = 9.75; // Should not exceed 11
                 public static final double INTAKE_FROM_SOURCE = -6; // Should not exceed 11
+
+                public static final double PASS_NOTE = 8.0;
 
                 public static final double FEEDER_OUT = 10; // Should not exceed 11
                 public static final double FEEDER_AMP = 7.5; // Should not exceed 11

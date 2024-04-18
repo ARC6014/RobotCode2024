@@ -64,6 +64,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
         mRunningOpenLoopOutput = 0;
         mRunningOpenLoopControl = new DutyCycleOut(0);
+
+        mTalonFX.setNeutralMode(NeutralModeValue.Coast);
     }
 
     public static IntakeSubsystem getInstance() {
