@@ -46,10 +46,10 @@ public class Constants {
         private static final double wheelBaseWidth = 0.56665;
 
         public static final double drivebaseRadius = Math.hypot(wheelBaseWidth / 2.0, wheelBaseLength / 2.0);
-        public static final double maxModuleSpeed = 4.0;
+        public static final double maxModuleSpeed = 5.0;
 
         public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-                        new PIDConstants(4.35, 0, 0),
+                        new PIDConstants(4.7, 0, 0), // 4.35
                         new PIDConstants(4.5, 0, 0),
                         maxModuleSpeed,
                         drivebaseRadius,
@@ -224,7 +224,7 @@ public class Constants {
                 /** unit: degrees */
                 public static final double SPEAKER_LONG = 54;
                 /** unit: degrees */
-                public static final double SPEAKER_SHORT = 38; // 22.5 31.5 36
+                public static final double SPEAKER_SHORT = 32; // 22.5 31.5 36
                 /** unit: degrees */
                 public static final double FROM_INTAKE = 75;
                 /** unit: degrees */
@@ -232,7 +232,7 @@ public class Constants {
                 /** unit degrees */
                 public static final double CLIMB = 45;
                 /** unit: degrees */
-                public static final double NOTE_PASS = 23;
+                public static final double NOTE_PASS = 25;
 
                 /** unit: degrees */
                 public static final double LAST_RESORT_ANGLE_CUTOFF = 120;
@@ -257,7 +257,7 @@ public class Constants {
                 public static final int BEAM_BREAK_ID = 2;
 
                 /** unit: percent */
-                public static final double FORWARD_PERCENT = 9.75;
+                public static final double FORWARD_PERCENT = 8; // 9.75
                 /** unit: percent */
                 public static final double REVERSE_PERCENT = -9.75;
                 /** unit: percent */
@@ -320,6 +320,8 @@ public class Constants {
                 public static final int SLAVE_MOTOR_ID = 31;
                 public static final int FEEDER_MOTOR_ID = 32;
 
+                public static final double ShooterOfsett = 2;
+
                 public static final int BEAM_BREAK_ID = 3;
 
                 public static final double kMinOutput = -1;
@@ -348,9 +350,9 @@ public class Constants {
                 public static final double SPEAKER_LONG_VOLTAGE = 9.75; // Should not exceed 11
                 public static final double INTAKE_FROM_SOURCE = -6; // Should not exceed 11
 
-                public static final double PASS_NOTE = 8.0;
+                public static final double PASS_NOTE = 7.0;
 
-                public static final double FEEDER_OUT = 10; // Should not exceed 11
+                public static final double FEEDER_OUT = 8; // Should not exceed 11
                 public static final double FEEDER_AMP = 7.5; // Should not exceed 11
                 public static final double FEEDER_FROM_INTAKE = 4; // Should not exceed 11
                 public static final double FEEDER_REVERSE = -6.31; // Should not exceed 11
@@ -488,25 +490,25 @@ public class Constants {
                 // Setpoints for LookUp Table interpolation
                 /** Distance(m), Arm Angle(degrees), Shooter Speed(volts) */
                 public static final double[][] SHOOT_POSITIONS = {
-                                { 1.44, 37.5, 9.75 },
-                                { 1.69, 40, 9.75 },
-                                { 1.94, 42, 9.75 },
-                                { 2.19, 44.5, 9.75 },
-                                { 2.44, 48.25, 9.75 },
-                                { 2.60, 51, 9.75 },
-                                { 2.69, 51, 9.75 },
-                                { 2.94, 53.75, 9.75 },
-                                { 3.00, 53.9, 9.75 },
-                                { 3.19, 55.5, 9.75 },
+                                { 1.44, 37.5 - ShooterConstants.ShooterOfsett , 9.75 },
+                                { 1.69, 40- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 1.94, 42- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.19, 44.5- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.44, 48.25- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.60, 51- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.69, 51- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.94, 53.75- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.00, 53.9- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.19, 55.5- ShooterConstants.ShooterOfsett, 9.75 },
 
-                                { 3.56, 56, 9.75 },
-                                { 3.69, 58.5, 9.75 },
-                                { 3.94, 59, 9.75 },
-                                { 4.19, 60.5, 10 },
-                                { 4.44, 61, 10 },
-                                { 4.69, 61, 10.5 },
-                                { 4.94, 61.85, 10.5 },
-                                { 6.0, 62.2, 11 }
+                                { 3.56, 56- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.69, 58.5- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.94, 59- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 4.19, 60.5- ShooterConstants.ShooterOfsett, 10 },
+                                { 4.44, 61- ShooterConstants.ShooterOfsett, 10 },
+                                { 4.69, 61- ShooterConstants.ShooterOfsett, 10.5 },
+                                { 4.94, 61.85- ShooterConstants.ShooterOfsett, 10.5 },
+                                { 6.0, 62.2- ShooterConstants.ShooterOfsett, 11 }
                 };
         }
 }

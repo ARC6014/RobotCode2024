@@ -198,6 +198,7 @@ public class ArmSubsystem extends SubsystemBase {
     }
 
     angle = DriverStation.isAutonomous() ? angle + 0.8 : angle;
+    // angle=angle-18; 
     return angle;
   }
 

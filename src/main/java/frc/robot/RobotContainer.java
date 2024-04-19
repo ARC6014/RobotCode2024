@@ -140,10 +140,10 @@ public class RobotContainer {
         private final ParallelCommandGroup setArmFeedAndShootSpeakerLOOKUP = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.LOOKUP),
                         new SequentialCommandGroup(
-                                        new WaitCommand(0.5),
+                                        new WaitCommand(0.75), // 0.5
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(0.5)),
-                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(1.75));
+                        new ShooterCommand().withShooterState(ShooterState.LOOKUP).withTimeout(2)); // 1.75
 
         private final ParallelCommandGroup setArmFeedAndShootAmp = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.AMP),
@@ -173,10 +173,10 @@ public class RobotContainer {
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerShort = new ParallelCommandGroup(
                         new ArmStateSet(mArm, ArmControlState.SPEAKER_SHORT),
                         new SequentialCommandGroup(
-                                        new WaitCommand(0.35),
+                                        new WaitCommand(0.6), // 0.35
                                         new FeederCommand().withFeederState(FeederState.LET_HIM_COOK)
                                                         .withTimeout(0.2)),
-                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(0.6));
+                        new ShooterCommand().withShooterState(ShooterState.SPEAKER_SHORT).withTimeout(1.2));
 
         // interpolation shooting
         private final ParallelCommandGroup AUTOsetArmFeedAndShootSpeakerLongLOOKUP = new ParallelCommandGroup(
