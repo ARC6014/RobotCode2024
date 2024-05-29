@@ -81,6 +81,7 @@ public class ShooterSubsystem extends SubsystemBase {
     /* source intake */
     INTAKE_FROM_SOURCE,
 
+    /* feeding bot strategy */
     NOTE_PASS,
   }
 
@@ -164,14 +165,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // if (!getSensorState() && isShooterStopped()) {
     // m_feederState = FeederState.STOP_WAIT_A_SEC;
     // }
-
-    // SmartDashboard.putNumber("SH-Master RPM",
-    // m_master.getEncoder().getVelocity());
-    // SmartDashboard.putNumber("SH-Slave RPM", m_slave.getEncoder().getVelocity());
-    // SmartDashboard.putNumber("SH-Master-Current", m_master.getOutputCurrent());
-    // SmartDashboard.putNumber("SH-Slave-Current", m_slave.getOutputCurrent());
-    // SmartDashboard.putBoolean("Beam Break Reading", getSensorState());
-
+    
     switch (m_shootState) {
       case AMP:
         setAmpOut(Constants.ShooterConstants.AMP_VOLTAGE);

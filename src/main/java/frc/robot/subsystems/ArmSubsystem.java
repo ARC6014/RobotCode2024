@@ -443,8 +443,6 @@ public class ArmSubsystem extends SubsystemBase {
     return lastDemandedRotation;
   }
 
-  // HAHA
-
   /** Returns the average drive velocity in radians/sec. */
   public double getCharacterizationVelocity() {
     return armMotor.getVelocity().getValueAsDouble();
