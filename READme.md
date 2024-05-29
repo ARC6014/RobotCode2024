@@ -8,23 +8,23 @@
 Explanation of codes can be found under [docs](/docs):
 
 - [Arm](/docs/ARM.md)
-  - Cr: CAN
+  - Cr: CT
 - [Telescopic](/docs/TELESCOP.md)
-  - Cr: CAN
+  - Cr: CT
 - [Intake](/docs/INTAKE.md)
-  - Cr: Ouz
+  - Cr: OK
 - [Shooter & Feeder](/docs/SH_FR.md)
-  - Cr: Alia & Cr
+  - Cr: AK & ATA
 
 ## Autos
-- 4PAllClosePieces (most used)
-  - Shoot inside + 3 close notes with LL interpolation
-  - approx. %85 precision of shooting 3/4 notes
+- 4PAllClosePieces
+  - Shoot inside + 3 close notes with interpolation
+  - approx. %85 precision of shooting 4 notes
 - ShootInside
   - Only shoot and wait
-- 3PFarRight+Far2nd (not optimized)
+- 3PFarRight+Far2nd (unoptimized)
   - Shoot inside + get 2 notes from the centerline
-- Disrupter Path
+- 'Unethical' Path
   - Disrupt the 4 notes in centerline
 
 
