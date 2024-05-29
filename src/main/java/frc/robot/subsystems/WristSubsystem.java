@@ -98,7 +98,7 @@ public class WristSubsystem extends SubsystemBase {
 
     public boolean isBoreEncoderAlive() {
         // return mBoreEncoder.isConnected();
-        return false;
+        return false; // since bore burned
     }
 
     public double getAngle() {

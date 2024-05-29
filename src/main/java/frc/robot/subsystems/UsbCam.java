@@ -10,11 +10,6 @@ public class UsbCam extends SubsystemBase {
 
     public UsbCam() {
         usbCamera = CameraServer.startAutomaticCapture(1);
-        // setFPS(60);
-        // setResolution(640, 252);
-        // usbCameraServer.setExposureAuto();
-        // usbCameraServer.setWhiteBalanceAuto();
-        // usbCameraServer.setBrightness(10);
     }
 
     public void setResolution(int width, int height) {
@@ -23,9 +18,7 @@ public class UsbCam extends SubsystemBase {
 
     public void setFPS(int fps) {
         usbCamera.setFPS(fps);
-    } // //
-      // "QUARTER_CW"
-
+    } 
     public UsbCamera getCameraFeed() {
         return usbCamera;
     }

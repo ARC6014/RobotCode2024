@@ -12,6 +12,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.ShooterState;
+import frc.shuffleboard.ShuffleBoardInteractions;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,8 +28,7 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
-  // private final ShuffleBoardInteractions mShuffleboard =
-  // ShuffleBoardInteractions.getInstance();
+  private final ShuffleBoardInteractions mShuffleboard = ShuffleBoardInteractions.getInstance();
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     // Logger.updateEntries();
-    // mShuffleboard.update();
+    mShuffleboard.update();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -96,14 +96,12 @@ public class Robot extends TimedRobot {
     DriveSubsystem.getInstance().zeroHeading();
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
-    // WristSubsystem.getInstance().resetToAbsolute();
     WristSubsystem.getInstance().resetFalconEncoder(2.0);
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      // ShooterSubsystem.getInstance().setShooterState(ShooterState.SPEAKER_LONG);
       m_autonomousCommand.schedule();
     }
   }
@@ -126,8 +124,6 @@ public class Robot extends TimedRobot {
     ShooterSubsystem.getInstance().setShooterState(ShooterState.CLOSED);
     DriveSubsystem.getInstance().resetToAbsolute();
     ArmSubsystem.getInstance().resetToAbsolute();
-    // WristSubsystem.getInstance().resetToAbsolute();
-    // ArmSubsystem.getInstance().resetFalconEncoder(-8.5);
   }
 
   /** This function is called periodically during operator control. */

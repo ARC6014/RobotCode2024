@@ -49,7 +49,7 @@ public class Constants {
         public static final double maxModuleSpeed = 5.0;
 
         public static final HolonomicPathFollowerConfig holonomicPoseConfig = new HolonomicPathFollowerConfig(
-                        new PIDConstants(4.7, 0, 0), // 4.35
+                        new PIDConstants(4.7, 0, 0),
                         new PIDConstants(4.5, 0, 0),
                         maxModuleSpeed,
                         drivebaseRadius,
@@ -87,8 +87,8 @@ public class Constants {
                 public static final double anglePeakCurrentDuration = 0.1;
                 public static final boolean angleEnableCurrentLimit = true;
 
-                public static final int driveContinuousCurrentLimit = 30; // 35
-                public static final int drivePeakCurrentLimit = 55; // 60
+                public static final int driveContinuousCurrentLimit = 30;
+                public static final int drivePeakCurrentLimit = 55;
                 public static final double drivePeakCurrentDuration = 0.2;
                 public static final boolean driveEnableCurrentLimit = true;
 
@@ -126,15 +126,13 @@ public class Constants {
 
                 public static final double maxSpeed = 5;
 
-                public static final double maxTransSpeedMetersPerSecond = 3.3; // translation speed (x/y)
-                public static final double maxAngularSpeedRadPerSec = 2 * Math.PI; // angular speed
-                public static final double maxAngularAccelRadPerSecSq = Math.pow(maxAngularSpeedRadPerSec, 2); // angular
-                                                                                                               // acceleration
+                public static final double maxTransSpeedMetersPerSecond = 3.3;
+                public static final double maxAngularSpeedRadPerSec = 2 * Math.PI;
+                public static final double maxAngularAccelRadPerSecSq = Math.pow(maxAngularSpeedRadPerSec, 2);
 
                 public static final TrapezoidProfile.Constraints rotPIDconstraints = new TrapezoidProfile.Constraints(
                                 maxAngularSpeedRadPerSec, maxAngularAccelRadPerSecSq);
 
-                // added these two for LLalignment not sure if it makes sense
                 private static final double maxTransAccelMetersPerSecSq = 2.5;
                 public static final TrapezoidProfile.Constraints transPIDconstraints = new TrapezoidProfile.Constraints(
                                 maxTransSpeedMetersPerSecond, maxTransAccelMetersPerSecSq);
@@ -196,7 +194,7 @@ public class Constants {
                 /** unit: rev/s */
                 public static final double ARM_VELOCITY = 200;
                 /** unit: rev/s^2 */
-                public static final double ARM_ACCyELERATION = 170;
+                public static final double ARM_ACCELERATION = 170;
 
                 public static final double kP = 1.2;
                 public static final double kD = 0.0;
@@ -244,12 +242,6 @@ public class Constants {
                 public static final double COEFFICIENT_CONSTANT = 21.47;
                 public static final boolean IS_ON_FIELD = true;
 
-                // gaussian fit
-                public static final double G_COEFFICENT_A = -24.19;
-                public static final double G_COEFFICENT_B = 0.6545;
-                public static final double G_COEFFICENT_C = -1.741;
-                public static final double G_COEFFICENT_D = 61.28;
-
         }
 
         public static final class IntakeConstants {
@@ -257,7 +249,7 @@ public class Constants {
                 public static final int BEAM_BREAK_ID = 2;
 
                 /** unit: percent */
-                public static final double FORWARD_PERCENT = 8; // 9.75
+                public static final double FORWARD_PERCENT = 8;
                 /** unit: percent */
                 public static final double REVERSE_PERCENT = -9.75;
                 /** unit: percent */
@@ -345,17 +337,18 @@ public class Constants {
                 public static final boolean FEEDER_INVERTED = false;
 
                 /* VOLTAGE */
-                public static final double AMP_VOLTAGE = 5; // Should not exceed 11
-                public static final double SPEAKER_SHORT_VOLTAGE = 9.75; // Should not exceed 11
-                public static final double SPEAKER_LONG_VOLTAGE = 9.75; // Should not exceed 11
-                public static final double INTAKE_FROM_SOURCE = -6; // Should not exceed 11
+                // any voltage should not exceed 11V
+                public static final double AMP_VOLTAGE = 5;
+                public static final double SPEAKER_SHORT_VOLTAGE = 9.75;
+                public static final double SPEAKER_LONG_VOLTAGE = 9.75;
+                public static final double INTAKE_FROM_SOURCE = -6;
 
                 public static final double PASS_NOTE = 7.0;
 
-                public static final double FEEDER_OUT = 8; // Should not exceed 11
-                public static final double FEEDER_AMP = 7.5; // Should not exceed 11
-                public static final double FEEDER_FROM_INTAKE = 4; // Should not exceed 11
-                public static final double FEEDER_REVERSE = -6.31; // Should not exceed 11
+                public static final double FEEDER_OUT = 8;
+                public static final double FEEDER_AMP = 7.5;
+                public static final double FEEDER_FROM_INTAKE = 4;
+                public static final double FEEDER_REVERSE = -6.31;
 
                 // voltage-control
                 public static final boolean IS_VOLTAGE_MODE = false;
@@ -390,14 +383,13 @@ public class Constants {
                 public static final double MAX_EXTENSION = 25.7; // theoretical max 34 cm
                 /** units: cm */
                 public static final double MAX_RETRACTION = 1.5;
-                // TODO: check value
                 /** units: A */
                 public static final int STATOR_CURRENT_LIMIT = 80;
         }
 
         public static final class LEDConstants {
-                public static final int BUFFER_LENGTH = 30; // TODO: set led length
-                public static final int PWM_PORT = 0; // TODO: Config
+                public static final int BUFFER_LENGTH = 30;
+                public static final int PWM_PORT = 0;
                 public static final int CANDLE_ID = 43;
         }
 
@@ -490,25 +482,25 @@ public class Constants {
                 // Setpoints for LookUp Table interpolation
                 /** Distance(m), Arm Angle(degrees), Shooter Speed(volts) */
                 public static final double[][] SHOOT_POSITIONS = {
-                                { 1.44, 37.5 - ShooterConstants.ShooterOfsett , 9.75 },
-                                { 1.69, 40- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 1.94, 42- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 2.19, 44.5- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 2.44, 48.25- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 2.60, 51- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 2.69, 51- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 2.94, 53.75- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 3.00, 53.9- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 3.19, 55.5- ShooterConstants.ShooterOfsett, 9.75 },
+                                { 1.44, 37.5 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 1.69, 40 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 1.94, 42 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.19, 44.5 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.44, 48.25 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.60, 51 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.69, 51 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 2.94, 53.75 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.00, 53.9 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.19, 55.5 - ShooterConstants.ShooterOfsett, 9.75 },
 
-                                { 3.56, 56- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 3.69, 58.5- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 3.94, 59- ShooterConstants.ShooterOfsett, 9.75 },
-                                { 4.19, 60.5- ShooterConstants.ShooterOfsett, 10 },
-                                { 4.44, 61- ShooterConstants.ShooterOfsett, 10 },
-                                { 4.69, 61- ShooterConstants.ShooterOfsett, 10.5 },
-                                { 4.94, 61.85- ShooterConstants.ShooterOfsett, 10.5 },
-                                { 6.0, 62.2- ShooterConstants.ShooterOfsett, 11 }
+                                { 3.56, 56 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.69, 58.5 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 3.94, 59 - ShooterConstants.ShooterOfsett, 9.75 },
+                                { 4.19, 60.5 - ShooterConstants.ShooterOfsett, 10 },
+                                { 4.44, 61 - ShooterConstants.ShooterOfsett, 10 },
+                                { 4.69, 61 - ShooterConstants.ShooterOfsett, 10.5 },
+                                { 4.94, 61.85 - ShooterConstants.ShooterOfsett, 10.5 },
+                                { 6.0, 62.2 - ShooterConstants.ShooterOfsett, 11 }
                 };
         }
 }
